@@ -1,0 +1,36 @@
+SELECT 
+cs-username,
+COUNT(CASE cs-uri-stem WHEN '/Pages/WhatsOnTri.aspx' then 1 when '/Lists/TriOnTheNews/TriOnNews.aspx' then 1 END) as HOME,
+COUNT(CASE cs-uri-stem WHEN '/Pages/Tri+On+The+News.aspx' then 1 END) as TriOnTheNews,
+COUNT(CASE cs-uri-stem WHEN '/Pages/Tri+Events.aspx' then 1 END) as TriEvents,
+COUNT(CASE cs-uri-stem WHEN '/Pages/3Club.aspx' then 1 END) as 3Club,
+COUNT(CASE cs-uri-stem WHEN '/Pages/SaTRIa.aspx' then 1 END) as SaTRIa,
+COUNT(CASE cs-uri-stem WHEN '/Pages/ProductService.aspx' then 1 END) as ProductService,
+COUNT(CASE cs-uri-stem WHEN '/Pages/Tri+Awards.aspx' then 1 END) as TriAwards,
+COUNT(CASE cs-uri-stem WHEN '/Pages/archive.aspx' then 1 END) as Archive,
+COUNT(CASE cs-uri-stem WHEN '/Pages/Board+of++Editors.aspx' then 1 END) as BoardEditorPage,
+COUNT(1) as TOTAL
+FROM C:\inetpub\logs\LogFiles\W3SVC909509156\u_ex1611*.log 
+where cs-username IS NOT NULL
+and sc-status = 200
+and cs-username NOT LIKE '%portal.adm%'
+and cs-username <> '0#.w|hutch\sharepoint.test'
+and cs-username NOT LIKE 'HUTCH\%' 
+and cs-uri-stem Not LIKE '/_vti%'
+and cs-uri-stem Not LIKE '/_layouts%'
+and cs-uri-stem Not LIKE '/_catalogs%'
+and cs-uri-stem Not LIKE '/Style+Library%'
+and cs-uri-stem <> '/Pages/PageNotFoundError.aspx'
+and cs-uri-stem Not LIKE '/PublishingImages/%'
+and cs-uri-stem Not LIKE '/IT%'
+and cs-uri-stem Not LIKE '/CO%'
+and cs-uri-stem Not LIKE '/Lists/Dear%'
+and cs-uri-stem Not LIKE '/Lists/Dear%'
+and cs-uri-stem Not LIKE '%/EditForm.aspx'
+and cs-uri-stem Not LIKE '%/AllItems.aspx'
+and cs-uri-stem Not LIKE '%/NewForm.aspx'
+and cs-uri-stem Not LIKE '/Lists/SaTRIa%'
+and cs-uri-stem Not LIKE '/Lists/TriProduct%'
+and cs-uri-stem Not LIKE '/Lists/Tri+Awards%'
+and cs-uri-stem Not LIKE '/Lists/3Club%'
+group by cs-username

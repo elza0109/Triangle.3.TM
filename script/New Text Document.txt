@@ -1,0 +1,1 @@
+"C:\Program Files (x86)\Log Parser 2.2\logparser.exe" "SELECT distinct EXTRACT_SUFFIX(cs-username,0,'\\') as user INTO 'C:\data_sharepoint\poped.csv' FROM 'C:\inetpub\logs\LogFiles\W3SVC909509156\u_ex1807*' where date = SYSTEM_DATE() and cs-method = 'GET' and cs-uri-stem = '/Lists/Web+SelfCare/NewForm.aspx' and sc-status = 200" -o:csv -headers OFF
