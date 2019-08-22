@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SharedDataSet xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2010/01/shareddatasetdefinition">
+  <DataSet Name="">
+    <Query>
+      <DataSourceReference>budgetDB</DataSourceReference>
+      <CommandText>SELECT        ua.year, ua.Category, ISNULL
+                             ((SELECT        sum(ISNULL(cb.BudgetDetail, 0))
+                                 FROM            CAPEX_Budget AS cb
+                                 WHERE        cb.Year = ua.Year AND cb.Categoryvalue + ' ' + cb.Naturevalue = ua.Category AND Status = 'Planned'), 0) AS budget, ISNULL
+                             ((SELECT        sum(ISNULL(cm.BABudgetDetails, 0))
+                                 FROM            CAPEX_Main AS cm
+                                 WHERE        cm.Category + ' ' + cm.Nature = ua.Category AND cm.Year = ua.Year), 0) AS consumed
+FROM            ((SELECT DISTINCT year, (Category + ' ' + Nature) AS Category
+                            FROM            [budget].[dbo].[CAPEX_Main]
+                            WHERE        year IS NOT NULL)
+                         UNION ALL
+                         (SELECT DISTINCT year, (CategoryValue + ' ' + NatureValue) AS Category
+                          FROM            [budget].[dbo].[CAPEX_Budget]
+                          WHERE        year IS NOT NULL AND Status = 'Planned')) AS ua
+GROUP BY ua.Year, ua.Category</CommandText>
+    </Query>
+    <Fields>
+      <Field Name="year">
+        <DataField>year</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+      <Field Name="Category">
+        <DataField>Category</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+      <Field Name="budget">
+        <DataField>budget</DataField>
+        <rd:TypeName>System.Double</rd:TypeName>
+      </Field>
+      <Field Name="consumed">
+        <DataField>consumed</DataField>
+        <rd:TypeName>System.Double</rd:TypeName>
+      </Field>
+    </Fields>
+  </DataSet>
+</SharedDataSet>

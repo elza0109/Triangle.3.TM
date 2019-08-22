@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.21005.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{159641D6-6404-4A2A-AE62-294DE0FE8301}") = "budget", "budget\budget.dtproj", "{2D0655B8-4E28-4679-802D-5069C7121813}"
+EndProject
+Project("{D2ABAB84-BF74-430A-B69E-9DC6D40DDA17}") = "CAPEX(JKTMMNSPDB\SPSDEVDB)", "<Server=.\spsdevdb;Database=CAPEX;>", "{42F2D3AC-401C-4E29-8CDC-FE0B275709A3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Development|Default = Development|Default
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2D0655B8-4E28-4679-802D-5069C7121813}.Development|Default.ActiveCfg = Development
+		{2D0655B8-4E28-4679-802D-5069C7121813}.Development|Default.Build.0 = Development
+		{42F2D3AC-401C-4E29-8CDC-FE0B275709A3}.Development|Default.ActiveCfg = Development
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

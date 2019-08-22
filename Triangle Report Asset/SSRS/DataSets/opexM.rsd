@@ -1,0 +1,296 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SharedDataSet xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2010/01/shareddatasetdefinition">
+  <DataSet Name="">
+    <Query>
+      <DataSourceReference>OPEX</DataSourceReference>
+      <CommandText>&lt;RSSharePointList xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
+  &lt;ListName&gt;OPEX Main&lt;/ListName&gt;
+  &lt;ViewFields&gt;
+    &lt;FieldRef Name="Title" /&gt;
+    &lt;FieldRef Name="Categorization" /&gt;
+    &lt;FieldRef Name="Vendor_x0020_1" /&gt;
+    &lt;FieldRef Name="HK_x0020_Vendor" /&gt;
+    &lt;FieldRef Name="HK_x0020_Classification" /&gt;
+    &lt;FieldRef Name="Budget_x0020_Type" /&gt;
+    &lt;FieldRef Name="Description" /&gt;
+    &lt;FieldRef Name="Current_x0020_Year_x0020_Budget" /&gt;
+    &lt;FieldRef Name="Current_x0020_Year_x0020_Q3F" /&gt;
+    &lt;FieldRef Name="Y_x002b_1_x0020_Budget" /&gt;
+    &lt;FieldRef Name="Y_x002b_2_x0020_Budget" /&gt;
+    &lt;FieldRef Name="Y_x002b_3_x0020_Budget" /&gt;
+    &lt;FieldRef Name="Y_x002b_4_x0020_Budget" /&gt;
+    &lt;FieldRef Name="Rates" /&gt;
+    &lt;FieldRef Name="Remarks" /&gt;
+    &lt;FieldRef Name="COA_x0020_Number" /&gt;
+    &lt;FieldRef Name="PO_x0020_Number" /&gt;
+    &lt;FieldRef Name="Jan_x0020_Plan" /&gt;
+    &lt;FieldRef Name="Jan_x0020_Consumed" /&gt;
+    &lt;FieldRef Name="Jan_x0020_CEP" /&gt;
+    &lt;FieldRef Name="Feb_x0020_Plan" /&gt;
+    &lt;FieldRef Name="Feb_x0020_Consumed" /&gt;
+    &lt;FieldRef Name="Feb_x0020_CEP" /&gt;
+    &lt;FieldRef Name="Mar_x0020_Plan" /&gt;
+    &lt;FieldRef Name="Mar_x0020_Consumed" /&gt;
+    &lt;FieldRef Name="Mar_x0020_CEP" /&gt;
+    &lt;FieldRef Name="Apr_x0020_Plan" /&gt;
+    &lt;FieldRef Name="Apr_x0020_Consumed" /&gt;
+    &lt;FieldRef Name="Apr_x0020_CEP" /&gt;
+    &lt;FieldRef Name="May_x0020_Plan" /&gt;
+    &lt;FieldRef Name="May_x0020_Consumed" /&gt;
+    &lt;FieldRef Name="May_x0020_CEP" /&gt;
+    &lt;FieldRef Name="Jun_x0020_Plan" /&gt;
+    &lt;FieldRef Name="Jun_x0020_Consumed" /&gt;
+    &lt;FieldRef Name="Jun_x0020_CEP" /&gt;
+    &lt;FieldRef Name="Jul_x0020_Plan" /&gt;
+    &lt;FieldRef Name="Jul_x0020_Consumed" /&gt;
+    &lt;FieldRef Name="Jul_x0020_CEP" /&gt;
+    &lt;FieldRef Name="Aug_x0020_Plan" /&gt;
+    &lt;FieldRef Name="Aug_x0020_Consumed" /&gt;
+    &lt;FieldRef Name="Aug_x0020_CEP" /&gt;
+    &lt;FieldRef Name="Sep_x0020_Plan" /&gt;
+    &lt;FieldRef Name="Sep_x0020_Consumed" /&gt;
+    &lt;FieldRef Name="Sep_x0020_CEP" /&gt;
+    &lt;FieldRef Name="Oct_x0020_Plan" /&gt;
+    &lt;FieldRef Name="Oct_x0020_Consumed" /&gt;
+    &lt;FieldRef Name="Oct_x0020_CEP" /&gt;
+    &lt;FieldRef Name="Nov_x0020_Plan" /&gt;
+    &lt;FieldRef Name="Nov_x0020_Consumed" /&gt;
+    &lt;FieldRef Name="Nov_x0020_CEP" /&gt;
+    &lt;FieldRef Name="Dec_x0020_Plan" /&gt;
+    &lt;FieldRef Name="Dec_x0020_Consumed" /&gt;
+    &lt;FieldRef Name="Dec_x0020_CEP" /&gt;
+    &lt;FieldRef Name="Group_x0020_Category" /&gt;
+    &lt;FieldRef Name="Currency" /&gt;
+    &lt;FieldRef Name="No_x0020_ID" /&gt;
+  &lt;/ViewFields&gt;
+&lt;/RSSharePointList&gt;</CommandText>
+      <rd:DesignerState><QueryDefinition xmlns="http://schemas.microsoft.com/ReportingServices/QueryDefinition/Relational"><SelectedColumns><ColumnExpression ColumnOwner="OPEX Main" ColumnName="Title" /><ColumnExpression ColumnOwner="OPEX Main" ColumnName="Categorization" /><ColumnExpression ColumnOwner="OPEX Main" ColumnName="Vendor_x0020_1" /><ColumnExpression ColumnOwner="OPEX Main" ColumnName="HK_x0020_Vendor" /><ColumnExpression ColumnOwner="OPEX Main" ColumnName="HK_x0020_Classification" /><ColumnExpression ColumnOwner="OPEX Main" ColumnName="Budget_x0020_Type" /><ColumnExpression ColumnOwner="OPEX Main" ColumnName="Description" /><ColumnExpression ColumnOwner="OPEX Main" ColumnName="Current_x0020_Year_x0020_Budget" /><ColumnExpression ColumnOwner="OPEX Main" ColumnName="Current_x0020_Year_x0020_Q3F" /><ColumnExpression ColumnOwner="OPEX Main" ColumnName="Y_x002b_1_x0020_Budget" /><ColumnExpression ColumnOwner="OPEX Main" ColumnName="Y_x002b_2_x0020_Budget" /><ColumnExpression ColumnOwner="OPEX Main" ColumnName="Y_x002b_3_x0020_Budget" /><ColumnExpression ColumnOwner="OPEX Main" ColumnName="Y_x002b_4_x0020_Budget" /><ColumnExpression ColumnOwner="OPEX Main" ColumnName="Rates" /><ColumnExpression ColumnOwner="OPEX Main" ColumnName="Remarks" /><ColumnExpression ColumnOwner="OPEX Main" ColumnName="COA_x0020_Number" /><ColumnExpression ColumnOwner="OPEX Main" ColumnName="PO_x0020_Number" /><ColumnExpression ColumnOwner="OPEX Main" ColumnName="Jan_x0020_Plan" /><ColumnExpression ColumnOwner="OPEX Main" ColumnName="Jan_x0020_Consumed" /><ColumnExpression ColumnOwner="OPEX Main" ColumnName="Jan_x0020_CEP" /><ColumnExpression ColumnOwner="OPEX Main" ColumnName="Feb_x0020_Plan" /><ColumnExpression ColumnOwner="OPEX Main" ColumnName="Feb_x0020_Consumed" /><ColumnExpression ColumnOwner="OPEX Main" ColumnName="Feb_x0020_CEP" /><ColumnExpression ColumnOwner="OPEX Main" ColumnName="Mar_x0020_Plan" /><ColumnExpression ColumnOwner="OPEX Main" ColumnName="Mar_x0020_Consumed" /><ColumnExpression ColumnOwner="OPEX Main" ColumnName="Mar_x0020_CEP" /><ColumnExpression ColumnOwner="OPEX Main" ColumnName="Apr_x0020_Plan" /><ColumnExpression ColumnOwner="OPEX Main" ColumnName="Apr_x0020_Consumed" /><ColumnExpression ColumnOwner="OPEX Main" ColumnName="Apr_x0020_CEP" /><ColumnExpression ColumnOwner="OPEX Main" ColumnName="May_x0020_Plan" /><ColumnExpression ColumnOwner="OPEX Main" ColumnName="May_x0020_Consumed" /><ColumnExpression ColumnOwner="OPEX Main" ColumnName="May_x0020_CEP" /><ColumnExpression ColumnOwner="OPEX Main" ColumnName="Jun_x0020_Plan" /><ColumnExpression ColumnOwner="OPEX Main" ColumnName="Jun_x0020_Consumed" /><ColumnExpression ColumnOwner="OPEX Main" ColumnName="Jun_x0020_CEP" /><ColumnExpression ColumnOwner="OPEX Main" ColumnName="Jul_x0020_Plan" /><ColumnExpression ColumnOwner="OPEX Main" ColumnName="Jul_x0020_Consumed" /><ColumnExpression ColumnOwner="OPEX Main" ColumnName="Jul_x0020_CEP" /><ColumnExpression ColumnOwner="OPEX Main" ColumnName="Aug_x0020_Plan" /><ColumnExpression ColumnOwner="OPEX Main" ColumnName="Aug_x0020_Consumed" /><ColumnExpression ColumnOwner="OPEX Main" ColumnName="Aug_x0020_CEP" /><ColumnExpression ColumnOwner="OPEX Main" ColumnName="Sep_x0020_Plan" /><ColumnExpression ColumnOwner="OPEX Main" ColumnName="Sep_x0020_Consumed" /><ColumnExpression ColumnOwner="OPEX Main" ColumnName="Sep_x0020_CEP" /><ColumnExpression ColumnOwner="OPEX Main" ColumnName="Oct_x0020_Plan" /><ColumnExpression ColumnOwner="OPEX Main" ColumnName="Oct_x0020_Consumed" /><ColumnExpression ColumnOwner="OPEX Main" ColumnName="Oct_x0020_CEP" /><ColumnExpression ColumnOwner="OPEX Main" ColumnName="Nov_x0020_Plan" /><ColumnExpression ColumnOwner="OPEX Main" ColumnName="Nov_x0020_Consumed" /><ColumnExpression ColumnOwner="OPEX Main" ColumnName="Nov_x0020_CEP" /><ColumnExpression ColumnOwner="OPEX Main" ColumnName="Dec_x0020_Plan" /><ColumnExpression ColumnOwner="OPEX Main" ColumnName="Dec_x0020_Consumed" /><ColumnExpression ColumnOwner="OPEX Main" ColumnName="Dec_x0020_CEP" /><ColumnExpression ColumnOwner="OPEX Main" ColumnName="Group_x0020_Category" /><ColumnExpression ColumnOwner="OPEX Main" ColumnName="Currency" /><ColumnExpression ColumnOwner="OPEX Main" ColumnName="No_x0020_ID" /></SelectedColumns></QueryDefinition></rd:DesignerState>
+    </Query>
+    <Fields>
+      <Field Name="Budget_Year">
+        <DataField>Title</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+      <Field Name="Categorization">
+        <DataField>Categorization</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+      <Field Name="Vendor_H3I">
+        <DataField>Vendor_x0020_1</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+      <Field Name="HK_Vendor">
+        <DataField>HK_x0020_Vendor</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+      <Field Name="HK_Classification">
+        <DataField>HK_x0020_Classification</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+      <Field Name="Budget_Type">
+        <DataField>Budget_x0020_Type</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+      <Field Name="Description">
+        <DataField>Description</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+      <Field Name="Current_Year_Budget">
+        <DataField>Current_x0020_Year_x0020_Budget</DataField>
+        <rd:TypeName>System.Double</rd:TypeName>
+      </Field>
+      <Field Name="Current_Year_Q3F">
+        <DataField>Current_x0020_Year_x0020_Q3F</DataField>
+        <rd:TypeName>System.Double</rd:TypeName>
+      </Field>
+      <Field Name="Y_1_Budget">
+        <DataField>Y_x002b_1_x0020_Budget</DataField>
+        <rd:TypeName>System.Double</rd:TypeName>
+      </Field>
+      <Field Name="Y_2_Budget">
+        <DataField>Y_x002b_2_x0020_Budget</DataField>
+        <rd:TypeName>System.Double</rd:TypeName>
+      </Field>
+      <Field Name="Y_3_Budget">
+        <DataField>Y_x002b_3_x0020_Budget</DataField>
+        <rd:TypeName>System.Double</rd:TypeName>
+      </Field>
+      <Field Name="Y_4_Budget">
+        <DataField>Y_x002b_4_x0020_Budget</DataField>
+        <rd:TypeName>System.Double</rd:TypeName>
+      </Field>
+      <Field Name="Rates">
+        <DataField>Rates</DataField>
+        <rd:TypeName>System.Double</rd:TypeName>
+      </Field>
+      <Field Name="COA_Number">
+        <DataField>COA_x0020_Number</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+      <Field Name="Remarks">
+        <DataField>Remarks</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+      <Field Name="PO_Number">
+        <DataField>PO_x0020_Number</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+      <Field Name="Jan_Plan">
+        <DataField>Jan_x0020_Plan</DataField>
+        <rd:TypeName>System.Double</rd:TypeName>
+      </Field>
+      <Field Name="Jan_Consumed">
+        <DataField>Jan_x0020_Consumed</DataField>
+        <rd:TypeName>System.Double</rd:TypeName>
+      </Field>
+      <Field Name="Jan_CEP">
+        <DataField>Jan_x0020_CEP</DataField>
+        <rd:TypeName>System.Double</rd:TypeName>
+      </Field>
+      <Field Name="Feb_Plan">
+        <DataField>Feb_x0020_Plan</DataField>
+        <rd:TypeName>System.Double</rd:TypeName>
+      </Field>
+      <Field Name="Feb_Consumed">
+        <DataField>Feb_x0020_Consumed</DataField>
+        <rd:TypeName>System.Double</rd:TypeName>
+      </Field>
+      <Field Name="Feb_CEP">
+        <DataField>Feb_x0020_CEP</DataField>
+        <rd:TypeName>System.Double</rd:TypeName>
+      </Field>
+      <Field Name="Mar_Plan">
+        <DataField>Mar_x0020_Plan</DataField>
+        <rd:TypeName>System.Double</rd:TypeName>
+      </Field>
+      <Field Name="Mar_Consumed">
+        <DataField>Mar_x0020_Consumed</DataField>
+        <rd:TypeName>System.Double</rd:TypeName>
+      </Field>
+      <Field Name="Mar_CEP">
+        <DataField>Mar_x0020_CEP</DataField>
+        <rd:TypeName>System.Double</rd:TypeName>
+      </Field>
+      <Field Name="Apr_Plan">
+        <DataField>Apr_x0020_Plan</DataField>
+        <rd:TypeName>System.Double</rd:TypeName>
+      </Field>
+      <Field Name="Apr_Consumed">
+        <DataField>Apr_x0020_Consumed</DataField>
+        <rd:TypeName>System.Double</rd:TypeName>
+      </Field>
+      <Field Name="Apr_CEP">
+        <DataField>Apr_x0020_CEP</DataField>
+        <rd:TypeName>System.Double</rd:TypeName>
+      </Field>
+      <Field Name="May_Plan">
+        <DataField>May_x0020_Plan</DataField>
+        <rd:TypeName>System.Double</rd:TypeName>
+      </Field>
+      <Field Name="May_Consumed">
+        <DataField>May_x0020_Consumed</DataField>
+        <rd:TypeName>System.Double</rd:TypeName>
+      </Field>
+      <Field Name="May_CEP">
+        <DataField>May_x0020_CEP</DataField>
+        <rd:TypeName>System.Double</rd:TypeName>
+      </Field>
+      <Field Name="Jun_Plan">
+        <DataField>Jun_x0020_Plan</DataField>
+        <rd:TypeName>System.Double</rd:TypeName>
+      </Field>
+      <Field Name="Jun_Consumed">
+        <DataField>Jun_x0020_Consumed</DataField>
+        <rd:TypeName>System.Double</rd:TypeName>
+      </Field>
+      <Field Name="Jun_CEP">
+        <DataField>Jun_x0020_CEP</DataField>
+        <rd:TypeName>System.Double</rd:TypeName>
+      </Field>
+      <Field Name="Jul_Plan">
+        <DataField>Jul_x0020_Plan</DataField>
+        <rd:TypeName>System.Double</rd:TypeName>
+      </Field>
+      <Field Name="Jul_Consumed">
+        <DataField>Jul_x0020_Consumed</DataField>
+        <rd:TypeName>System.Double</rd:TypeName>
+      </Field>
+      <Field Name="Jul_CEP">
+        <DataField>Jul_x0020_CEP</DataField>
+        <rd:TypeName>System.Double</rd:TypeName>
+      </Field>
+      <Field Name="Aug_Plan">
+        <DataField>Aug_x0020_Plan</DataField>
+        <rd:TypeName>System.Double</rd:TypeName>
+      </Field>
+      <Field Name="Aug_Consumed">
+        <DataField>Aug_x0020_Consumed</DataField>
+        <rd:TypeName>System.Double</rd:TypeName>
+      </Field>
+      <Field Name="Aug_CEP">
+        <DataField>Aug_x0020_CEP</DataField>
+        <rd:TypeName>System.Double</rd:TypeName>
+      </Field>
+      <Field Name="Sep_Plan">
+        <DataField>Sep_x0020_Plan</DataField>
+        <rd:TypeName>System.Double</rd:TypeName>
+      </Field>
+      <Field Name="Sep_Consumed">
+        <DataField>Sep_x0020_Consumed</DataField>
+        <rd:TypeName>System.Double</rd:TypeName>
+      </Field>
+      <Field Name="Sep_CEP">
+        <DataField>Sep_x0020_CEP</DataField>
+        <rd:TypeName>System.Double</rd:TypeName>
+      </Field>
+      <Field Name="Oct_Plan">
+        <DataField>Oct_x0020_Plan</DataField>
+        <rd:TypeName>System.Double</rd:TypeName>
+      </Field>
+      <Field Name="Oct_Consumed">
+        <DataField>Oct_x0020_Consumed</DataField>
+        <rd:TypeName>System.Double</rd:TypeName>
+      </Field>
+      <Field Name="Oct_CEP">
+        <DataField>Oct_x0020_CEP</DataField>
+        <rd:TypeName>System.Double</rd:TypeName>
+      </Field>
+      <Field Name="Nov_Plan">
+        <DataField>Nov_x0020_Plan</DataField>
+        <rd:TypeName>System.Double</rd:TypeName>
+      </Field>
+      <Field Name="Nov_Consumed">
+        <DataField>Nov_x0020_Consumed</DataField>
+        <rd:TypeName>System.Double</rd:TypeName>
+      </Field>
+      <Field Name="Nov_CEP">
+        <DataField>Nov_x0020_CEP</DataField>
+        <rd:TypeName>System.Double</rd:TypeName>
+      </Field>
+      <Field Name="Dec_Plan">
+        <DataField>Dec_x0020_Plan</DataField>
+        <rd:TypeName>System.Double</rd:TypeName>
+      </Field>
+      <Field Name="Dec_Consumed">
+        <DataField>Dec_x0020_Consumed</DataField>
+        <rd:TypeName>System.Double</rd:TypeName>
+      </Field>
+      <Field Name="Dec_CEP">
+        <DataField>Dec_x0020_CEP</DataField>
+        <rd:TypeName>System.Double</rd:TypeName>
+      </Field>
+      <Field Name="Group_Category">
+        <DataField>Group_x0020_Category</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+      <Field Name="Currency">
+        <DataField>Currency</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+      <Field Name="No_ID">
+        <DataField>No_x0020_ID</DataField>
+        <rd:TypeName>System.Double</rd:TypeName>
+      </Field>
+    </Fields>
+  </DataSet>
+</SharedDataSet>

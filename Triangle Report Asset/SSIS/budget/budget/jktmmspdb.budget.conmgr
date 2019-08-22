@@ -1,0 +1,14 @@
+﻿<?xml version="1.0"?>
+<DTS:ConnectionManager xmlns:DTS="www.microsoft.com/SqlServer/Dts"
+  DTS:ObjectName="jktmmspdb.budget"
+  DTS:DTSID="{E83A61F3-9BC0-44E7-9E1D-9F574FBA09E4}"
+  DTS:CreationName="OLEDB">
+  <DTS:ObjectData>
+    <DTS:ConnectionManager
+      DTS:ConnectionString="Data Source=JKTMMSPDB;User ID=SSIS_Exec;Initial Catalog=budget;Provider=SQLNCLI11.1;Persist Security Info=True;">
+      <DTS:Password
+        DTS:Name="Password"
+        Sensitive="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAj9OpwvHFskeQdPnjgYDcLgAAAAACAAAAAAADZgAAwAAAABAAAADpkeYobyF33JTiPVjIgbEkAAAAAASAAACgAAAAEAAAAAaMYWXNmD5i73VyvJiOBBp4AAAANdmPtoFgrt9ZAQ50og4ozhzHCCmPbf3C4Vmk2OHoEq4nz+WZM4eCMmRgkeN/UuHRdPsOWcf36rwOV5Y2Gpcm6659DYg38K7k7PifsDjL5snJFccZLTsDUaBrKlE6hAKvOuEpEBWDbN7zrsKcpT3oFHhBu3sejuzGFAAAAE56HCxPGxZbMtgBmNT/PzZ3tZ6y</DTS:Password>
+    </DTS:ConnectionManager>
+  </DTS:ObjectData>
+</DTS:ConnectionManager>
