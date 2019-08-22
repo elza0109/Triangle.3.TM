@@ -1,0 +1,193 @@
+<link rel="stylesheet" href="/SiteAssets/TriAngleAsset/lib/dist/plugins/bootstrap/datatables.bootstrap.min.css">
+<script src="/SiteAssets/TriAngleAsset/lib/jquery.dataTables.min.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/angularjs.min.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/angular-sanitize.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/angular-resource.js"></script>
+
+<div ng-app="globalApp" ng-controller="pollingCtrl">
+    <div ng-controller="pollingCtrl as showCase">
+    	<strong><p style="margin: 0;padding: 0" id="wording"></p></strong>
+        <div ng-if="data.id === null">
+            <h1>No active polling in the meantime.</h1>
+        </div>
+        <div ng-if="data.id !== null">
+            <div class="row col-md-12" ng-if="seen">
+                <h1>We value your feedback. Thank you for your active involvement! </h1>
+            </div>
+            <div class="col-md-12" ng-if="!seen">
+            	
+                <h3>{{data.question}}</h3>
+                <div class="col-md-12" style="margin-top: 5%">
+                    <div class="row" style="margin-left: 2%" ng-repeat="ans in b">
+                        <a class="btn btn-default btn-submit-gradient" ng-click="submit(ans)" style="min-width: 50px; margin-top: 5px;"
+                            target="_blank">{{ans.answer}}</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+	var baseOrigin = window.location.origin;
+	var baseUrl_en_id = _spPageContextInfo.webAbsoluteUrl;
+    angular.module('globalApp', ['ngSanitize', 'ngResource']).controller('pollingCtrl', pollingCtrl);
+    function pollingCtrl($scope, $resource, $filter, $http, $q) {
+    
+    	var enurl = baseUrl_en_id .search("/en");
+	
+		if(localStorage.getItem('bread')){
+				var mybread = localStorage.getItem('bread').split(';');
+				var breadhtml = '';
+				if(enurl != -1 ){
+					
+					breadhtml = '<a href="/en">Home</a><span> &gt;&nbsp;Xpress Yourself &gt;&nbsp;<a href="/en/polling" onclick="breadcrumb(`Xpress Yourself`, `Polling`)">Polling</a></span>';
+				
+				}
+				else{
+					
+					breadhtml = '<a href="/id">Home</a><span> &gt;&nbsp;Xpresikan Dirimu &gt;&nbsp;<a href="/id/polling" onclick="breadcrumb(`Xpresikan Dirimu`, `Polling`)">Polling</a></span>';
+				}
+				
+				localStorage.setItem('bread',breadhtml);
+			}
+    	
+        var vm = this;
+        var userId = _spPageContextInfo.userId;
+        var ansList = [];
+        var ansCount = {};
+        var now = (new Date()).toISOString()
+        $scope.seen = false;
+        
+        $scope.b = [];
+
+        $scope.data = {
+            id: null,
+            question: null,
+            answers: [],
+            isActive: null,
+        };
+
+        $scope.init = function () {
+            $resource(_spPageContextInfo.webAbsoluteUrl + "/_api/web/lists/GetByTitle('Polling%20Master%20Question')/Items?$filter=IsActive%20eq%20%271%27%20and%20End_x0020_Date%20ge%20'" + now + "'&$OrderBy=Modified%20desc", {}, {
+                get: {
+                    method: 'GET',
+                    headers: { "accept": "application/json;odata=verbose" }
+                }
+            }).get().$promise.then(function (response) {
+                var res = response.d.results[0];
+                
+                var ans;
+                if (res) {
+                	
+                    ans = res.Answer_x0020_Options.split(";");
+                    $scope.data.id = res.ID;
+                    $scope.data.question = res.Title;
+                    $scope.data.isActive = res.IsActive;
+                    $scope.data.answers = ans;
+                };
+                
+                var length = $scope.data.answers.length;
+                for(var i=0; i < length; i++){
+					var a = {
+					'id' : i, 
+					'answer' : $scope.data.answers[i]}
+					
+					$scope.b.push(a);
+				}
+				
+                $resource(baseOrigin  + "/en/_api/web/lists/GetByTitle('Polling%20Result')/Items?$filter=Title eq '" + $scope.data.id + "'", {}, {
+                    get: {
+                        method: 'GET',
+                        headers: { "accept": "application/json;odata=verbose" }
+                    }
+                    
+                }).get().$promise.then(function (response) {
+                    ansList = [];
+					ansCount = {};
+                    var res = response.d.results;
+                    
+                    for(var j=0; j < res.length ; j++){
+                    	ansList.push(res[j].Answer);
+                    }
+                    /*
+                    {id : value}
+                    {"answer" : 'express your self'};
+                    
+                    {'express your self' : 1, Knowledge Center: 5, Knowledge Center: 5}
+                    
+                    ansList.forEach(function (i) {
+                        ansCount[i] = (ansCount[i] || 0) + 1;
+                    });*/
+                    
+                    //console.log(ansList);
+                    
+                   
+                    for(var y=0; y < ansList.length ; y++){
+                    	ansCount[ansList[y]] = (ansCount[ansList[y]] || 0) + 1;
+                    }
+
+                    console.log(ansCount);
+                    
+                    //$scope.chartLabel = Object.keys(ansCount);
+                    //$scope.chartValue = Object.values(ansCount);
+                                        
+                    for(var z=0; z < res.length ; z++){
+                    	if(res[z].AuthorId == userId){
+                        	$scope.seen = true;
+                        }
+                    }
+   
+                });
+            });
+        };
+
+        $scope.init()
+        
+        $.ajax({
+               url: _spPageContextInfo.webAbsoluteUrl + "/_api/web/lists/getbytitle('Theme Welcome Wording')/items?$top=1&$orderby=Modified desc&$filter=Typefor eq 'Polling'",
+               method: "GET",
+               headers: { "Accept": "application/json; odata=verbose" },
+               success: function (data) {
+               
+               wording = data.d.results[0].Theme;
+               document.getElementById("wording").innerHTML = wording;
+              },
+              error: function (data) {
+                  alert("Error: "+ data);
+             }
+          });
+
+
+        $scope.submit = function (ans) {
+            var url = baseOrigin  + "/en/_api/web/lists/GetByTitle('Polling%20Result')/Items"
+            var hdr = {
+                headers: {
+                    "Accept": "application/json;odata=verbose",
+                    "Content-type": "application/json;odata=verbose",
+                    "X-RequestDigest": $('#__REQUESTDIGEST').val(),
+                    "odata-version": ""
+                }
+            };
+            var params = JSON.stringify({
+                '__metadata': {
+                    'type': 'SP.Data.PollingResultListItem'
+                },
+                'Title': $scope.data.id.toString(),
+                'Question': $scope.data.question,
+                'Answer': ans.answer,
+                'AnswerID': ans.id.toString(),
+                'RespondentId': userId
+            });
+
+            $http.post(url, params, hdr)
+                .then(function onSuccess(response) {
+                    $scope.init();
+                }).catch(function onError(response) {
+				
+                });
+        };
+
+    };
+
+</script>

@@ -1,0 +1,864 @@
+﻿<div class="container text-center" style="padding : 0!important">
+	<div id="myCarousel" class="carousel slide" data-ride="carousel">
+		<!-- Indicators -->
+		<ol id="bendil" class="carousel-indicators">
+		</ol>
+
+		<!-- Wrapper for slides -->
+		<div class="carousel-inner" id="carouselbox">
+		</div>
+
+		<!-- Left and right controls -->
+		<a class="left carousel-control" href="#myCarousel" data-slide="prev">
+		  <span class="fa fa-angle-left nextpre"></span>
+		  <span class="sr-only">Previous</span>
+		</a>
+		<a class="right carousel-control" href="#myCarousel" data-slide="next">
+		  <span class="fa fa-angle-right nextpre"></span>
+		  <span class="sr-only">Next</span>
+		</a>
+	</div>
+</div>
+ 
+ <style>
+  
+ 
+ #contentBox{
+ 	padding : 0 !important;
+ }
+ 
+ #DeltaPlaceHolderMain{
+ 	padding : 0 !important;
+ }
+ 
+ #MainContentCustom{
+ 	margin-left : 2.5%!important;
+ 	margin-right : 2.5%!important;
+ 	text-align: center !important;
+	text-align: -webkit-center !important;
+ }
+	
+	.ms-table .ms-fullWidth{
+		margin-top : -0.85%;
+			
+	}
+ .container {
+    width: 100%;
+}
+ .contentwrapper{
+	margin : 5% !important;
+	}
+	
+	#s4-workspace {
+	width: 100%;
+	height:auto;
+	}
+	#titlerow {
+	height:100px;
+	}
+	
+	footer#footerid {
+	    position: fixed;
+	    width: 100%;
+	    bottom: 0px;
+	    z-index : 100000
+}
+
+.carousel-inner img {
+  margin: auto!important;
+}
+
+.left {
+	left : 0;
+}
+
+.modal {
+  text-align: center;
+  padding: 0!important;
+}
+
+.modal::before {
+  content: '';
+  display: inline-block;
+  height: 100%;
+  vertical-align: middle;
+  margin-right: -4px;
+}
+
+.modal-dialog {
+  display: inline-block;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.active {
+    background-color: transparent!important;
+}
+
+.modal-header {
+      border-bottom: none;
+      }
+.modal-footer {
+      border-top: none;
+      }
+.carousel-control.right {
+	right : -37px;
+}
+
+.carousel-control.left {
+	left : -37px;
+}
+.carousel-indicators {
+    bottom: 0px;
+}
+
+.carousel-indicators .active {
+    background-color: gray!important;
+}
+
+.item {
+    .transition(.3s ease-in-out left);
+}
+
+.close { 
+  margin: 0;
+  position: absolute;
+  top: 0px;
+  right: -63px;
+  width: 23px;
+  height: 23px;
+  border-radius: 23px;
+  background-color: #00aeef;
+  color: #ffe300;
+  font-size: 27px;
+  opacity: 1;
+  z-index: 1051;
+}
+
+.carousel-control.left {
+    background-image: none; 
+}
+.carousel-control.right {
+    background-image: none; 
+}
+
+ </style>
+ 
+ <script type="text/javascript">
+ 	//var baseOrigin = window.location.origin;
+ 	var baseOrigin = "http://triangle.three.co.id";
+
+ 	var CurrentUserId = _spPageContextInfo.userId;
+ 	
+	(function(){
+	  document.querySelector("#pageContentTitle").style.display = 'none';
+	  document.querySelector("#LeftNAV").style.display = 'none';
+	  document.querySelector("#MainContentCustom").classList.add("row");
+	  document.querySelector("#MainContentCustom").classList.remove("col-md-10");	
+	  document.querySelector("#breadcrumbs").style.display = 'none';
+	  document.querySelector("#hr-breadcrumb").style.display = 'none';
+	  
+	 $(".ms-pub-contentLayout.ms-verticalAlignTop").wrap( "<center></center>" );
+
+  
+	  $(".LeftNAV").hide();	  
+	  var baseUrl = window.location.href;
+	  var baseUrl_en_id = _spPageContextInfo.webAbsoluteUrl;
+	  var html = "";
+	  var bendil = "";
+	  var count = 0;
+	  var today = new Date();
+	  var hg = "auto!important";
+	  if( $( window ).height() < 750 ){
+	  	hg = "50vh!important";
+	  }else{
+	  	hg = "60vh!important";
+	  }
+		
+	  $.ajax({
+         url: baseUrl_en_id + "/_api/web/lists/getbytitle('Banner%20Triangle')/items?$filter=OData__ModerationStatus eq '0' and (startDate le datetime'" + today.toISOString() + "') and (ExpiredDate ge datetime'" + today.toISOString() + "')&$OrderBy=OrderPosition",
+         headers: {"accept": "application/json;odata=verbose"},
+         type: "GET",
+         async: false,
+         success: function(data) {
+         	if(data.d.results){
+         		var len = data.d.results.length;
+         		$.ajax({
+			         url: baseUrl_en_id + "/_api/web/lists/getbytitle('Polling%20Master%20Question')/Items?$filter=IsActive eq '1'&$OrderBy=Modified%20desc",
+			         headers: {"accept": "application/json;odata=verbose"},
+			         type: "GET",
+			         async: false,
+			         success: function(respon) {
+			         	var polling = respon.d.results;
+			         	
+			         	$.ajax({
+					         url: baseOrigin + "/en/_api/web/lists/getbytitle('Polling Result')/Items",
+					         headers: {"accept": "application/json;odata=verbose"},
+					         type: "GET",
+							 async: false,
+					         success: function(res) {
+					         	var pollingResults = res.d.results;
+					         	count = 0;
+					         	$.ajax({
+							         url: baseOrigin + "/en/_api/web/lists/getbytitle('Polling Result')/Items",
+							         headers: {"accept": "application/json;odata=verbose"},
+							         type: "GET",
+									 async: false,
+							         success: function(b) {
+							         	var news = b.d.results;
+							         	count = 0;
+							         }
+							    });
+
+					         	for(var i = 0;i < polling.length ;i++){
+									var alreadyAnswerPolling = false;
+									if(pollingResults.length > 0){
+										for(var j = 0; j < pollingResults.length; j++){
+											if((parseInt(pollingResults[j].Title) == polling[i].ID) && (parseInt(pollingResults[j].EditorId) == parseInt(CurrentUserId))){
+												alreadyAnswerPolling = true;										
+											}
+										}	
+										
+										if(alreadyAnswerPolling == true){
+											continue;
+										}
+
+										html += '<div class="item '+ (count==0? 'active':'') +'"><a href="'+ baseUrl_en_id + '/polling"><div class="text-center"><img class="img-responsive" src="'+polling[i].Banner+'" alt="'+polling[i].Title+'" style="max-height:'+ hg +';margin:auto!important;width: 100%;margin: auto;"></div></a>';
+										/*
+										html += '<div class="row" style="padding:5px;background:white;position: absolute;margin-left: auto;margin-right: auto;left: 0;right: 0;margin-top:100px;text-align:left!important;opacity:0.9"><div class="col-md-12"><div class="form-horizontal"><div class="form-group">'+
+											  '<label for="Title" class="control-label col-md-2">Questions</label><div class="col-md-10">'+
+											  		'<input type="hidden" id="id'+i+'" class="col-md-12" value="'+[i] +'">'+
+											  		'<input type="hidden" id="type'+i+'" class="col-md-12" value="polling">'+
+													'<input id="ques'+i+'" disabled class="col-md-12" value="'+polling[i].Title+'">'+
+											  '</div></div><div class="form-group"><label for="Title" class="control-label col-md-2" style="background:white">Answer</label><div class="col-md-10" style="background:white">';
+								  		var optionsSplit = polling[i].Answer_x0020_Options.split(';');
+								  		for(var j=0;j < optionsSplit.length;j++){
+								  			html += '<div class="radio"><label><input type="radio" onchange="polling(`'+polling[i].ID+'`, `'+optionsSplit[j]+'` )" id="resp'+i+'" name="optradio'+i+'" ng-model="data.resp'+i+'" value="'+j+'">'+optionsSplit[j]+'</label></div>';
+								  		}
+										*/
+										html += '</div>';
+										bendil += '<li data-target="#myCarousel" data-slide-to="'+count+'" class="'+ (count==0? 'active':'') +'"></li>'
+										count = count + 1;
+										
+										
+									}else{
+											html += '<div class="item '+ (i==0? 'active':'') +'"><a href="'+ baseUrl_en_id + '/polling"><div class="text-center"><img class="img-responsive" src="'+polling[i].Banner+'" alt="'+polling[i].Title+'" style="max-height:'+ hg +';margin:auto!important;width: 100%;margin: auto;"></div></a>';
+							
+											/*html += '<div class="row" style="padding:5px;background:white;position: absolute;margin-left: auto;margin-right: auto;left: 0;right: 0;margin-top:100px;text-align:left!important;opacity:0.9"><div class="col-md-12"><div class="form-horizontal"><div class="form-group">'+
+													  '<label for="Title" class="control-label col-md-2">Questions</label><div class="col-md-10">'+
+															'<input type="hidden" id="id'+i+'" class="col-md-12" value="'+[i] +'">'+
+															'<input type="hidden" id="type'+i+'" class="col-md-12" value="polling">'+
+															'<input id="ques'+i+'" disabled class="col-md-12" value="'+polling[i].Title+'">'+
+													  '</div></div><div class="form-group"><label for="Title" class="control-label col-md-2" style="background:white">Answer</label><div class="col-md-10" style="background:white">';
+											var optionsSplit = polling[i].Answer_x0020_Options.split(';');
+											for(var j=0;j < optionsSplit.length;j++){
+												html += '<div class="radio"><label><input type="radio" onchange="polling(`'+polling[i].ID+'`, `'+optionsSplit[j]+'` )" id="resp'+i+'" name="optradio'+i+'" ng-model="data.resp'+i+'" value="'+j+'">'+optionsSplit[j]+'</label></div>';
+											}*/
+					
+											html += '</div>';
+
+											bendil += '<li data-target="#myCarousel" data-slide-to="'+count+'" class="'+ (count==0? 'active':'') +'"></li>'
+											count = count + 1;
+										}
+								}
+								
+								for(var i=0; i < len; i++){
+					         		
+								  		if(i== 0) {
+								  			if(data.d.results[i].LinkURLInformation == null)
+								  			{
+								  				html += '<div class="item '+ (count==0? 'active':'') +'"><div class="text-center"><img class="img-responsive" src="'+data.d.results[i].BannerImage.Url+'" alt="'+data.d.results[i].Title+'" style="max-height:'+ hg +';margin:auto!important;width: 100%;margin: auto;"></div></div>';
+								  			}
+								  			else
+								  			{
+									  			html += '<div class="item '+ (count==0? 'active':'') +'"><div class="text-center"><a href="'+_spPageContextInfo.webAbsoluteUrl+''+data.d.results[i].LinkURLInformation+'"><img class="img-responsive" src="'+data.d.results[i].BannerImage.Url+'" alt="'+data.d.results[i].Title+'" style="max-height:'+ hg +';width: 100%;margin: auto;"></a></div></div>';
+								  			}
+								  			bendil += '<li data-target="#myCarousel" data-slide-to="'+count+'" class="'+ (count==0? 'active':'') +'"></li>'
+								  		}else{ 
+								  			if(data.d.results[i].LinkURLInformation == null)
+								  			{
+								  				html += '<div class="item"><div class="text-center"><img class="img-responsive" src="'+_spPageContextInfo.webAbsoluteUrl+''+data.d.results[i].BannerImage.Url+'" alt="'+data.d.results[i].Title+'" style="max-height:'+ hg +';margin:auto!important;width: 100%;margin: auto;"></div></div>';
+											}
+											else
+											{
+												html += '<div class="item"><div class="text-center"><a href="'+_spPageContextInfo.webAbsoluteUrl+''+data.d.results[i].LinkURLInformation+'"><img class="img-responsive" src="'+data.d.results[i].BannerImage.Url+'" alt="'+data.d.results[i].Title+'" style="max-height:'+ hg +';margin:auto!important;width: 100%;margin: auto;"></a></div></div>';
+											}
+								  			bendil += '<li data-target="#myCarousel" data-slide-to="'+count+'"></li>'
+								  		}
+								  		count++;	
+								  	}
+									
+									$('#bendil').append(bendil);
+									$('#carouselbox').append(html);
+							}
+			    		});
+			        }
+	    		});	
+         	}
+         }
+      });
+	})();
+</script>
+<script src="/_catalogs/masterpage/TriAngle/js/jquery.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/angularjs.min.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/angular-animate.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/angular-sanitize.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/ui-bootstrap-tpls-0.13.1.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/angular-resource.js"></script>
+
+<script>
+
+	//var baseOrigin = window.location.origin;http:
+	//var baseOrigin = "triangle.three.co.id";
+	
+	console.log('baseOrigin',baseOrigin);
+	
+	var baseUrl_en_id = _spPageContextInfo.webAbsoluteUrl;
+	var currentUserId = _spPageContextInfo.userId;
+	
+	var len=0;
+	var data=[];
+	var xRequestDigest = "";
+	angular.module('globalApp'
+		,['ngSanitize','ngResource', 'ngAnimate', 'ui.bootstrap'])
+		.controller('newsGalleryCtrl', quizGalleryCtrl)
+		.controller('ModalInstanceCtrl', ModalInstanceCtrl);
+		
+	function quizGalleryCtrl($rootScope, $resource, $scope, $http, $q, $modal, $log, $sce) {
+	    var me = this;
+	    $scope.quiz = [];
+	    
+	    var listObj = [];
+	    var ansList = [];
+	    var ansCount = {};
+	
+		$scope.datas = {
+	            id: null,
+	            title: null,
+	            questions: null,
+	            isActive: null,
+	            comment: null
+	        };
+	    $scope.seen = false;
+	    $scope.idx = 0;
+	    $scope.disableNext = false;
+	    $scope.disablePrev = true;
+	    $scope.disableSubmit = true;
+	    $scope.answerList = "Strongly Agree;Agree;Neutral;Disagree;Strongly Disagree";
+	    $scope.answer = [];
+	    
+	    $scope.surveycomment = "Any comments about this survey?";
+	    
+	    
+	    $rootScope.survey = [];
+		me.tables = [];
+		$.ajax({
+	        url: _spPageContextInfo.webAbsoluteUrl + "/_api/contextinfo",
+	        type: "POST",
+	        headers: {
+	            "Accept": "application/json;odata=verbose",
+	        },
+	        success: function (data) {
+	           
+	           xRequestDigest = data.d.GetContextWebInformation.FormDigestValue;
+	        },
+	        error: function (data) {
+	            console.log('error xRequestDigest', data);
+	        }
+	    });
+
+
+	    var construct = {
+			APIGetQuestion: baseUrl_en_id + "/_api/web/lists/getbytitle('Quiz Master Question')/items?$filter=Active eq 'Active'",
+			APIGetQuizResult: baseOrigin + "/en/_api/web/lists/getbytitle('Quiz Result')/items",
+			
+			APIGetSurvey: baseUrl_en_id + "/_api/web/lists/GetByTitle('Survey%20Master%20Question')/Items?$filter=IsActive eq '1'&$OrderBy=Modified desc",
+			APIGetSurveyResult: baseOrigin  + "/en/_api/web/lists/getbytitle('Survey Result')/items",
+
+			
+			APIGetPolling: _spPageContextInfo.webAbsoluteUrl + "/_api/web/lists/getbytitle('Polling%20Master%20Question')/Items?$filter=IsActive eq '1'&$OrderBy=Modified%20desc",
+			
+			APIGetUser: _spPageContextInfo.webAbsoluteUrl + "/_api/SP.UserProfiles.PeopleManager/GetMyProperties",
+			APIPostAnswer: _spPageContextInfo.webAbsoluteUrl + "/_api/web/lists/getbytitle('Quiz Result')/items",
+			APIEditAnswer: function (qID) {
+				return _spPageContextInfo.webAbsoluteUrl + "/_api/web/lists/getbytitle('Quiz Result')/items(" + qID + ")"
+			},
+			StringThankyou: 'Thank you for your attendance',
+			StringIncomplete: 'Please Answer all the Question(s)',
+			StringDuplicate: 'You already answer this Question',
+			StringActive: 'Active'
+		}
+   	
+    	$scope.loadData = function(){
+    		$resource(construct.APIGetQuestion, {}, {
+				get: {
+					method: 'GET',
+					headers: { "accept": "application/json;odata=verbose" }
+				}
+			}).get().$promise.then(function (response) {
+				var data = response.d.results;
+							
+				$resource(construct.APIGetQuizResult, {}, {
+						get: {
+								method: 'GET',
+								headers: { "accept": "application/json;odata=verbose" }
+							}
+						}).get().$promise.then(function(res) {
+							for(var i = 0;i < data.length ;i++){
+								var alreadyAnswerQuiz = false;
+								for(var j = 0; j < res.d.results.length; j++){
+									if((parseInt(res.d.results[j].Title) == data[i].ID) && (parseInt(res.d.results[j].EditorId) == parseInt(currentUserId))){
+											alreadyAnswerQuiz = true;										
+										}
+								}
+								
+								if(alreadyAnswerQuiz == true){
+									continue;
+								}
+									if(data[i].Active == construct.StringActive) {
+										var meData = {
+													'Id' : data[i].Id,
+													'TitleId': data[i].Title,
+													'type' : 'quiz',
+													'answertype' : data[i].answertype,
+													'answer' : data[i].answer,
+													'Question' : data[i].Question,
+													'TitleQuiz': data[i].TitleQuiz
+											}
+				
+										 $scope.quiz.push(meData);
+									}
+							}
+						});
+						
+						$resource(construct.APIGetSurvey, {}, {
+							get: {
+								method: 'GET',
+								headers: { "accept": "application/json;odata=verbose" }
+							}
+						}).get().$promise.then(function (d) {
+							var res = d.d.results[0];
+							 
+							 if(typeof res != 'undefined')
+							 {
+							 	
+				                var ans = res.Question.split("|");
+			                	$scope.datas.id = res.ID;
+			                	$scope.datas.title = res.Title;
+			                	$scope.datas.questions = ans;				                
+				             }
+				             
+							
+							
+							$resource(baseOrigin + "/en/_api/web/lists/GetByTitle('Survey%20Result')/Items?$filter=Title eq '" + $scope.datas.id + "'", {}, {
+							get: {
+									method: 'GET',
+									headers: { "accept": "application/json;odata=verbose" }
+								}
+							}).get().$promise.then(function(resp) {
+								
+								if(typeof res != 'undefined')
+							 	{
+									for(var i = 0;i < $scope.datas.questions.length ;i++){
+										var alreadyAnswerSurvey = false;
+										for(var j = 0; j < resp.d.results.length; j++){
+											if((parseInt(resp.d.results[j].Title) == $scope.datas.id) && (parseInt(resp.d.results[j].EditorId) == parseInt(currentUserId))){
+													alreadyAnswerSurvey = true;										
+												}
+										}
+										
+										if(alreadyAnswerSurvey == true){
+											continue;
+										}
+										
+										var meData = {
+													'Id' : $scope.datas.id,
+													'TitleId': $scope.datas.id,
+													'type' : 'survey',
+													'answertype' : 'Multiple Choice',
+													'answer' :$scope.answerList,
+													'Question' : $scope.datas.questions[i]														
+											}
+				
+										$rootScope.survey.push(meData);
+										
+										if(i == ($scope.datas.questions.length-1)){
+											var meDataComment = {
+													'Id' : $scope.datas.id,
+													'TitleId': $scope.datas.id,
+													'type' : 'survey',
+													'answertype' : null,
+													'answer' :null,
+													'Question' : $scope.surveycomment														
+											}
+											$rootScope.survey.push(meDataComment);
+										}	
+									}	
+								}
+								
+								if ($scope.quiz.length > 0){
+									me.open("Quiz", $scope.quiz, "lg");
+								}else{
+									if($scope.survey.length > 0){
+										me.open("Surveys", $rootScope.survey, "lg");
+									}
+								}
+								
+							});					
+						});
+					
+			});
+
+    	};    
+		  
+		  me.open = function (title, content, thumbnails, size, parentSelector) {
+			 
+			  var mycont ='';
+			  $scope.question = content.length;
+			  len = content.length;
+			  data= content;
+			  
+
+			  for(var i=0;i< content.length;i++){
+			  	mycont += '<div class="row item '+ (i==0? 'active':'') +'" style="padding:15px"><div class="col-md-12"><div class="form-horizontal"><div class="form-group">'+
+							  '<label for="Title" class="control-label col-md-2">Questions</label><div class="col-md-10">'+
+							  		'<input type="hidden" id="id'+i+'" class="col-md-12" value="'+content[i].Id +'">'+
+							  		'<input type="hidden" id="type'+i+'" class="col-md-12" value="'+content[i].type +'">'+
+									'<input id="ques'+i+'" disabled class="col-md-12" value="'+content[i].Question+'">'+
+							  '</div></div><div class="form-group"><label for="Title" class="control-label col-md-2">Answer</label><div class="col-md-10">';
+							  if(content[i].answertype == "Multiple Choice"){			  		
+						  			var answers = (content[i].answer).split(';');
+						  			var length = answers.length;
+						  			var b =[];
+					                for(var z=0; z < length; z++){
+										var a = {
+										'id' : z, 
+										'answer' : answers[z]}
+										b.push(a);
+									}
+								  	for(var j=0;j < b.length;j++){
+								  		mycont += '<div class="radio"><label><input type="radio" onchange="func()" id="resp'+i+'" name="optradio'+i+'" ng-model="data.resp'+i+'" value="'+b[j].answer +'|'+ b[j].id +'">'+b[j].answer+'</label></div>';
+								  	}
+							  }else{
+							  		mycont += '<textarea rows="5" class="col-md-12 mytexta" id="resp'+i+'" ng-model="data.resp'+i+'" onblur="func()"></textarea>';
+							  }
+									
+							 	mycont += '</div></div></div></div></div>';			  }
+			 
+			  	mycont += '<ol class="carousel-indicators" type="1">';
+
+	            for(var i=0;i< content.length;i++){                   
+					 mycont += '<li data-target="#carousel-example-generic" data-slide-to="'+i+'" class="'+ (i==0? 'active':'') +'"></li>';				    
+			  	}
+			  	
+			  	mycont += '</ol>';
+				
+				if (content[0].type == 'survey'){
+					$rootScope.survey = [];
+				}    
+				
+				if (content[0].type == 'quiz'){
+					$scope.quiz = [];
+				}  		        
+			    var parentElem = parentSelector ?angular.element($document[0].querySelector('.modal-demo ' + parentSelector)) : undefined;
+				  var modalInstance = $modal.open({
+			      animation: false,
+			      backdrop: false,
+			      ariaLabelledBy: 'modal-title',
+			      ariaDescribedBy: 'modal-body',
+			      templateUrl: 'myModalContent.html',
+			      controller: 'ModalInstanceCtrl',
+			      controllerAs: 'showChase',
+			      size: size,
+			      appendTo: parentElem,
+			      resolve: {
+			        items: function () {
+			          return {'title' : title, 'content' :  $sce.trustAsHtml(mycont)};
+			        }
+			      }
+			    });
+		  };
+		  
+		  $rootScope.open = function (title, content, thumbnails, size, parentSelector) {
+			  
+			  $rootScope.survey = [];
+			  var mycont ='';
+			  $scope.question = content.length;
+			  len = content.length;
+			  data= content;
+			  
+
+			  for(var i=0;i< content.length;i++){
+			  	mycont += '<div class="row item '+ (i==0? 'active':'') +'" style="padding:15px"><div class="col-md-12"><div class="form-horizontal"><div class="form-group">'+
+							  '<label for="Title" class="control-label col-md-2">Questions</label><div class="col-md-10">'+
+							  		'<input type="hidden" id="id'+i+'" class="col-md-12" value="'+content[i].Id +'">'+
+							  		'<input type="hidden" id="type'+i+'" class="col-md-12" value="'+content[i].type +'">'+
+									'<input id="ques'+i+'" disabled class="col-md-12" value="'+content[i].Question+'">'+
+							  '</div></div><div class="form-group"><label for="Title" class="control-label col-md-2">Answer</label><div class="col-md-10">';
+							  if(content[i].answertype == "Multiple Choice"){
+						  			var answers = (content[i].answer).split(';');
+								  	for(var j=0;j < answers.length;j++){
+								  		mycont += '<div class="radio"><label><input type="radio" onchange="func()" id="resp'+i+'" name="optradio'+i+'" ng-model="data.resp'+i+'" value="'+answers[j]+'">'+answers[j]+'</label></div>';
+								  	}
+							  }else{
+							  		mycont += '<textarea rows="5" class="col-md-12 mytexta" id="resp'+i+'" ng-model="data.resp'+i+'" onblur="func()"></textarea>';
+							  }
+									
+							 	mycont += '</div></div></div></div></div>';			  }
+			 
+			  	mycont += '<ol class="carousel-indicators" type="1">';
+
+	            for(var i=0;i< content.length;i++){                   
+					 mycont += '<li data-target="#carousel-example-generic" data-slide-to="'+i+'" class="'+ (i==0? 'active':'') +'"></li>';				    
+			  	}
+			  	
+			  	mycont += '</ol>';
+				
+				
+			    var parentElem = parentSelector ?angular.element($document[0].querySelector('.modal-demo ' + parentSelector)) : undefined;
+				  var modalInstance = $modal.open({
+			      animation: false,
+			      backdrop: false,
+			      ariaLabelledBy: 'modal-title',
+			      ariaDescribedBy: 'modal-body',
+			      templateUrl: 'myModalContent.html',
+			      controller: 'ModalInstanceCtrl',
+			      controllerAs: 'showChase',
+			      size: size,
+			      appendTo: parentElem,
+			      resolve: {
+			        items: function () {
+			          return {'title' : title, 'content' :  $sce.trustAsHtml(mycont)};
+			        }
+			      }
+			    });
+		  };
+		  
+		$rootScope.openModalMsg = function (title, size, parentSelector) {
+		var parentElem = parentSelector?angular.element($document[0].querySelector('.modal-demo ' + parentSelector)) : undefined;
+		  var modalInstance = $modal.open({
+			  animation: false,
+			  backdrop: false,
+			  ariaLabelledBy: 'modal-title',
+			  ariaDescribedBy: 'modal-body',
+			  templateUrl: 'myModalContent2.html',
+			  controller: 'ModalInstanceCtrl',
+			  controllerAs: 'showChase',
+			  size: size,
+			  appendTo: parentElem,
+			  resolve: {
+				items: function () {
+				  return {'title' : title };
+				}
+			  }
+			});
+		};
+
+		$scope.loadData();
+	};
+	
+	function polling(id, answer){
+		 var params = JSON.stringify({
+						'__metadata': {
+							'type': 'SP.Data.PollingResultListItem'
+						},
+						'Title': id,
+						'Answer': answer
+					});
+
+		$.ajax({
+	        url: baseOrigin + "/en/_api/web/lists/getbytitle('Polling Result')/items?",
+	        type: "POST",
+	        data: params,
+	        headers: {
+	            "Content-type": "application/json;odata=verbose",
+	            "X-RequestDigest": xRequestDigest
+	        },
+	        success: function (data) {
+	            
+	            location.reload();
+	        },
+	        error: function (data) {
+	            console.log('error xRequestDigest', data);
+	        }
+	    });
+
+	};
+	   
+	function func(){
+		var length = len;
+		
+		var isEnable = false;
+		for(var i = 0; i < length; i++){
+			
+			if(data[i].answertype == "Multiple Choice"){
+				console.log($('#resp' +[i]+':checked').val());
+				if ($('#resp' +[i]+':checked').val()){
+					
+					if(i == 0) isEnable = true;
+					else isEnable &= true;
+				}else{
+					
+					if(i == 0) isEnable = false;
+					else  isEnable &= false;
+				}
+			}else{
+				
+				if ($('#resp' +[i]).val() == ""){
+					if(i == 0) isEnable = false;
+					else  isEnable &= false;
+				}else{
+					if(i == 0) isEnable = true;
+					else isEnable &= true;
+				}
+				
+			}
+			
+		}
+
+		if(isEnable) $('#btnSubmit').removeAttr('disabled');
+	};
+	
+	function ModalInstanceCtrl($rootScope,$http, $modalInstance, items) {
+	  var $ctrl = this;
+	  $ctrl.items = items;
+	  $ctrl.question=1;
+	  $ctrl.countAnswer = 0;
+	  $ctrl.isSubmit = true;
+	  $ctrl.selected = {
+	    item: $ctrl.items[0]
+	  };
+	  
+	  
+	  $ctrl.ok = function () {
+	  	
+	  	for(var i = 0; i < data.length; i++){
+	  		
+	  		var answer;	
+	  		if (data[i].answertype == "Multiple Choice")
+	  		{	
+	  			answer = $('#resp' +[i]+':checked').val().split("|");
+	  		}
+	  		else
+	  		{
+	  			answer = $('#resp' +[i]).val();
+	  			
+	  		}
+	  	
+	  		
+	  		var url = baseOrigin + "/en/_api/web/lists/getbytitle('Quiz Result')/items";
+	  		var params = JSON.stringify({
+						'__metadata': {
+							'type': 'SP.Data.QuizResultListItem'
+						},
+						'Title': data[i].Id.toString(),
+						'TitleId': data[i].TitleId,
+						'Answer': data[i].answertype == "Multiple Choice"? answer[0] : $('#resp' +[i]).val(),
+						'AnswerID': data[i].answertype == "Multiple Choice"? answer[1] : '',
+						'Question': data[i].Question,
+						'TitleQuiz': data[i].TitleQuiz
+					});
+			if(data[i].type == "survey"){
+				 url = baseOrigin + "/en/_api/web/lists/getbytitle('Survey Result')/items";	
+				 params = JSON.stringify({
+						'__metadata': {
+							'type': 'SP.Data.SurveyResultListItem'
+						},
+						'Title': data[i].Id.toString(),
+						'Answer': data[i].answertype == "Multiple Choice"? answer[0] : $('#resp' +[i]).val(),
+						'AnswerID': data[i].answertype == "Multiple Choice"? answer[1] : '',
+						'Question': data[i].Question
+					});
+
+			}
+			
+			var hdr = {
+	      		headers:{ 
+		                "Content-type": "application/json;odata=verbose",
+		                "X-RequestDigest": xRequestDigest,
+	               	}
+		           }
+
+			$.ajax({
+					url: url,
+					type: "POST",
+					data:params,
+					async: false,
+					headers: {
+						 "Content-type": "application/json;odata=verbose",
+		               "X-RequestDigest": xRequestDigest,
+					},
+			        success: function (data) {
+			             console.log('get success', data);				             
+     
+			        },
+			        error: function (data) {
+			            console.log('get error', data);
+			        }
+	
+				});
+				
+          }
+        
+	    $modalInstance.close($ctrl.selected.item);
+	    
+	    if($rootScope.survey.length == 0) $rootScope.openModalMsg('Thank you for taking the time to complete this survey.');
+	    if($rootScope.survey.length > 0) $rootScope.open("Surveys", $rootScope.survey, "lg");
+	  };
+		
+	  $ctrl.close = function () {
+	    $modalInstance.close($ctrl.selected.item);
+	  };
+	  
+	  $ctrl.cancel = function () {
+	    $modalInstance.dismiss('cancel');
+	  };
+	};
+</script>
+
+
+<div ng-app="globalApp">   
+	<div  ng-controller="newsGalleryCtrl">
+		<script type="text/ng-template" id="myModalContent.html">
+				<div class="modal-header" style="background-image: linear-gradient(to right, #f14a26 , #ef147c);">
+					<h3 class="modal-title" style="color:white!important" id="modal-title">{{showChase.items.title}}</h3>
+					<div>  
+						<button class="close" type="button" ng-click="showChase.close()">&times;</button>			
+					</div>
+				</div>       	
+				<div class="modal-body modal-content" id="modal-body">
+					<div id="carousel-example-generic" class="carousel slide" data-ride="carousel" data-interval="false">
+						<!-- Wrapper for slides ng-repeat="person in showCase.items.content-->
+						<div class="carousel-inner" ng-bind-html="showChase.items.content">
+						
+						</div>
+						<a class="left carousel-control" ng-non-bindable href="#carousel-example-generic" role="button" data-slide="prev" style="color:magenta">
+							<span class="glyphicon glyphicon-chevron-left"></span>
+						</a>
+						<a class="right carousel-control" ng-non-bindable href="#carousel-example-generic" role="button" data-slide="next" style="color:magenta">
+							<span class="glyphicon glyphicon-chevron-right"></span>
+						</a>
+					</div>
+					<div class="modal-footer">
+						<div class="text-center">  
+							<button id="btnSubmit" class="btn btn-primary" type="button" ng-click="showChase.ok()" ng-disabled="true">Submit</button>			
+						</div>
+					</div>
+				</div>
+	    </script>
+	        
+	    <script type="text/ng-template" id="myModalContent2.html">
+	        <div class="modal-header" style="background-image: linear-gradient(to right, #f14a26 , #ef147c);">
+	            <h3 class="modal-title" style="color:white!important" id="modal-title">Messasge</h3>
+	            <div>  
+					<button class="close" type="button" ng-click="showChase.close()">&times;</button>			
+				</div>
+	        </div>       	
+			<div class="modal-body">	
+				<p>{{showChase.items.title}}</p>
+        	</div>
+        	<div class="modal-footer">
+	        </div>
+	    </script>
+	</div> 
+</div>

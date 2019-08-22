@@ -1,0 +1,790 @@
+﻿<link rel="stylesheet" href="/SiteAssets/TriAngleAsset/lib/dist/plugins/bootstrap/datatables.bootstrap.min.css" />
+<link rel="stylesheet" href="/SiteAssets/TriAngleAsset/lib/dist/css/angular-datatables.css" />
+
+<script src="/SiteAssets/TriAngleAsset/lib/jquery-latest.min.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/angularjs.min.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/ui-bootstrap.min.js"></script>
+
+<script src="/SiteAssets/TriAngleAsset/lib/angular-sanitize.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/angular-resource.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/angular-animate.js"></script>
+
+<script src="/SiteAssets/TriAngleAsset/lib/jquery.dataTables.min.js"></script> 
+<script src="/SiteAssets/TriAngleAsset/lib/dist/angular-datatables.min.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/dist/plugins/bootstrap/angular-datatables.bootstrap.min.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/dataTables.responsive.min.js"></script>
+
+<style>
+.loading {
+  position: fixed;
+  z-index: 999;
+  height: 2em;
+  width: 2em;
+  overflow: show;
+  margin: auto;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}
+
+/* Transparent Overlay */
+.loading:before {
+  content: '';
+  display: block;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.3);
+}
+
+/* :not(:required) hides these rules from IE9 and below */
+.loading:not(:required) {
+  /* hide "loading..." text */
+  font: 0/0 a;
+  color: transparent;
+  text-shadow: none;
+  background-color: transparent;
+  border: 0;
+}
+
+.loading:not(:required):after {
+  content: '';
+  display: block;
+  font-size: 10px;
+  width: 1em;
+  height: 1em;
+  margin-top: -0.5em;
+  -webkit-animation: spinner 1500ms infinite linear;
+  -moz-animation: spinner 1500ms infinite linear;
+  -ms-animation: spinner 1500ms infinite linear;
+  -o-animation: spinner 1500ms infinite linear;
+  animation: spinner 1500ms infinite linear;
+  border-radius: 0.5em;
+  -webkit-box-shadow: rgba(0, 0, 0, 0.75) 1.5em 0 0 0, rgba(0, 0, 0, 0.75) 1.1em 1.1em 0 0, rgba(0, 0, 0, 0.75) 0 1.5em 0 0, rgba(0, 0, 0, 0.75) -1.1em 1.1em 0 0, rgba(0, 0, 0, 0.5) -1.5em 0 0 0, rgba(0, 0, 0, 0.5) -1.1em -1.1em 0 0, rgba(0, 0, 0, 0.75) 0 -1.5em 0 0, rgba(0, 0, 0, 0.75) 1.1em -1.1em 0 0;
+  box-shadow: rgba(0, 0, 0, 0.75) 1.5em 0 0 0, rgba(0, 0, 0, 0.75) 1.1em 1.1em 0 0, rgba(0, 0, 0, 0.75) 0 1.5em 0 0, rgba(0, 0, 0, 0.75) -1.1em 1.1em 0 0, rgba(0, 0, 0, 0.75) -1.5em 0 0 0, rgba(0, 0, 0, 0.75) -1.1em -1.1em 0 0, rgba(0, 0, 0, 0.75) 0 -1.5em 0 0, rgba(0, 0, 0, 0.75) 1.1em -1.1em 0 0;
+}
+
+/* Animation */
+
+@-webkit-keyframes spinner {
+  0% {
+    -webkit-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -ms-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    -moz-transform: rotate(360deg);
+    -ms-transform: rotate(360deg);
+    -o-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+@-moz-keyframes spinner {
+  0% {
+    -webkit-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -ms-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    -moz-transform: rotate(360deg);
+    -ms-transform: rotate(360deg);
+    -o-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+@-o-keyframes spinner {
+  0% {
+    -webkit-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -ms-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    -moz-transform: rotate(360deg);
+    -ms-transform: rotate(360deg);
+    -o-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+@keyframes spinner {
+  0% {
+    -webkit-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -ms-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    -moz-transform: rotate(360deg);
+    -ms-transform: rotate(360deg);
+    -o-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+</style>
+<div ng-app="globalApp">
+	<script type="text/ng-template" id="myModalContent.html">
+        <div class="modal-header">
+            <h3 class="modal-title" id="modal-title">{{showCase.items.title}}</h3>
+        </div>
+        <div class="modal-body" id="modal-body">
+        	<div ng-bind-html="showCase.items.content"></div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" type="button" ng-click="showCase.ok()">OK</button>
+        </div>
+    </script>
+
+	<div ng-controller="addVlogCtrl as showCase">
+		<div id="loading-image" ng-show="isSpin" class="loading">Loading&#8230;</div>
+		<div id="tableForm" ng-show="hideForm" >
+			<!--a class="btn btn-success btn-md" ng-click="addNew()"><span class="fa fa-plus"> Add New </span></a-->
+			<a class="btn btn-success btn-md" ng-click="toAddUrl()"><span class="fa fa-plus"> Add New </span></a>
+			<div class="panel-heading col-md-12 no-padding" id="en">
+				<h3>Term & Condition for Blogs</h3>
+				<ul>
+					<li>Vlog format: * .mp4, * .mpeg, * .avi, * .m4v, max 100 Mb</li>
+				    <li>Maximum Vlog duration is 60 seconds</li>
+				    <li>Selected videos and articles will be uploaded on the <b>Xpress Yourself page</b></li>
+				    <li>Invite SaTRIa as many as possible to give a Rating in your work or you can give your rating to other SaTRIa’s works (one name valid to give one Rating). Highest rating for 3 consecutive weeks will get EXCLUSIVE merchandise from the Internal Communication and Engagement, HR Division</li>
+				    <li>All your works will belong to PT Hutchison 3 Indonesia</li>				    
+				</ul>
+			</div>
+			<div class="panel-heading col-md-12 no-padding" id="id">
+				<h3>Syarat dan Ketentuan</h3>
+				<ul>
+					<li>Format Vlog: *.mp4, *.mpeg, *.avi, *.m4v, maks 100 Mb</li>
+				    <li>Durasi Vlog maksimal 60 detik</li>
+				    <li>Video dan artikel yang terseleksi dan terpilih akan diunggah di laman <b>Xpress Yourself</b></li>
+				    <li>Ajak para SaTRIa sebanyak-banyaknya untuk memberi Rating di hasil karyamu/karya SaTRIa lainnya (satu nama hanya berhak untuk memberikan satu kali Rating). Hasil karya yang memperoleh rating tertinggi selama 3 minggu berturut-turut akan mendapatkan merchandise EKSKLUSIF dari Internal Communication and Engagement, HR Division</li>
+				    <li>Semua karyamu akan menjadi milik PT Hutchison 3 Indonesia.</li>	
+				</ul>
+			</div>
+		    <table datatable="ng" dt-options="showCase.dtOptions" dt-column-defs="showCase.dtColumnDefs"  class="table table-striped">
+			    <thead style='display:none;'>
+			    	<th>header 1</th>
+			    	<th>header 2</th>
+                    <th>header 3</th>
+                    <th>header 4</th>
+			  	</thead>
+		        <tbody>
+			        <tr ng-repeat="person in showCase.persons">
+			        	<td class="column-datatable" >{{person.ID}}</td>
+			        	<td class="column-datatable" >{{person.VideoType}}</td>
+			            <td class="col-md-4">  	
+				            	<a data-autoplay="true" data-vbtype="video" ng-href='#' ng-click="openModal(person.Title,person,'video')">
+				            			<img class="img-responsive modal-content max300" ng-src="{{person.Thumbnails}}"/>
+				            	</a>
+			            </td>
+			            
+			            <td class="col-md-8"><div class="row"><span>{{person.DateNewsFormatted}}</span><a ng-href='{{person.Link}}'>
+                            <p><strong>{{person.Title}}</strong></p></a>
+			             		<div id="news" ng-bind-html="person.Content | limitTo: 300">
+			            		</div>
+			            		<a ng-href='#' ng-click="openModal(person.Title, person.Content)">...View Description</a>
+			            	</div>
+			            	<div class="text-right"> 
+			            		<a class="btn btn-primary btn-sm" ng-click="edit(person)">Edit</a>
+			            		<a class="btn btn-danger btn-sm"  ng-click="delete(person)">Delete</a>
+			            	</div>
+			            </td>
+			        </tr>
+		        </tbody>
+			 </table>
+		</div>
+			
+			<div id="addForm" ng-show="!hideForm">
+			<table class="col-sm-12 form-table">
+				<div class="col-md-12">
+					<div class="panel-heading col-md-12 no-padding">
+						<a ng-click="collapse()"><span class="pull-right clickable"><i id='test' class="fa fa-minus"></i></span></a>
+						<hr class="hr-thick"></hr>
+					</div>
+					
+					<div class="panel-bodies">
+						
+						<div class='form-horizontal'>
+							<div class="form-group">
+						        <label for="Url" class="control-label col-xs-2">Video</label>
+						        <div class="col-xs-10">
+                                    <div class="input-group">
+                                        <div class="col-xs-10 no-padding">
+                                            <input type="text" ng-model="$root.FileDownload" class="form-control" id="myFileDownload" placeholder="File Video" readonly/>
+                                        </div>
+                                        <div class="col-xs-2">
+                                            <input type="file" class="form-control" style="width:200px;border: white;color: white;" ng-model="$root.FileDownload" file-model="FileDownload" class="form-control" id="myFileDownload" placeholder="File Download" ng-required="!$root.FileDownload" ng-disabled="isEdit"/>
+                                        </div>
+                                    </div>`
+						            <span class="ms-metadata" style="color:red"><i>{{messasge}}</i></span>
+						        </div>				        
+						    </div>
+						    
+						    <div class="form-group">
+						    	<label for="Content" class="control-label col-xs-2">Description</label>
+						    	<div class="col-md-10">
+							         <textarea name="Content" class="form-control" ng-model="data.Content" rows="6">
+							         </textarea>
+							     </div>
+						    </div>
+							
+						    <div class="form-group">
+						        <div class="col-xs-offset-2 col-xs-10">
+						            <a class="btn btn-primary" ng-click="save()">Save</a>
+						            <a class="btn btn-warning" ng-click="cancel()">Cancel</a>
+						        </div>
+						    </div>
+						</div>
+					</div>                
+                </div>            
+            </table>
+        </div>        
+    </div >
+</div>    
+
+<script>		
+	var idCurrent = _spPageContextInfo.userId;
+	var baseOrigin = window.location.origin;
+	var baseUrl_en_id = _spPageContextInfo.webAbsoluteUrl;
+
+			
+	angular.module('globalApp', ['ngSanitize','datatables', 'datatables.bootstrap', 'ngResource', 'ui.bootstrap','ngAnimate'])
+	.controller('addVlogCtrl', addVlogCtrl)
+	.controller('ModalInstanceCtrl', ModalInstanceCtrl)
+	.directive('fileModel', ['$parse', function ($parse) {
+    return {
+       restrict: 'A',
+       link: function(scope, element, attrs) {
+          var model = $parse(attrs.fileModel);
+          var modelSetter = model.assign;
+          
+          element.bind('change', function() {
+             scope.$apply(function() {
+                modelSetter(scope, element[0].files[0]);
+             });
+          });
+       }
+    };
+ }]);
+
+
+	function addVlogCtrl($scope, $rootScope, $resource, $compile, $http, $q, $sce, $uibModal, $anchorScroll, $location, DTOptionsBuilder, DTColumnDefBuilder) {
+		
+		var enurl = baseUrl.search("/en");
+	
+		if(localStorage.getItem('bread')){
+				var mybread = localStorage.getItem('bread').split(';');
+				var breadhtml = '';
+				
+				if(enurl != -1 ){
+					if (mybread.length == 3){
+						breadhtml = '<a href="/en">Home</a><span> &gt;&nbsp;New Video &gt;&nbsp;<a href="/en/vlog" onclick="breadcrumb(`null`, `New Video`)">Vlog</a> &gt;&nbsp; My video</span>';	
+					}else{
+						breadhtml = '<a href="/en">Home</a><span> &gt;&nbsp;Xpress Yourself &gt;&nbsp;<a href="/en/vlog" onclick="breadcrumb(`Xpress Yourself`, `Vlog`)">Vlog</a> &gt;&nbsp; My video</span>';
+					}
+				}
+				else{
+					if (mybread.length == 3){
+						breadhtml = '<a href="/id">Home</a><span> &gt;&nbsp;New Video &gt;&nbsp;<a href="/id/vlog" onclick="breadcrumb(`null`, `New Video`)">Vlog</a> &gt;&nbsp; My video</span>';	
+					}else{
+						breadhtml = '<a href="/id">Home</a><span> &gt;&nbsp;Xpresikan Dirimu &gt;&nbsp;<a href="/id/vlog" onclick="breadcrumb(`Xpresikan Dirimu`, `Vlog`)">Vlog</a> &gt;&nbsp; My video</span>';
+					}
+				}
+				
+				localStorage.setItem('bread',breadhtml);
+			}
+		$scope.isSpin = false;
+		
+		var enurl = baseUrl.search("/en");
+	
+		if(enurl != -1 ){
+			document.querySelector("#en").style.display = 'block';
+			document.querySelector("#id").style.display = 'none';
+		}
+		else
+		{
+			document.querySelector("#en").style.display = 'none';
+			document.querySelector("#id").style.display = 'block';
+		}
+
+	    var vm = this;
+	    vm.persons = [];
+	    vm.data = [];
+	    vm.myvideo = [];
+	    vm.dtInstance = {};
+	    $scope.hideForm = true;
+	    $scope.data =[];
+	   	$scope.isEdit = false;
+	    $scope.messasge = "Tipe file video: *.mp4, *.mpeg, *.avi, *.m4v";
+	    $scope.xRequestDigest;
+	    $scope.idListVlog;
+	    $anchorScroll();
+	    vm.dtOptions = DTOptionsBuilder
+	    	.newOptions()
+	        .withPaginationType('full_numbers')
+	        .withDisplayLength(2)
+    		.withBootstrap()
+    		.withOption('responsive', true)
+		vm.dtOptions = {
+						searching:false,
+						bLengthChange: false,
+						pageLength : 3,
+		    			lengthMenu: [[3, -1], [3]]
+						};
+						
+	    vm.dtColumnDefs = [
+	        DTColumnDefBuilder.newColumnDef(0).notVisible(),
+            DTColumnDefBuilder.newColumnDef(1).notVisible(),
+            DTColumnDefBuilder.newColumnDef(2),
+            DTColumnDefBuilder.newColumnDef(3)
+	    ];
+	    
+	    $.ajax({  
+			url: baseOrigin  + "/en/_api/web/lists/getbytitle('Video')/Items",  
+			method: "GET",  
+			headers: { "Accept": "application/json; odata=verbose" },  
+			success: function (data) {
+				for(var i = 0;i <data.d.results.length;i++){
+                    if(data.d.results[i].Title != null && data.d.results[i].AuthorId == idCurrent)
+                    {
+                        vm.data.push({
+                            ID:data.d.results[i].ID,
+                            Title: data.d.results[i].Title,
+                            OData__ModerationStatus: data.d.results[i].OData__ModerationStatus,
+                            AuthorId:data.d.results[i].AuthorId,
+                            Thumbnails:data.d.results[i].AlternateThumbnailUrl.Url,
+                            Content : data.d.results[i].VideoSetDescription,
+                            Link: baseUrl_en_id+"/Vlog/"+ data.d.results[i].Title +"?web=1"
+                        });
+                    }
+                }
+				 	
+	        },
+	        error: function (data) {console.log('error xRequestDigest', data)}
+		});	
+		
+		$.ajax({
+	        url: _spPageContextInfo.webAbsoluteUrl + "/_api/contextinfo",
+	        type: "POST",
+	        headers: {
+	            "Accept": "application/json;odata=verbose",
+	        },
+	        success: function (data) {
+	            $scope.xRequestDigest = data.d.GetContextWebInformation.FormDigestValue;
+	        },
+	        error: function (data) {
+	            console.log('error xRequestDigest', data);
+	        }
+	    });
+	    
+	    $.ajax({
+	        url: _spPageContextInfo.webAbsoluteUrl + "/_api/web/lists/getbytitle('Video')/",
+	        type: "GET",
+	        headers: {
+	            "Accept": "application/json;odata=verbose",
+	        },
+	        success: function (data) {
+	            $scope.idListVlog = data.d.Id;
+	        },
+	        error: function (data) {
+	            	        }
+	    });
+
+	          				        
+	    $scope.addNew= function() {
+			$scope.data =[];
+			$scope.isEdit = false;
+			$('#myFile').val('');
+			$('#FileDownload').val('');
+			$rootScope.FileDownload = "";
+			$scope.hideForm = false;
+			$scope.data.Created = new Date();	
+		};
+		
+		$scope.toAddUrl= function() {
+			window.location.href = _spPageContextInfo.webAbsoluteUrl + "/_layouts/15/Upload.aspx?List={"+ $scope.idListVlog+"}";
+		};
+
+
+	    
+	    $scope.cancel= function() {
+ 			$scope.hideForm = true;  
+ 			$anchorScroll();
+	    }
+	    
+	    $scope.edit =function(x) {
+			$scope.data = x;
+			$scope.isEdit = true;
+			$scope.hideForm = false;
+			$rootScope.FileDownload = x.Title;
+		 };
+	    
+	     $scope.save = function(edit) {
+			$scope.isSpin= true;
+	     	var filevideo = $scope.FileDownload;
+			var typevideo = '';
+			var titleVideo = '';
+			var url = _spPageContextInfo.webAbsoluteUrl +"/_api/web/lists/getbytitle('Video')/items";
+			
+		      	var hdr = {
+		      		headers:{ 
+			                "Content-type": "application/json;odata=verbose"
+			               }
+			           };
+			           
+			if($scope.isEdit){
+				url += "("+ $scope.data.ID +")";
+				hdr = {
+				      		headers:{ 
+						        	"Accept": "application/json;odata=verbose",
+					                "Content-type": "application/json;odata=verbose",
+					                "X-HTTP-Method": "MERGE",
+					                "X-RequestDigest": $scope.xRequestDigest,
+					                "If-Match": "*",
+					                "odata-version": ""				        
+					               }
+					  }
+			      	
+			      	
+              		var params = JSON.stringify(
+                    {
+                          "__metadata" :{
+                              "type": "SP.Data.VlogItem"
+                          },
+                        	"VideoSetDescription": $scope.data.Content
+                          });
+              		
+              		
+              		$http.post(url, params, hdr)
+					.then(function onSuccess(response) {
+						$scope.reloadTable();
+						$scope.isSpin= false;
+						$scope.cancel();
+					}).catch(function onError(response) {
+						console.log('error',response);							
+					});  
+			
+			}else{
+				if(filevideo) {
+					typevideo = '.'+(filevideo.type).replace('video/','');
+					titleVideo = (filevideo.name).split(typevideo);
+					var info = $scope.uploadDoc();					
+					setTimeout(function(){
+						$scope.isSpin= false;
+						$scope.$apply();
+					}, 200);
+					return;
+
+				}else{
+					setTimeout(function(){
+						$scope.isSpin= false;
+						$scope.$apply();
+					}, 200);
+					
+					return;
+				}
+				    	
+			    var urlget = url + "?$filter=Title eq '" + titleVideo[0]+"'";
+
+			    $.ajax({
+					url: urlget,
+					type: "GET",
+					headers: {
+						"accept": "application/json;odata=verbose"
+					},
+			        success: function (data) {
+			             console.log('get success', data);	
+			             hdr = {
+				      		headers:{ 
+						        	"Accept": "application/json;odata=verbose",
+					                "Content-type": "application/json;odata=verbose",
+					                "X-HTTP-Method": "MERGE",
+					                "X-RequestDigest": $scope.xRequestDigest,
+					                "If-Match": "*",
+					                "odata-version": ""				        
+					               }
+					           }
+			      		
+			      		
+			             var params = JSON.stringify(
+	                        {
+	                              "__metadata" :{
+	                                  "type": "SP.Data.VlogItem"
+	                              },
+	                            	"VideoSetDescription": $scope.data.Content,
+									"VideoType" : typevideo
+	                        });
+						
+	                    var id = data.d.results[0].ID;   
+						if (data.d.results[0].ID){
+						      	url += "("+ id +")";						      	
+					      	 $http.post(url, params, hdr)
+							.then(function onSuccess(response) {
+								setTimeout(function(){
+									$scope.isSpin= false;
+									$scope.$apply();
+								}, 200);
+
+								$scope.reloadTable();
+								$scope.cancel();
+							}).catch(function onError(response) {
+								console.log('error',response);							
+							});  
+						}
+						        
+			        },
+			        error: function (data) {
+			            console.log('get error', data);
+			        }
+	
+				});
+			}
+	     };
+	    
+	    $scope.$watch('FileDownload', function (newValue, oldValue, scope) {
+		    if(newValue){
+               
+			    var file = newValue;
+		        if(file.type =='video/mp4' || file.type =='video/mpg' || file.type =='video/avi'|| file.type =='video/m4v' ){
+		        
+		        }else{
+		        	$scope.messasge = "Wrong type File! Your video type must *.mp4, *.mpg, *.avi, *.m4v";
+		        	return;
+		        }
+		        
+		        if(file.size > 100000000){
+		          	$scope.messasge = "Wrong size Video! your video must less than equal 100MB";
+		          	return;
+		        }
+		        $rootScope.FileDownload = file.name;
+	        	$scope.msg = "";
+			}
+		});
+	   
+	    $scope.uploadDoc =function(x) {
+			var file = $scope.FileDownload;
+			if(!file) return;
+			var hosturl = _spPageContextInfo.webAbsoluteUrl +"/Vlog/";
+			console.log('hosturl',hosturl);
+	        var hdr = {
+		      		headers:{ 
+			                "Accept": "application/json;odata=verbose",
+			                "X-RequestDigest": $scope.xRequestDigest,
+			                "content-length": file.byteLength
+			               }
+			           };
+			
+	        var url = _spPageContextInfo.webAbsoluteUrl +"/_api/web/GetFolderByServerRelativeUrl('Video')/Files/add(overwrite=true,url='"+ file.name+"')?@target='"+ hosturl +"'";
+	        console.log('url',url);    
+		    	$.ajax({
+				url: url,
+				type: "POST",
+				data: file,
+				processData: false,
+				async: false,
+				cache:false,
+				headers: {
+					"accept": "application/json;odata=verbose",
+					"X-RequestDigest": $scope.xRequestDigest,
+					"content-length": file.byteLength
+				},
+		        success: function (data) {
+		             console.log('upload success', data);	
+		             return true;        
+		        },
+		        error: function (data) {
+		            console.log('upload error', data);
+		            return true;
+		        },
+		         complete: function(){
+			    }
+
+			});
+	    };
+	    		
+	    $scope.delete = function(x) {
+			if(!x.ID) return;
+			var r = confirm("Do you want to delete this row?");
+		    
+			var url = _spPageContextInfo.webAbsoluteUrl +"/_api/web/lists/getbytitle('Video')/Items("+x.ID+")";
+		    var hdr = {
+	      		headers:{ 
+		                "Accept": "application/json;odata=verbose",
+		                "X-RequestDigest": $scope.xRequestDigest,
+		                "If-Match": "*"
+		        }
+		    };
+			if (r == true) {
+		        $http.delete(url, hdr)
+			    .then(function onSuccess(response) {
+				    $scope.reloadTable();
+				  }).catch(function onError(response) {
+				    console.log('error in delete', response);
+				  });
+		    } 
+		};
+		
+    	$scope.download =function(x) {
+ 			alert('download');        
+	    };
+	    
+	    $scope.reloadTable = function(){
+	    	vm.persons = [];
+	    	var url = baseUrl_en_id+ "/_api/web/lists/getbytitle('Video')/Items"
+	    	var hdr = {
+	      		headers:{ 
+		                "Content-type": "application/json;odata=verbose"
+		                }
+		           };
+	    	$resource( baseUrl_en_id + "/_api/web/lists/getbytitle('Video')/Items", {}, {
+				    get: {
+				        method: 'GET',
+				        headers: { "accept": "application/json;odata=verbose" }
+				    }
+				 }).get().$promise.then(function(response) {
+	        				
+	        		for(var i = 0;i <response.d.results.length;i++){
+				 		if(response.d.results[i].Title != null && response.d.results[i].AuthorId == idCurrent)
+				 		{
+				 			vm.persons.push({
+		        				ID:response.d.results[i].ID,
+			                    Title: response.d.results[i].Title,
+			                    OData__ModerationStatus: response.d.results[i].OData__ModerationStatus,
+			                    AuthorId:response.d.results[i].AuthorId,
+			                    Thumbnails:response.d.results[i].AlternateThumbnailUrl.Url,
+			                    Content : response.d.results[i].VideoSetDescription,
+			                    VideoRenditionLabel : response.d.results[i].VideoRenditionLabel,
+			                    VideoType : response.d.results[i].VideoType,
+			                    Link: baseUrl_en_id+"/Vlog/"+ response.d.results[i].Title +"?web=1"
+			                });
+				 		}
+				 	}
+				 	
+				 	$resource(_spPageContextInfo.webAbsoluteUrl +"/_api/web/lists/getbytitle('Video')/items?$filter=ContentType%20eq%20%27Video%20Rendition%27&$select=FileLeafRef,FileRef,ContentTypeId,ContentType/Name&$expand=ContentType", {}, {
+						    get: {
+						        method: 'GET',
+						        headers: { "accept": "application/json;odata=verbose" }
+						    }
+						 }).get().$promise.then(function(res) {		
+						 					 			
+					 			vm.myvideo = res.d.results;
+					 			
+								for(var i = 0;i < vm.persons.length;i++){
+									for(var j=0; j < vm.myvideo.length;j++){
+										var titlesplit = vm.myvideo[j].FileLeafRef.split(vm.persons[i].VideoType);
+										var title = titlesplit[0];
+										
+										if(title == vm.persons[i].Title){
+											vm.persons[i]['LinkVideo']= vm.myvideo[j].FileRef;
+										}
+			        				}
+								}
+							$resource(_spPageContextInfo.webAbsoluteUrl +"/_api/web/siteusers", {}, {
+								    get: {
+								        method: 'GET',
+								        headers: { "accept": "application/json;odata=verbose" }
+								    }
+								 }).get().$promise.then(function(res) {
+								 	vm.author = res.d.results;
+								 				 			
+						 			for(var i = 0;i < vm.persons.length;i++){
+						 				
+			        					for(var j=0; j < vm.author.length;j++){						
+			        						if(vm.author[j].Id== vm.persons[i].AuthorId){
+												   vm.persons[i]['Author']= vm.author[j].Title;	
+			        						}
+			        					}
+			        				}			 		        		
+					    		});	
+					 });
+					 console.log('video',vm.persons);
+					 
+	    		});
+	    };
+		
+ 		$scope.collapse = function(x) {
+				console.log($('#test').hasClass('fa-minus'));
+				if(!$('#test').hasClass('fa-plus')) {
+					$('.panel-bodies').slideUp();
+					$('#test').removeClass('fa-minus').addClass('fa-plus');
+				} else {
+					$('.panel-bodies').slideDown();
+					$('#test').removeClass('fa-plus').addClass('fa-minus');
+				}
+					
+		};
+		
+		
+	   $scope.item = {
+		    get: function(x) {
+		    
+		    $scope.name="";
+			$scope.eles= angular.element(x).find('p');
+			[].forEach.call($scope.eles, function (ctl) {
+		        $scope.name += (ctl.outerHTML).toString();
+		    });
+		    console.log($scope.name);
+			return $scope.name;      
+		    }
+		  };
+		  
+		$scope.animationsEnabled = true;
+	  	$scope.openModal = function (title, content, type, size, parentSelector) {
+		  	var co = type == 'video'?
+				  	$sce.trustAsHtml('<video class="col-md-12" controls autoplay>'+
+					  '<source  src="'+ baseOrigin + '/' + content.LinkVideo+'" type="video/mp4">'+
+					  'Your browser does not support HTML5 video.'+
+					'</video> <span class="col-md-12"><p>&nbsp;</p></span>')
+			  	: content; 
+		    var parentElem = parentSelector?angular.element($document[0].querySelector('.modal-demo ' + parentSelector)) : undefined;
+			  var modalInstance = $uibModal.open({
+			      animation: $scope.animationsEnabled,
+			      ariaLabelledBy: 'modal-title',
+			      ariaDescribedBy: 'modal-body',
+			      templateUrl: 'myModalContent.html',
+			      controller: 'ModalInstanceCtrl',
+			      controllerAs: 'showCase',
+			      size: size,
+			      appendTo: parentElem,
+			      resolve: {
+			        items: function () {
+			          return {'title' : title, 'content' : co };
+			        }
+			      }
+		    });
+		  };
+    		$scope.reloadTable();
+	   };
+	   
+function ModalInstanceCtrl($scope, $rootScope, $uibModalInstance, items, DTOptionsBuilder, DTColumnDefBuilder) {
+	var showCase = this;
+	showCase.message = '';
+	showCase.items = items;
+	showCase.selected = {
+		item: showCase.items[0]
+	};
+
+	showCase.approve = function(data) {
+		showCase.ok();
+	}
+
+	showCase.ok = function () {
+		$uibModalInstance.close(showCase.selected.item);
+	};
+
+	showCase.cancel = function () {
+		$uibModalInstance.dismiss('cancel');
+	};
+};
+</script>

@@ -1,0 +1,611 @@
+﻿	<!-- Controller Template -->
+	<div ng-controller="eventCtrl as showCase">
+		<!-- tableForm Template -->
+		<div id="tableForm" ng-show="hideForm" >
+			<a class="btn btn-success btn-md" ng-click="addNew()"><span class="fa fa-plus"></span> Add New</a>
+		    <table datatable="ng" dt-options="showCase.dtOptions" dt-column-defs="showCase.dtColumnDefs" dt-instance="showCase.dtInstance" class="col-sm-12 table table-striped table-bordered form-table">
+		    	<thead>
+			    	<th class="column-datatable">Id</th>
+				    <th class="column-datatable">Event Name</th>
+				    <th class="column-datatable">Event Description</th>
+				    <th class="column-datatable">Banner</th>
+				    <th class="column-datatable">Start Date</th>
+					<th class="column-datatable">Due Date</th>
+					<th class="column-datatable">Assigned to</th>
+					<th class="column-datatable">Status</th>
+				    <th class="column-datatable">Actions</th>
+			  	</thead>
+		        <tbody>
+		        	<tr ng-repeat="field in showCase.tables">
+				        <td class="column-datatable">{{field.ID}}</td>
+				        <td class="column-datatable">{{field.Title}}</td>
+				        <td class="column-datatable">
+				        	<div ng-bind-html="field.Body| limitTo: 100"></div>
+				        </td>
+				        <td class="column-datatable"><img ng-src="{{field.Banner}}" class="img-responsive"></td>
+				        <td class="column-datatable">{{field.StartDate | date:'mediumDate'}}</td>
+				        <td class="column-datatable">{{field.DueDate | date:'mediumDate'}}</td>
+				        <td class="column-datatable">
+				        	<span ng-bind-html="getPeople(field.AssignedToId.results)"></span>
+				        </td>
+				        <td class="column-datatable">
+				        	<div ng-switch="field.OData__ModerationStatus">
+								  <div ng-switch-when="0">
+								    <p>Approved</p>
+								  </div>
+								  <div ng-switch-when="1">
+								    <p>Rejected</p>
+								  </div>
+								  <div ng-switch-when="2">
+								    <p>Pending</p>
+								  </div>
+								  <div ng-switch-default>
+								    <p>Draft</p>
+								  </div>
+								</div>
+				        	</td>
+				        <td class="column-datatable">
+							<div class="col-sm-4 no-padding">
+								<a ng-click="edit(field)"><span class="btn btn-warning btn-sm fa fa-edit"></span></a>
+							</div>
+							<div class="col-sm-4 no-padding">
+								<a ng-click="delete(field)"><span class="btn btn-danger btn-sm fa fa-trash-o"></span></a>  
+							</div>
+							<div class="col-sm-4 no-padding">
+								<a ng-click="approve(field)"><span class="btn btn-success btn-sm fa fa-check"></span></a>
+							</div>
+			            </td>
+		        	</tr>
+		        </tbody>
+		    </table>
+		</div>
+		<!-- tableForm Template -->
+		
+		<!-- Form Input -->
+		<div id="addForm" ng-show="!hideForm">
+			<table class="col-sm-12 form-table">
+				<div class="col-md-12">
+					<div class="panel-heading col-md-12 no-padding">
+						<a ng-click="collapse()"><span class="pull-right clickable"><i id='panel-header' class="fa fa-minus"></i></span></a>
+						<hr class="hr-thick">
+					</div>
+					<div class="panel-bodies">
+						<div class='form-horizontal'>
+							<div class="form-group">
+						        <label for="Title" class="control-label col-xs-2">Event Name</label>
+						        <div class="col-xs-10">
+						        	<input type="hidden" ng-model="data.ID" name="ID" id="ID" >
+						            <input type="text" ng-model="data.Title" class="form-control" id="Title" placeholder="Event Name" ng-required="required">
+						            <span class="ms-metadata">Wording for Menu to be displayed</span>
+						        </div>
+						    </div>
+						    <div class="form-group">
+						    	<label for="Content" class="control-label col-xs-2">Content</label>
+						    	<div class="col-md-10">
+							         <div text-angular="text-angular" name="htmlcontent" ng-model="data.Body" ta-disabled='disabled' 
+							         	ta-toolbar-button-class="btn btn-default btn-xs"
+							         	ta-toolbar="[]"
+							         	ta-text-editor-class="form-control myform1-height" 
+        								ta-html-editor-class="form-control myform1-height"
+        								ta-unsafe-sanitizer="true"
+							         >
+							         </div>
+							     </div>
+						    </div>
+						    <div class="form-group">
+						    	<label for="StartDate" class="control-label col-xs-2">Start Date</label>
+						    	<div class="col-md-10">
+									<div class="input-group">
+							          <input type="text" icon-prefix="fa" class="form-control" uib-datepicker-popup="{{format}}" 
+							          	ng-model="data.StartDate" is-open="datepickers.StartDate" min-date="minDate" max-date="'2215-06-22'" 
+							          	datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" show-button-bar="false"/>
+							          <span class="input-group-btn">
+						                <button type="button" class="btn btn-primary" ng-click="openDate($event,'StartDate')"><i class="fa fa-calendar"></i></button>
+						              </span>
+							        </div>
+							     </div>
+						    </div>
+						    <div class="form-group">
+						    	<label for="DueDate" class="control-label col-xs-2">Due Date</label>
+						    	<div class="col-md-10">
+							        <div class="input-group">
+							          <input type="text" class="form-control" uib-datepicker-popup="{{format}}" 
+							          	ng-model="data.DueDate" is-open="datepickers.DueDate" min-date="minDate" max-date="'2215-06-22'" 
+							          	datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" show-button-bar="false"/>
+							          <span class="input-group-btn">
+						                <button type="button" class="btn btn-primary" ng-click="openDate($event,'DueDate')"><i class="fa fa-calendar"></i></button>
+						              </span>
+							        </div>
+							     </div>
+						    </div>
+							<div class="form-group">
+						        <label for="Url" class="control-label col-xs-2">Banner Image</label>
+						        <div class="col-xs-10">
+						        <div class="input-group">
+						        	<!--span class="ms-metadata"><i>{{FileDownload}}</i></span-->
+						        	<div class="col-xs-10 no-padding">
+						        		<input type="text" ng-model="$root.FileDownload" class="form-control" placeholder="File Download" readonly/>
+						        	</div>
+						        	<div class="col-xs-2">
+						        		<input type="file" class="form-control" style="width:200px;border: white;color: white;" ng-model="$root.FileDownload" file-model="FileDownload" class="form-control" id="myFileDownload" placeholder="File Download" ng-required="!$root.FileDownload"/>
+						        	</div>
+						        	</div>
+					            
+						            <span class="ms-metadata" style="color:red"><i>{{msg}}</i></span>
+						        </div>				        
+						    </div>
+						    <div class="form-group">
+						        <label for="assign to" class="control-label col-xs-2">Assigned to</label>
+						        <div class="col-xs-10">
+							        <ui-select multiple ng-model="showCase.multipleDemo.selectedPeople" theme="bootstrap" ng-disabled="showCase.disabled" sortable="true" close-on-select="false" style="width: 800px;">
+									    <ui-select-match placeholder="Select person...">{{$item.name}}</ui-select-match>
+									    <ui-select-choices repeat="person in showCase.people | propsFilter: {name: $select.search}">
+									      <div ng-bind-html="person.name | highlight: $select.search"></div>
+									    </ui-select-choices>
+									</ui-select>
+									<!--p>Selected: {{showCase.multipleDemo.selectedPeople}}</p-->
+									<span class="ms-metadata" style="color:red"><i>Please type for search</i></span>
+							   </div>
+						    </div>
+						    <div class="form-group">
+						        <div class="col-xs-offset-2 col-xs-10">
+						            <a class="btn btn-primary" ng-click="save()"><span class="fa fa-save"></span> Save</a>
+						            <a class="btn btn-warning" ng-click="cancel()">Cancel</a>
+						        </div>
+						    </div>
+						</div>
+					</div>
+				</div>
+			</table>
+		</div>
+	</div >	
+
+
+
+
+<script>
+angular.module('globalApp')
+.controller('eventCtrl', eventCtrl)
+.directive('fileModel', ['$parse', function ($parse) {
+    return {
+       restrict: 'A',
+       link: function(scope, element, attrs) {
+          var model = $parse(attrs.fileModel);
+          var modelSetter = model.assign;
+          
+          element.bind('change', function() {
+             scope.$apply(function() {
+                modelSetter(scope, element[0].files[0]);
+             });
+          });
+       }
+    };
+ }]);
+
+
+function eventCtrl($scope, $rootScope, $resource, $compile, $http, $q, $anchorScroll, $location, $uibModal, $log, $document, DTOptionsBuilder, DTColumnDefBuilder) {
+	$scope.baseurl = window.location.origin + "/";
+	$scope.baseurl_en = _spPageContextInfo.webAbsoluteUrl;
+	var vm = this;
+	var $ctrl = this;
+	$scope.msg = "Tipe file image: *.png, *.jpg, *.jpeg";
+	$scope.xRequestDigest;
+	vm.tables = [];
+	vm.person = [];
+	vm.dtInstance = {};
+	$scope.data =[];
+	$rootScope.FileDownload="";
+	$scope.hideForm = true;
+	$scope.animationsEnabled = true;
+	$scope.SiteGroups = [];
+    $location.hash('top');
+    $scope.xRequestDigest;
+    $anchorScroll();
+
+	$scope.datepickers = {
+		StartDate: false,
+	    DueDate: false
+	};
+	
+	vm.people = [];
+  
+  	$.ajax({  
+			url: _spPageContextInfo.webAbsoluteUrl + "/_api/web/siteusers",  
+			method: "GET",  
+			headers: { "Accept": "application/json; odata=verbose" },  
+			success: function (data) {
+	            var data = data.d.results;
+	            data.map(el => {
+					var params = {
+						name: el.Title,  Id: el.Id
+					};
+					vm.people.push(params);
+				})
+
+	        },
+	        error: function (data) {
+	            console.log('error xRequestDigest', data);
+	        }
+		});
+		  
+	  vm.multipleDemo = {};
+	  vm.multipleDemo.selectedPeople = [];
+  
+  	$scope.getPeople= function(x) {
+  		if(x == null) return;
+  		
+  		var html = '<ul style="list-style-type: circle;">';
+  		
+		for(var i=0; i < x.length;i++){
+			for(j=0;j < vm.people.length;j++){
+				if(x[i] == vm.people[j].Id ){
+					html += "<li>"+ vm.people[j].name +"</li>";
+				}	
+			}
+		}
+		return html +='</ul>';
+	};
+	
+	$scope.currentUser= function() {
+		$.ajax({  
+			url: _spPageContextInfo.webAbsoluteUrl + "/_api/web/CurrentUser",  
+			method: "GET",  
+			headers: { "Accept": "application/json; odata=verbose" },  
+			success: function (data)  
+				{  
+					  
+				},  
+			error: function (data)   
+				{  
+					failure(data);  
+				}  
+		}); 
+	};
+	
+	$scope.currentUserGroup= function(userid) {
+		$.ajax({  
+			url: _spPageContextInfo.webAbsoluteUrl + "/_api/web/GetUserById("+ userid +")/Groups",  
+			method: "GET",  
+			headers: { "Accept": "application/json; odata=verbose" },  
+			success: function (data) {
+	            console.log('GetUserById',data);
+	        },
+	        error: function (data) {
+	            console.log('error xRequestDigest', data);
+	        }
+		});
+	};
+		
+	
+	$scope.getAllGroup= function(userid) {
+		$.ajax({  
+			url: _spPageContextInfo.webAbsoluteUrl + "/_api/web/sitegroups",  
+			method: "GET",  
+			headers: { "Accept": "application/json; odata=verbose" },  
+			success: function (data) {
+	            
+	        },
+	        error: function (data) {
+	            
+	        }
+		});
+	};
+		
+	$.ajax({
+        url: _spPageContextInfo.webAbsoluteUrl + "/_api/contextinfo",
+        type: "POST",
+        headers: {
+            "Accept": "application/json;odata=verbose",
+        },
+        success: function (data) {
+            $scope.xRequestDigest = data.d.GetContextWebInformation.FormDigestValue;
+        },
+        error: function (data) {
+            console.log('error xRequestDigest', data);
+        }
+    });
+    
+	$scope.collapse = function(x) {
+		if(!$('#panel-header').hasClass('fa-plus')) {
+			$('.panel-bodies').slideUp();
+			$('#panel-header').removeClass('fa-minus').addClass('fa-plus');
+		} else {
+			$('.panel-bodies').slideDown();
+			$('#panel-header').removeClass('fa-plus').addClass('fa-minus');
+		}		
+	};
+	
+	$scope.toggleMin = function() {
+		    $scope.minDate = $scope.minDate ? null : new Date();
+	};
+	$scope.toggleMin();
+	
+	$scope.openDate = function($event, x) {
+	    $event.preventDefault();
+	    $event.stopPropagation();
+	    for (var key in $scope.datepickers) {
+		    if (key == x) {
+		        $scope.datepickers[key] = true;
+		    }else{
+		    	$scope.datepickers[key] = false;
+		    }
+		}
+	};
+	
+	  $scope.dateOptions = {
+	    formatYear: 'yy',
+	    startingDay: 1,
+	    showWeeks: false
+	  };
+	  
+	  $scope.formats = ['dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
+	  $scope.format = $scope.formats[0];
+  
+	$scope.addNew= function() {
+		$scope.data =[];
+		$('#FileDownload').val('');
+		$rootScope.FileDownload="";
+		$scope.FileDownload="";
+		vm.multipleDemo.selectedPeople = [];
+		$scope.hideForm = false;
+		$scope.data.StartDate = new Date();
+		$scope.data.DueDate = new Date();
+	};
+	    
+    $scope.cancel= function() {
+		$scope.hideForm = true; 
+	};
+
+    $scope.edit =function(x) {
+		$scope.hideForm = false;
+		$scope.data = x;
+		if(x.Banner != null){
+			var data = x.Banner.split('/');
+			$rootScope.FileDownload = data[data.length - 1];
+		}
+		vm.multipleDemo.selectedPeople = [];
+		if(x.AssignedToId != null){
+			for(var i=0; i < x.AssignedToId.results.length;i++){
+				for(j=0;j < vm.people.length;j++){
+					if(x.AssignedToId.results[i] == vm.people[j].Id ){
+						vm.multipleDemo.selectedPeople.push(vm.people[j]);
+					}	
+				}
+				
+			}
+		}
+		
+		$scope.data.StartDate = new Date(x.StartDate);
+		$scope.data.DueDate = new Date(x.DueDate);
+
+    };
+ 	    	
+	vm.dtOptions = DTOptionsBuilder
+		.newOptions()
+		.withPaginationType('full_numbers')
+		.withDisplayLength(2)
+		.withBootstrap()
+		.withOption('responsive', true)
+		
+	vm.dtOptions = {
+		bLengthChange: false,
+		pageLength : 5,
+		lengthMenu: [[5, -1], [5]],
+		order : [[0, 'desc']]
+	};
+	
+	vm.dtColumnDefs = [
+		DTColumnDefBuilder.newColumnDef(0).notVisible(),
+		DTColumnDefBuilder.newColumnDef(1),
+		DTColumnDefBuilder.newColumnDef(2),
+		DTColumnDefBuilder.newColumnDef(3),
+		DTColumnDefBuilder.newColumnDef(4),
+		DTColumnDefBuilder.newColumnDef(5),
+		DTColumnDefBuilder.newColumnDef(6),
+		DTColumnDefBuilder.newColumnDef(7)
+	];
+	
+    $scope.reloadTable = function(){
+    	var hdr = {
+      		headers:{ 
+	                "Content-type": "application/json;odata=verbose"
+	                }
+	           };
+    	$resource( $scope.baseurl + "en/_api/web/lists/getbytitle('Event')/Items?$orderby=Modified%20desc", {}, {
+			    get: {
+			        method: 'GET',
+			        headers: { "accept": "application/json;odata=verbose" }
+			    }
+			 }).get().$promise.then(function(response) {
+        		vm.tables = response.d.results;
+    		});
+    };
+    $scope.currentUser();
+	$scope.getAllGroup();
+	$scope.reloadTable();
+	
+	
+	$scope.$watch('FileDownload', function (newValue, oldValue, scope) {
+	    if(newValue != oldValue){
+	    	
+		    var file = newValue;
+	         if(file.type =='image/jpeg' || file.type =='image/png' ){
+        
+	        }else{
+	        	$scope.messasge = "Wrong type File! Your image type must *.png, *.jpg, *.jpeg";
+	        	return;
+	        }
+	         
+	         if(file.size > 2000000){
+	          	$scope.msg = "Wrong size Image! your image must less than equal 2MB!";
+	          	return;
+	        }
+	        $rootScope.FileDownload = file.name;
+	        $scope.msg = "";
+		}
+	});
+
+
+    vm.upload = function () {
+		var file = $scope.FileDownload;
+		if(!file) return;
+
+		var hosturl = window.location.origin +"/SiteAssets/Event%20Image%20Collection/";
+        var hdr = {
+	      		headers:{ 
+		                "Accept": "application/json;odata=verbose",
+		                "X-RequestDigest": $scope.xRequestDigest,
+		                "content-length": file.byteLength
+		               }
+		           };
+
+        var url = window.location.origin + "/_api/web/GetFolderByServerRelativeUrl('SiteCollectionImages/Event%20Image%20Collection')/Files/add(overwrite=true, url='"+ file.name +"')?@target='"+ hosturl +"'" 
+
+        return $q(function(resolve, reject) {
+            $http.post(url, file, hdr)
+                .then(function onSuccess(response) {
+                    vm.bannerUrl = response.data.d.ServerRelativeUrl;
+                    $scope.FileDownload = "";
+                    resolve('upload success');
+                }).catch(function onError(response) {
+                    reject('error');
+                    console.log(response);
+                });
+        });
+    };
+
+
+	$scope.save = function(approve) {
+		var now = moment().format("DD/MM/YYYY");
+		var message ='';
+		
+		if(!approve){
+			if($scope.data.Title == null){
+		      	return alert('Please fill Event Name');
+		      }
+			if($scope.data.Body == null){
+		      	return alert('Please fill Event Description');
+		      }
+		    if($scope.data.StartDate == null){
+		      	return alert('Please fill Start Date');
+		      }
+		    if($scope.data.DueDate == null){
+		      	return alert('Please fill Due Date');
+		      }
+		    if( moment($scope.data.StartDate, "DD/MM/YYYY") >  moment($scope.data.DueDate, "DD/MM/YYYY")){
+		      	return alert('Start Date cannot greater than Due Date');
+		      }
+		    
+		    if( moment($scope.data.StartDate, "DD/MM/YYYY") < now){
+		      	return alert('Start Date cannot less than today');
+		      }
+		    if( moment($scope.data.DueDate, "DD/MM/YYYY") < now){
+		      	return alert('Due Date cannot less than today');
+		     }
+		}
+		
+		var file = $scope.FileDownload;
+		if(!angular.isString(file)) vm.upload();
+      	var url = $scope.baseurl +"en/_api/web/lists/getbytitle('Event')/Items";
+      	var hdr = {
+      		headers:{ 
+	                "Content-type": "application/json;odata=verbose",
+	                "X-RequestDigest": $scope.xRequestDigest,
+	               }
+	           };
+      
+      	if ($scope.data.ID){
+	      	url += "("+$scope.data.ID+")";
+			
+	      	hdr = {
+	      		headers:{ 
+			        	"Accept": "application/json;odata=verbose",
+		                "Content-type": "application/json;odata=verbose",
+		                "X-HTTP-Method": "MERGE",
+		                "X-RequestDigest": $scope.xRequestDigest,
+		                "If-Match": "*",
+		                "odata-version": ""				        
+		               }
+		           }
+      	}
+
+      	var params = JSON.stringify(
+					{
+		      			"__metadata" :{
+		      				"type": "SP.Data.EventListItem"
+		      			},
+						"OData__ModerationStatus": $scope.data.OData__ModerationStatus
+		      			}
+      				);
+      
+      	if(!approve){
+			var medata = [];
+			for(var i=0; i < vm.multipleDemo.selectedPeople.length;i++){
+				medata.push(vm.multipleDemo.selectedPeople[i].Id);
+			}
+	      	params = JSON.stringify(
+				{
+	      			"__metadata" :{
+	      				"type": "SP.Data.EventListItem"
+	      			},
+	      			"Title": $scope.data.Title,
+	      			"Body": $scope.data.Body,
+	      			"StartDate":$scope.data.StartDate,
+	      			"DueDate": $scope.data.DueDate,
+	      			"Banner": "/SiteCollectionImages/Event Image Collection/" + (file.name == null? $rootScope.FileDownload : file.name),
+	      			"AssignedToId": {"results" : medata}
+	      		 })
+      	}	
+      	
+		$http.post(url, params, hdr)
+		.then(function onSuccess(response) {
+			$scope.reloadTable();
+			if(!approve) $scope.cancel();
+		}).catch(function onError(response) {
+			console.log(response);
+		});
+
+     };
+     
+     $scope.delete = function(x) {
+		if(!x.ID) return;
+		var r = confirm("Do you want to delete this row?");
+	    
+		var url = $scope.baseurl +"en/_api/web/lists/getbytitle('Event')/Items("+x.ID+")";
+	    var hdr = {
+      		headers:{ 
+	                "Accept": "application/json;odata=verbose",
+	                "X-RequestDigest": $scope.xRequestDigest,
+	                "If-Match": "*"
+	        }
+	    };
+		if (r == true) {
+	        $http.delete(url, hdr)
+		    .then(function onSuccess(response) {
+			    $scope.reloadTable();
+			  }).catch(function onError(response) {
+			    console.log('error in delete', response);
+			  });
+	    } 
+	};
+	
+	$scope.approve = function(x) {
+			if(!x.ID) return;
+			
+ 			var r = confirm("Do you want to approve this content?");
+ 			if (r == true) {
+ 				$scope.data = {
+	 				'Title' : x.Title,
+	 				'StartDate' : x.StartDate,
+	 				'DueDate' : x.DueDate,
+	 				'Body' : x.Body,
+	 				"Banner": "/SiteCollectionImages/Event Image Collection/" + x.Banner,
+	 				'OData__ModerationStatus' : 0,
+	 				'ID' : x.ID
+	 			 };
+				$scope.save(true);
+			}
+	    };
+		
+}
+</script>

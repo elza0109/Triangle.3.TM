@@ -1,0 +1,106 @@
+<link rel="stylesheet" href="/SiteAssets/TriAngleAsset/lib/css/fullcalendar.min.css">
+<link rel="stylesheet" href="/SiteAssets/TriAngleAsset/lib/css/datepicker.css">
+<link rel="stylesheet" href="/SiteAssets/TriAngleAsset/lib/css/bootstrap-modal.min.css">
+<script src="/SiteAssets/TriAngleAsset/lib/moment.min.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/bootstrap-datepicker.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/bootstrap-modal.min.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/fullcalendar.min.js"></script>
+
+<style>
+    .btn-default.active { height: 2.1em !important; }
+    .month.active { max-height: 55px !important; }
+    .year.active { max-height: 55px !important; }
+    .fc-icon-fa { font-family: FontAwesome; }
+    .modal { position: fixed !important; top: 20% !important; }
+    .modal-header { padding: 10px 12px !important; }
+    .modal-footer { padding: 10px 15px !important; }
+</style>
+
+<div id='calendar'></div>
+
+<div id="eventModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+  
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title" style="color: #777 !important">Event Details</h4>
+        </div>
+        <div id="eventContent" class="modal-body" style="padding: 30px 30px 20px"></div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+  
+    </div>
+</div>
+
+<script>
+	var baseurl = window.location.origin + "/";
+	var baseurl_en = _spPageContextInfo.webAbsoluteUrl;
+
+    $(document).ready(function() {
+        $('.datepicker').datepicker()
+        $('#calendar').fullCalendar({
+            defaultDate: moment(),
+            defaultView: 'month',
+            eventLimit: 4,
+            eventLimitText: " More...",
+            themeSystem: "bootstrap3",
+            customButtons: {
+                jumpBtn: {
+                    text: ' ',
+                }
+            },
+            header: {
+                left: 'prev,next,today',
+                center: 'title jumpBtn',
+                right: 'agendaDay,agendaWeek,month'
+            },
+            eventClick: function(event, jsEvent, view) {
+                $('#eventModal').modal('toggle');
+                $('#eventContent').html(
+                    "<div class='row'><div class='col-md-12'><p style='font-size:20px'><strong>" + event.title + "</strong></p></div></div>" +
+                    "<div class='row'><div class='col-md-12'><img class='img-responsive' src='"+event.banner+"'/></div></div>" + 
+                    "<div class='row'><div class='col-md-12'>"+event.description+"</div></div>" + 
+                    "<div class='row'><div class='col-md-3'>Start Date <span style='float: right'>:</span></div><div class='col-md-9 no-padding'>" + moment(event.start).format("LL") + "</div></div>"+ 
+                    "<div class='row'><div class='col-md-3'>Due Date <span style='float: right'>:</span></div><div class='col-md-9 no-padding'>" + moment(event.duedate).format("LL") + "</div></div>"
+                )
+            },
+            events: function(start, end, timezone, callback) {
+                var st = moment(start).format('YYYY-MM-DD[T]HH:mm:ss[Z]');
+                var ed = moment(end).format('YYYY-MM-DD[T]HH:mm:ss[Z]');
+                var filterUri = "?$top=1000&$filter=StartDate ge '" + st + "' and StartDate le '" + ed + "'";
+                $.ajax({
+                    url: baseurl + "en/_api/web/lists/GetByTitle('Event')/Items" + filterUri,
+                    type: "GET",
+                    headers: {"Accept": "application/json;odata=verbose"},
+                    success: function (res) {
+                        var events = [];
+                        res.d.results.forEach(e => {
+                            events.push({
+                                title: e.Title,
+                                start: e.StartDate,
+                                duedate: e.DueDate,
+                                banner: e.Banner ,
+                                description: e.Body,
+                                color: '#5f6dd0'
+                            });
+                        });
+                        callback(events);
+                    }
+                });
+            }
+        });
+        $('.fc-jumpBtn-button').append("<span class='fa fa-calendar'></span>")
+        $('.fc-jumpBtn-button').attr({
+            "data-date": moment().format('DD-MM-YYYY'),
+            "data-date-format": "dd-mm-yyyy",
+            "id": "jumpBtn"
+        });
+        $('#jumpBtn').datepicker().on('changeDate', function(ev) {
+            $('#jumpBtn').datepicker('hide');
+            $('#calendar').fullCalendar('gotoDate', moment(ev.date.valueOf()));
+        })
+    })
+</script>

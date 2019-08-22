@@ -1,0 +1,254 @@
+﻿<script src="/SiteAssets/TriAngleAsset/lib/angularjs.min.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/angular-animate.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/angular-sanitize.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/ui-bootstrap.min.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/angular-resource.js"></script>
+    
+<div ng-app="globalApp" ng-controller="profileCtrl as $ctrl">
+	<!--row1-->
+	<div class="col-md-12">
+		<div class="col-md-6">
+			<p>&nbsp;</p>
+			<div class="col-md-3">
+					<a data-toggle="modal" ng-href='#' ng-click="$ctrl.open(persons[0].Title, persons[0].Content, persons[0].Img, persons[0].Link)" style="display: block; max-width:100px "><img class="img-responsive" ng-src="{{persons[0].Img}}"/></a>
+			</div>
+			<div class="col-md-9" >
+				<p class="font-em"><strong><a data-toggle="modal" ng-href='#' ng-click="$ctrl.open(persons[0].Title, persons[0].Content, persons[0].Img, persons[0].Link)" style="display: inline-block; font-size: 0.9vw">{{persons[0].Title}}</a></strong></p>
+				<div id="news" ng-bind-html="persons[0].Content | limitTo: 200" style="font-size: 0.9vw"></div>
+				<a data-toggle="modal" ng-href='#' ng-click="$ctrl.open(persons[0].Title, persons[0].Content, persons[0].Img, persons[0].Link)" style="display: inline-block; font-size: 0.9vw">...Read more</a>
+			</div>
+		</div>
+		<div class="col-md-6">
+			<p>&nbsp;</p>
+			<div class="col-md-3">
+				<a data-toggle="modal" ng-href='#' ng-click="$ctrl.open(persons[1].Title, persons[1].Content, persons[1].Img, persons[1].Link)" style="display: block; max-width:100px "><img class="img-responsive" ng-src="{{persons[1].Img}}"/></a>
+			</div>
+			<div class="col-md-9" >
+				<p class="font-em"><strong><a data-toggle="modal" ng-href='#' ng-click="$ctrl.open(persons[1].Title, persons[1].Content, persons[1].Img, persons[1].Link)" style="display: inline-block; font-size: 0.9vw">{{persons[1].Title}}</a></strong></p>
+				<div id="news" ng-bind-html="persons[1].Content | limitTo: 200" style="font-size: 0.9vw"></div>
+				<a data-toggle="modal" ng-href='#' ng-click="$ctrl.open(persons[1].Title, persons[1].Content, persons[1].Img, persons[1].Link)" style="display: inline-block; font-size: 0.9vw">...Read more</a>
+			</div>
+		</div>
+		<br/>
+	</div>
+
+	<!--row2-->
+	<div class="col-md-12">
+		<div class="col-md-6">
+			<p>&nbsp;</p>
+			<div class="col-md-3">
+				<a data-toggle="modal" ng-href='#' ng-click="$ctrl.open(persons[2].Title, persons[2].Content, persons[2].Img, persons[2].Link)" style="display: block; max-width:100px "><img class="img-responsive" ng-src="{{persons[2].Img}}"/></a>
+			</div>
+			<div class="col-md-9" >
+				<p class="font-em"><strong><a data-toggle="modal" ng-href='#' ng-click="$ctrl.open(persons[2].Title, persons[2].Content, persons[2].Img, persons[2].Link)" style="display: inline-block; font-size: 0.9vw">{{persons[2].Title}}</a></strong></p>
+				<div id="news" ng-bind-html="persons[2].Content | limitTo: 200" style="font-size: 0.9vw"></div>
+				<a data-toggle="modal" ng-href='#' ng-click="$ctrl.open(persons[2].Title, persons[2].Content, persons[2].Img, persons[2].Link)" style="display: inline-block; font-size: 0.9vw">...Read more</a>
+			</div>
+		</div>
+		<div class="col-md-6">
+			<p>&nbsp;</p>
+			<div class="col-md-3">
+				<a data-toggle="modal" ng-href='#' ng-click="$ctrl.open(persons[3].Title, persons[3].Content, persons[3].Img, persons[3].Link)" style="display: block; max-width:100px "><img class="img-responsive" ng-src="{{persons[3].Img}}"/></a>
+			</div>
+			<div class="col-md-9" >
+				<p class="font-em"><strong><a data-toggle="modal" ng-href='#' ng-click="$ctrl.open(persons[3].Title, persons[3].Content, persons[3].Img, persons[3].Link)" style="display: inline-block; font-size: 0.9vw">{{persons[3].Title}}</a></strong></p>
+				<div id="news" ng-bind-html="persons[3].Content | limitTo: 200" style="font-size: 0.9vw"></div>
+				<a data-toggle="modal" ng-href='#' ng-click="$ctrl.open(persons[3].Title, persons[3].Content, persons[3].Img, persons[3].Link)" style="display: inline-block; font-size: 0.9vw">...Read more</a>
+			</div>
+		</div>
+		<br/>
+	</div>
+
+	<!--row3-->
+	<div class="col-md-12">
+			<div class="col-md-6">
+				<p>&nbsp;</p>
+				<div class="col-md-3">
+					<a data-toggle="modal" ng-href='#' ng-click="$ctrl.open(persons[4].Title, persons[4].Content, persons[4].Img, persons[4].Link)" style="display: block; max-width:100px "><img class="img-responsive" ng-src="{{persons[4].Img}}"/></a>
+				</div>
+				<div class="col-md-9" >
+					<p class="font-em"><strong><a data-toggle="modal" ng-href='#' ng-click="$ctrl.open(persons[4].Title, persons[4].Content, persons[4].Img, persons[4].Link)" style="display: inline-block; font-size: 0.9vw">{{persons[4].Title}}</a></strong></p>
+					<div id="news" ng-bind-html="persons[4].Content | limitTo: 200" style="font-size: 0.9vw"></div>
+					<a data-toggle="modal" ng-href='#' ng-click="$ctrl.open(persons[4].Title, persons[4].Content, persons[4].Img, persons[4].Link)" style="display: inline-block; font-size: 0.9vw">...Read more</a>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<p>&nbsp;</p>
+				<div class="col-md-3">
+					<a data-toggle="modal" ng-href='#' ng-click="$ctrl.open(persons[5].Title, persons[5].Content, persons[5].Img, persons[5].Link)" style="display: block; max-width:100px "><img class="img-responsive" ng-src="{{persons[5].Img}}"/></a>
+				</div>
+				<div class="col-md-9" >
+					<p class="font-em"><strong><a data-toggle="modal" ng-href='#' ng-click="$ctrl.open(persons[5].Title, persons[5].Content, persons[5].Img, persons[5].Link)" style="display: inline-block; font-size: 0.9vw">{{persons[5].Title}}</a></strong></p>
+					<div id="news" ng-bind-html="persons[5].Content | limitTo: 200" style="font-size: 0.9vw"></div>
+					<a data-toggle="modal" ng-href='#' ng-click="$ctrl.open(persons[5].Title, persons[5].Content, persons[5].Img, persons[5].Link)" style="display: inline-block; font-size: 0.9vw">...Read more</a>
+				</div>
+			</div>
+			<br/>
+		</div>
+
+		<!--row4-->
+		<div class="col-md-12">
+			<div class="col-md-6">
+				<p>&nbsp;</p>
+				<div class="col-md-3">
+					<a data-toggle="modal" ng-href='#' ng-click="$ctrl.open(persons[6].Title, persons[6].Content, persons[6].Img, persons[6].Link)" style="display: block; max-width:100px "><img class="img-responsive" ng-src="{{persons[6].Img}}"/></a>
+				</div>
+				<div class="col-md-9" >
+					<p class="font-em"><strong><a data-toggle="modal" ng-href='#' ng-click="$ctrl.open(persons[6].Title, persons[6].Content, persons[6].Img, persons[6].Link)" style="display: inline-block; font-size: 0.9vw">{{persons[6].Title}}</a></strong></p>
+					<div id="news" ng-bind-html="persons[6].Content | limitTo: 200" style="font-size: 0.9vw"></div>
+					<a data-toggle="modal" ng-href='#' ng-click="$ctrl.open(persons[6].Title, persons[6].Content, persons[6].Img, persons[6].Link)" style="display: inline-block; font-size: 0.9vw">...Read more</a>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<p>&nbsp;</p>
+				<div class="col-md-3">
+					<a data-toggle="modal" ng-href='#' ng-click="$ctrl.open(persons[7].Title, persons[7].Content, persons[7].Img, persons[7].Link)" style="display: block; max-width:100px "><img class="img-responsive" ng-src="{{persons[7].Img}}"/></a>
+				</div>
+				<div class="col-md-9" >
+					<p class="font-em"><strong><a data-toggle="modal" ng-href='#' ng-click="$ctrl.open(persons[7].Title, persons[7].Content, persons[7].Img, persons[7].Link)" style="display: inline-block; font-size: 0.9vw">{{persons[7].Title}}</a></strong></p>
+					<div id="news" ng-bind-html="persons[7].Content | limitTo: 200" style="font-size: 0.9vw"></div>
+					<a data-toggle="modal" ng-href='#' ng-click="$ctrl.open(persons[7].Title, persons[7].Content, persons[7].Img, persons[7].Link)" style="display: inline-block; font-size: 0.9vw">...Read more</a>
+				</div>
+			</div>
+			<br/>
+		</div>
+
+		<!--row4-->
+		<div class="col-md-12">
+			<div class="col-md-6">
+				<p>&nbsp;</p>
+				<div class="col-md-3">
+					<a data-toggle="modal" ng-href='#' ng-click="$ctrl.open(persons[8].Title, persons[8].Content, persons[8].Img, persons[8].Link)" style="display: block; max-width:100px "><img class="img-responsive" ng-src="{{persons[8].Img}}"/></a>
+				</div>
+				<div class="col-md-9" >
+					<p class="font-em"><strong><a data-toggle="modal" ng-href='#' ng-click="$ctrl.open(persons[8].Title, persons[8].Content, persons[8].Img, persons[8].Link)" style="display: inline-block; font-size: 0.9vw">{{persons[8].Title}}</a></strong></p>
+					<div id="news" ng-bind-html="persons[8].Content | limitTo: 200" style="font-size: 0.9vw"></div>
+					<a data-toggle="modal" ng-href='#' ng-click="$ctrl.open(persons[8].Title, persons[8].Content, persons[8].Img, persons[8].Link)" style="display: inline-block; font-size: 0.9vw">...Read more</a>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<p>&nbsp;</p>
+				<div class="col-md-3">
+					
+				</div>
+				<div class="col-md-9" >
+					
+				</div>
+			</div>
+			<br/>
+		</div>
+	
+	<script type="text/ng-template" id="myModalContent.html">
+        <div class="modal-header">
+            <div class="col-md-10">
+        		<h3 class="modal-title" id="modal-title">{{$ctrl.items.title}}</h3>
+        	</div>
+        	<div class="col-md-2">
+        		<a ng-click="$ctrl.ok()"><span class="fa fa-times fa-lg" style="float:right"></span></a>
+        	</div>
+        </div>
+        <div class="col-md-6 modal-body" id="myModal">
+    		<img id="myImg" ng-src="{{$ctrl.items.thumbnails}}" class="modal-content" alt="{{$ctrl.items.title}}" style="width:100%">
+    	</div>
+
+        <div class="modal-body" id="modal-body" ng-bind-html="$ctrl.items.content" style="text-align: justify">
+        </div>
+        <div class="modal-footer">
+        	<div ng-if="$ctrl.items.link != null">
+        		<button class="btn btn-info" type="button" ng-click="$ctrl.link($ctrl.items.link)">Visit Division Link</button>
+			</div>            
+        </div>
+    </script>
+</div>
+
+<script>
+	angular.module('globalApp', ['ngAnimate', 'ngSanitize', 'ngResource', 'ui.bootstrap'])
+		.controller('profileCtrl', profileCtrl)
+		.controller('ModalInstanceCtrl', ModalInstanceCtrl);
+
+	function profileCtrl($resource, $http, $q, $scope, $uibModal, $log, $document) {
+	    var $ctrl = this;
+      $scope.persons = [];
+	    $scope.image = '<img class="img-responsive" src="'+ window.location.origin +'"/SiteCollectionImages/Triangle Colletion/dummy-profile-pic-male.jpg">';
+		$scope.content = "";
+		$scope.title = "";
+		$scope.thumbnails = "";
+		$scope.modalContent = "";
+		$scope.modalTitle = "";
+		
+		$resource(_spPageContextInfo.webAbsoluteUrl +"/_api/web/lists/getbytitle('Our Company')/Items?$filter=SubmenuContent eq 'Divisions'and OData__ModerationStatus eq '0'&$orderby=OrderPosition", {}, {
+				    get: {
+				        method: 'GET',
+				        headers: { "accept": "application/json;odata=verbose" }
+				    }
+				 }).get().$promise.then(function(response) {
+	        		var data = response.d.results;
+	        			for(var i = 0;i < data.length ;i++){
+	        				var meData = {
+										'Title': data[i].Title,
+										'Content' : data[i].Content,
+										'Img' : data[i].Thumbnails.Url,
+										'Link' : data[i].Link
+										}
+										$scope.persons.push(meData);
+                }
+
+								var cols = parseInt(2);
+								var rows = parseInt(Math.round(data.length/2));
+								for (var x = 0; x < rows; x++) {
+									for (var y = 0; y < cols ; y++) {
+									}
+								}                        
+	    		});
+	    	
+	    
+		  $ctrl.items = ['item1', 'item2', 'item3'];
+		  $ctrl.title = "";
+		  $ctrl.animationsEnabled = true;
+		
+		  $ctrl.open = function (title, content, thumbnails, link, size , parentSelector) {
+		    var parentElem = parentSelector ? 
+		      angular.element($document[0].querySelector('.modal-demo ' + parentSelector)) : undefined;
+			  var modalInstance = $uibModal.open({
+		      animation: $ctrl.animationsEnabled,
+		      ariaLabelledBy: 'modal-title',
+		      ariaDescribedBy: 'modal-body',
+		      templateUrl: 'myModalContent.html',
+		      controller: 'ModalInstanceCtrl',
+		      controllerAs: '$ctrl',
+		      size: size,
+		      appendTo: parentElem,
+		      resolve: {
+		        items: function () {
+		          return {'title' : title, 'content' : content, 'thumbnails':thumbnails, 'link':link};
+		        }
+		      }
+		    });
+		  };
+	};
+	
+	function ModalInstanceCtrl($uibModalInstance, items) {
+	  var $ctrl = this;
+	  $ctrl.items = items;
+	  $ctrl.selected = {
+	    item: $ctrl.items[0]
+	  };
+	
+	  $ctrl.ok = function () {
+	    $uibModalInstance.close($ctrl.selected.item);
+	  };
+	  
+	  $ctrl.link = function (link) {
+	  	window.open(link, '_blank');
+	  };
+
+	  
+	   $ctrl.close = function() {
+	  	$modalInstance.close($ctrl.selected.item);
+	  }
+
+	  $ctrl.cancel = function () {
+	    $uibModalInstance.dismiss('cancel');
+	  };
+	};
+</script>

@@ -1,0 +1,294 @@
+﻿<link rel="stylesheet" href="/SiteAssets/TriAngleAsset/lib/dist/plugins/bootstrap/datatables.bootstrap.min.css">
+<link rel="stylesheet" href="/SiteAssets/TriAngleAsset/lib/dist/css/angular-datatables.css">
+
+<script src="/SiteAssets/TriAngleAsset/lib/jquery.dataTables.min.js"></script> 
+<script src="/SiteAssets/TriAngleAsset/lib/angularjs.min.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/dist/angular-datatables.min.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/dist/plugins/bootstrap/angular-datatables.bootstrap.min.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/dataTables.responsive.min.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/angular-sanitize.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/angular-resource.js"></script>
+
+<style>
+	.ms-pub-contentLayout {
+	    background-color: rgba( 255,255,255,0.85 );
+	    display: table-cell;
+	    min-width: 1052px;
+	    padding: 20px;
+	    margin-top: 20px;
+	}
+</style>
+
+<div ng-app="globalApp">
+	<div class="col-md-12 no-padding" ng-controller="pressReleaseCtrl as showCase">
+		<div class="col-md-12">
+			<div class="no-padding" id="en">
+				<h3 style="margin: 0;padding: 0">Hi SaTRIa, for those of you who like to blog, share your experiences and voice your opinions here. Send a Blog from your own work (not plagiarism).</h3>
+				<p>&nbsp;</p>
+				<p style="margin: 0;padding: 0" id="wordingEN"></p>
+				<span class="ms-rteFontSize-3"><a href="/en/my-blog"><strong>My Blog </strong><i class="fa fa-comment"></i></a></span>
+			</div>
+			<div class="no-padding" id="id">
+				<h3 style="margin: 0;padding: 0">Hai SaTRIa, buat kamu yang suka nge-Blog, bagikan pengalaman serumu dan suarakan opinimu di sini. Kirim Blog hasil karyamu sendiri (bukan karya jiplakan).</h3>
+				<p>&nbsp;</p>
+				<p style="margin: 0;padding: 0" id="wordingID"></p>
+				<span class="ms-rteFontSize-3"><a href="/id/my-blog"><strong>My Blog </strong><i class="fa fa-comment"></i></a></span>
+			</div>
+			
+		</div>
+		<div class="form-horizontal">
+			<div class="form-group col-sm-6">
+				<label class="control-label col-sm-4" for="sel1">Category</label>
+				<div class="col-sm-8">	      
+					<select class="form-control" name="repeatSelect" id="repeatSelect" ng-model="data.category" ng-change="filterData()">
+						<option value="">-- Select All --</option>
+						<option ng-repeat="option in data.listcategory" value="{{option.Id}}">{{option.name}}</option>
+					</select>
+				</div>
+		    </div>
+		</div>
+		<div class="col-md-12 no-padding">
+		    <table datatable="ng" dt-options="showCase.dtOptions" dt-column-defs="showCase.dtColumnDefs"  class="table table-striped" style="width:100%!important">
+			    <thead style='display:none;'>
+				    <th>header 1</th>
+				</thead>
+			    <tbody>
+			        <tr ng-repeat="person in showCase.persons">
+			            <td class="col-md-12">
+			            	<div class="">
+			            		<div class="col-md-12">
+			            			<span>{{person.DateFormatted}}</span><p style="font-size:16px"><strong>{{person.Title}}</strong></p>
+			            			<div id="news" ng-bind-html="person.Body | limitTo: 350">
+			            			</div>
+			            		</div>
+			            		<div class="col-md-12 range25">
+				            	</div>
+				            	<div class="col-md-12">
+				            		<div class="col-md-4 no-padding">
+				            			<a class="btn btn-default btn-submit-gradient" ng-href='{{person.link}}' target="_blank">Read More</a>
+			            			</div>
+			            			<div class="col-md-8" style="font-size:12px;">
+			            				<div class="col-md-12">
+			            					<div class="col-md-2 no-padding">
+			            						<p>Rating</p>
+			            					</div>
+			            					<div class="col-md-1 no-padding">
+			            						<p>:</p>
+			            					</div>
+			            					
+			            					<div class="col-md-8 no-padding">
+			            						<div class="star-ratings-sprite"><span ng-style="person.ratingPercent" class="star-ratings-sprite-rating"></span></div>
+			            					</div>          					
+			            				</div>
+			            				<div class="col-md-12" style="top:-5px">
+			            					<div class="col-md-2 no-padding">
+			            						<p >Author</p>
+			            					</div>
+			            					<div class="col-md-1 no-padding">
+			            						<p>:</p>
+			            					</div>
+			            					<div class="col-md-8 no-padding">
+			            						<p>{{person.Author}}</p>
+			            					</div>          				
+										</div>	
+									</div>
+								</div>
+							</div>
+			            </td>
+			        </tr>
+			    </tbody>
+		    </table>
+	    </div>
+	    <div class="col-md-12">
+	    	<div class="no-padding" id="enfooter">
+	    		<p>&nbsp;</p>
+				<small>Content should be constructive, positive, transmits enthusiasm and motivation, do not contain elements of politics, pornography, humiliation, or harassment of ethnicity, religion, race, and intergroup (SARA) and other personal backgrounds.</small>
+			</div>
+			<div class="no-padding" id="idfooter">
+				<p>&nbsp;</p>
+				<small>Konten bersifat membangun, positif, menularkan semangat dan motivasi, tidak mengandung unsur politik, pornografi, penghinaan, ataupun pelecehan terhadap SARA dan latar belakang lainnya yang bersifat pribadi.</small>
+			</div>
+	    </div>
+	</div>
+</div>
+
+
+<script>
+
+var baseOrigin = window.location.origin;
+var baseUrl_en_id = _spPageContextInfo.webAbsoluteUrl;
+
+
+	angular.module('globalApp', ['ngSanitize','datatables', 'datatables.bootstrap', 'ngResource']).controller('pressReleaseCtrl', pressReleaseCtrl);
+
+	function pressReleaseCtrl($scope, $resource, DTOptionsBuilder, DTColumnDefBuilder, $http, $q, $filter) {
+	    
+	    var vm = this;
+	    vm.persons = [];
+	    vm.author = [];
+	    vm.idlist=[];
+	    vm.category=[];
+		var wording='';
+
+		var enurl = _spPageContextInfo.webAbsoluteUrl.search("/en");
+	
+		if(enurl != -1 ){
+			document.querySelector("#en").style.display = 'block';
+			document.querySelector("#id").style.display = 'none';
+			document.querySelector("#enfooter").style.display = 'block';
+			document.querySelector("#idfooter").style.display = 'none';
+
+		}
+		else
+		{
+			document.querySelector("#enfooter").style.display = 'none';
+			document.querySelector("#idfooter").style.display = 'block';
+			document.querySelector("#en").style.display = 'none';
+			document.querySelector("#id").style.display = 'block';
+
+		}
+		
+	    $scope.data = {
+		    category: "",
+		    master : null,
+		    listcategory : []
+		  };
+
+	    vm.dtOptions = DTOptionsBuilder
+	    	.newOptions()
+	        .withPaginationType('full_numbers')
+	        .withDisplayLength(2)
+    		.withBootstrap()
+    		.withOption('responsive', true);
+    		
+		vm.dtOptions = {
+						bLengthChange: false,
+						pageLength : 3,
+		    			lengthMenu: [[3, -1], [3]]
+						};
+	    vm.dtColumnDefs = [
+	        DTColumnDefBuilder.newColumnDef(0)
+	    ];
+	    
+	    $scope.filterData = function() {
+	    	if ($scope.data.category == "" ){ 
+	    		vm.persons = $scope.data.master;
+	    		return;
+	    	}
+	    	var data = $scope.data.master;
+	    	vm.persons = [];
+	    	var isShow = false;
+	    	
+    		for(var i=0; i < data.length;i++){
+    			isShow = false;
+    			for(var j=0; j < data[i].PostCategoryId.results.length; j++){
+    				if( data[i].PostCategoryId.results[j] == $scope.data.category){
+    					isShow = true;
+    					break;
+       				}
+    			}
+    			if (isShow){ 
+   					vm.persons.push(data[i]);
+   				}
+    		}
+		};
+		
+		$.ajax({
+               url: _spPageContextInfo.webAbsoluteUrl + "/_api/web/lists/getbytitle('Theme Welcome Wording')/items?$top=1&$orderby=Modified desc&$filter=Typefor eq 'Blog'",
+               method: "GET",
+               headers: { "Accept": "application/json; odata=verbose" },
+               success: function (data) {
+               wording = data.d.results[0].Theme;
+               document.getElementById("wordingEN").innerHTML = "Theme : " + wording;
+               document.getElementById("wordingID").innerHTML = "Tema : " + wording;
+              },
+              error: function (data) {
+                  alert("Error: "+ data);
+             }
+          });
+
+		$scope.reload = function(){
+			$resource(baseOrigin +"/en/_api/web/lists/getbytitle('Posts')", {}, {
+						    get: {
+						        method: 'GET',
+						        headers: { "accept": "application/json;odata=verbose" }
+						    }
+						 }).get().$promise.then(function(response) {
+			        		vm.idlist = response.d.Id;
+		  					
+			    		});
+		
+			    
+			    $resource(baseOrigin +"/en/_api/web/lists/getbytitle('Posts')/Items?$filter=_ModerationStatus eq '0'&$orderby=Created%20desc", {}, {
+						    get: {
+						        method: 'GET',
+						        headers: { "accept": "application/json;odata=verbose" }
+						    }
+						 }).get().$promise.then(function(response) {
+						 	vm.persons = response.d.results;
+						 	for(var i = 0;i < vm.persons.length;i++){
+						 		vm.persons[i]['Image']= '/SiteAssets/Pict%20H3I%20Rebranding/blogDummy.jpg';
+						 		vm.persons[i]['link']=baseOrigin +"/en/Lists/Posts/Post.aspx?List="+ vm.idlist +"&ID="+vm.persons[i].Id;
+						 		if(vm.persons[i].AverageRating != null)
+						 		{
+						 			var x = vm.persons[i].AverageRating
+						 			var y = (x/5*100).toString() + "%";
+						 			vm.persons[i]['ratingPercent'] = {"width":y};
+						 		}
+						 		else
+						 		{
+						 			vm.persons[i]['ratingPercent'] = {"width":"0%"};
+						 		}
+						 		
+						 	}
+						 	
+						 	<!--- $resource(_spPageContextInfo.webAbsoluteUrl +"/_api/web/siteUserInfoList/items(18)", {}, { -->
+		
+			        		$resource(_spPageContextInfo.webAbsoluteUrl +"/_api/web/siteusers", {}, {
+									    get: {
+									        method: 'GET',
+									        headers: { "accept": "application/json;odata=verbose" }
+									    }
+									 }).get().$promise.then(function(res) {
+									 	vm.author = res.d.results;				 			
+							 			for(var i = 0;i < vm.persons.length;i++){
+							 			
+				        					for(var j=0; j < vm.author.length;j++){						
+				        						if(vm.author[j].Id== vm.persons[i].AuthorId){
+													   vm.persons[i]['Author']= vm.author[j].Title;	
+				        						}
+				        					}
+				        				}			 
+						 
+					        			$scope.data.master = vm.persons;
+						    		});
+			    		});
+		};
+	    
+		$scope.getCategory = function(){
+			$.ajax({  
+				url: baseOrigin  + "/en/_api/web/lists/getbytitle('Categories')/Items",  
+				method: "GET",  
+				headers: { "Accept": "application/json; odata=verbose" },  
+				success: function (data) {
+					var data = data.d.results;
+					var mydata = [];
+					data.forEach(function(el){
+						var params = {
+							name: el.Title,  Id: el.Id
+						};
+						mydata.push(params);
+					})
+					$scope.data.listcategory = mydata;
+				},
+				error: function (data) {
+					console.log('error xRequestDigest', data);
+				}
+			});
+		};	
+	    
+		$scope.reload();
+		$scope.getCategory();
+	}
+
+</script>

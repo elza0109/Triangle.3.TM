@@ -1,0 +1,452 @@
+﻿<link rel="stylesheet" href="/SiteAssets/TriAngleAsset/lib/dist/plugins/bootstrap/datatables.bootstrap.min.css">
+<link rel="stylesheet" href="/SiteAssets/TriAngleAsset/lib/dist/css/angular-datatables.css">
+<link rel="stylesheet" href="/SiteAssets/TriAngleAsset/lib/css/angular-datepicker.css">
+
+
+<script src="/SiteAssets/TriAngleAsset/lib/angularjs.min.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/moment.min.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/angular-moment.min.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/angular-datepicker.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/jquery.dataTables.min.js"></script> 
+<script src="/SiteAssets/TriAngleAsset/lib/angular-animate.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/dist/angular-datatables.min.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/dist/plugins/bootstrap/angular-datatables.bootstrap.min.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/dataTables.responsive.min.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/angular-sanitize.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/ui-bootstrap.min.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/angular-resource.js"></script>
+
+<script src="/SiteAssets/TriAngleAsset/lib/Chart.min.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/angular-chart.min.js"></script>
+
+<link rel="stylesheet" href="/SiteAssets/TriAngleAsset/lib/css/textAngular.css" type="text/css">
+
+<script src='/SiteAssets/TriAngleAsset/lib/textAngular-rangy.min.js'></script>
+<script src='/SiteAssets/TriAngleAsset/lib/textAngular-sanitize.min.js'></script>
+<script src='/SiteAssets/TriAngleAsset/lib/textAngular.min.js'></script>
+
+<script src="/SiteAssets/TriAngleAsset/lib/select.js"></script>
+<link rel="stylesheet" type="text/css" href="/SiteAssets/TriAngleAsset/lib/css/select.css">
+<link rel="stylesheet" type="text/css" href="/SiteAssets/TriAngleAsset/lib/css/select2.default.css">
+<link rel="stylesheet" type="text/css" href="/SiteAssets/TriAngleAsset/lib/css/selectize.default.css">
+
+<link rel="stylesheet" href="/SiteAssets/TriAngleAsset/lib/css/buttons.dataTables.min.css">
+
+<style>
+	.column-datatable{
+		  	padding-left: 5px!important;
+		  	padding-right: 5px!important;
+		  	text-align: center!important;
+		  	vertical-align: middle!important;
+		  }
+		  
+	.column-datatable-right{
+		  	padding-left: 5px!important;
+		  	padding-right: 5px!important;
+		  	float : right;
+		  }
+		  
+	.column-datatable-left{
+		  	padding-left: 5px!important;
+		  	padding-right: 5px!important;
+		  	float : right;
+		  }
+		  
+	.ta-editor.form-control.myform1-height, .ta-scroll-window.form-control.myform1-height  {
+	    min-height: 200px;
+	    height: 200px;
+	    overflow: auto;
+	    font-family: inherit;
+	    font-size: 100%;
+	}
+	
+	.form-control.myform1-height > .ta-bind {
+	    height: 200px;
+	    min-height: 200px;
+	    padding: 6px 12px;
+	}
+
+	#MainContentCustom {
+		margin-left : 15px;
+	}
+	
+	.fixed-left-nav {
+		margin-top: -50px;
+		margin-left: -50px;
+	}
+	
+	.nav-angular{
+		background-image: linear-gradient(to bottom, #f14a26 , #ef147c)
+	}
+	
+	.select2 > .select2-choice.ui-select-match {
+            /* Because of the inclusion of Bootstrap */
+            height: 29px;
+        }
+
+    .selectize-control > .selectize-dropdown {
+        top: 36px;
+    }
+    /* Some additional styling to demonstrate that append-to-body helps achieve the proper z-index layering. */
+    .select-box {
+      background: #fff;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .loading {
+  position: fixed;
+  z-index: 999;
+  height: 2em;
+  width: 2em;
+  overflow: show;
+  margin: auto;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}
+
+/* Transparent Overlay */
+.loading:before {
+  content: '';
+  display: block;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.3);
+}
+
+/* :not(:required) hides these rules from IE9 and below */
+.loading:not(:required) {
+  /* hide "loading..." text */
+  font: 0/0 a;
+  color: transparent;
+  text-shadow: none;
+  background-color: transparent;
+  border: 0;
+}
+
+.loading:not(:required):after {
+  content: '';
+  display: block;
+  font-size: 10px;
+  width: 1em;
+  height: 1em;
+  margin-top: -0.5em;
+  -webkit-animation: spinner 1500ms infinite linear;
+  -moz-animation: spinner 1500ms infinite linear;
+  -ms-animation: spinner 1500ms infinite linear;
+  -o-animation: spinner 1500ms infinite linear;
+  animation: spinner 1500ms infinite linear;
+  border-radius: 0.5em;
+  -webkit-box-shadow: rgba(0, 0, 0, 0.75) 1.5em 0 0 0, rgba(0, 0, 0, 0.75) 1.1em 1.1em 0 0, rgba(0, 0, 0, 0.75) 0 1.5em 0 0, rgba(0, 0, 0, 0.75) -1.1em 1.1em 0 0, rgba(0, 0, 0, 0.5) -1.5em 0 0 0, rgba(0, 0, 0, 0.5) -1.1em -1.1em 0 0, rgba(0, 0, 0, 0.75) 0 -1.5em 0 0, rgba(0, 0, 0, 0.75) 1.1em -1.1em 0 0;
+  box-shadow: rgba(0, 0, 0, 0.75) 1.5em 0 0 0, rgba(0, 0, 0, 0.75) 1.1em 1.1em 0 0, rgba(0, 0, 0, 0.75) 0 1.5em 0 0, rgba(0, 0, 0, 0.75) -1.1em 1.1em 0 0, rgba(0, 0, 0, 0.75) -1.5em 0 0 0, rgba(0, 0, 0, 0.75) -1.1em -1.1em 0 0, rgba(0, 0, 0, 0.75) 0 -1.5em 0 0, rgba(0, 0, 0, 0.75) 1.1em -1.1em 0 0;
+}
+
+/* Animation */
+
+@-webkit-keyframes spinner {
+  0% {
+    -webkit-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -ms-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    -moz-transform: rotate(360deg);
+    -ms-transform: rotate(360deg);
+    -o-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+@-moz-keyframes spinner {
+  0% {
+    -webkit-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -ms-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    -moz-transform: rotate(360deg);
+    -ms-transform: rotate(360deg);
+    -o-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+@-o-keyframes spinner {
+  0% {
+    -webkit-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -ms-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    -moz-transform: rotate(360deg);
+    -ms-transform: rotate(360deg);
+    -o-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+@keyframes spinner {
+  0% {
+    -webkit-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -ms-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    -moz-transform: rotate(360deg);
+    -ms-transform: rotate(360deg);
+    -o-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+
+</style>
+
+<div ng-app="globalApp">
+	<div class="row" ng-controller="AppCtrl">
+		<div id="loading-image" ng-show="root.isSpin" class="loading">Loading&#8230;</div>
+		<div class="col-md-2 col-xs-2 fixed-left-nav" mydir1>
+		   
+		</div>
+		
+		<! -- form dinamyc-->		
+			<div class="col-md-10">
+				<hr style="margin-top:-25px;margin-bottom:0;margin-left: 35px;border-top:1px solid #bbbaba"/>
+				<div style="margin-top:0;margin-left: 35px;" ng-bind-html="breadcrumb"></div>
+				<h1 class="col-md-12 no-padding" style="margin-top:0;margin-left: 35px;">{{pageTitle | uppercase}}</h1>
+				<div class="dynamic-content" style="margin-left: 35px;margin-top:5px">
+					
+			      <!-- Loading content Here -->
+			    </div>
+			</div>			
+		<! -- form dinamyc -->
+	</div>
+</div>
+
+<script>
+	var baseOrigin = window.location.origin;
+	var baseUrl = window.location.href;
+	var baseUrl_en_id = _spPageContextInfo.webAbsoluteUrl;
+
+    var app = angular.module('globalApp', ['chart.js', 'ngAnimate', 'ngSanitize','datatables', 'datatables.bootstrap', 'datatables.buttons', 'ngResource', 'ui.bootstrap', 'textAngular', 'angularMoment', '720kb.datepicker', 'ui.select'])
+    app.config(
+      function($controllerProvider, $provide, $compileProvider, $qProvider) {
+        app._controller = app.controller;
+        app._service = app.service;
+        app._factory = app.factory;
+        app._value = app.value;
+        app._directive = app.directive;
+        angular.lowercase = angular.$$lowercase;
+        app.controller = function(name, constructor) {
+          $controllerProvider.register(name, constructor);
+          return (this);
+        };
+
+        app.service = function(name, constructor) {
+          $provide.service(name, constructor);
+          return (this);
+        };
+
+        app.factory = function(name, factory) {
+          $provide.factory(name, factory);
+          return (this);
+        };
+
+        app.value = function(name, value) {
+          $provide.value(name, value);
+          return (this);
+        };
+
+        app.directive = function(name, factory) {
+          $compileProvider.directive(name, factory);
+          return (this);
+        };
+      });
+      
+    app.controller('AppCtrl', function($rootScope, $scope, $http, $compile) {
+      $scope.someData = {};
+      $scope.htmlLeftAngular = "";
+      $scope.pageTitle = "CMS";
+      $rootScope.isSpin =true;
+      $scope.breadcrumb = '<a href= baseUrl_en_id +"/cms">CMS</a>';
+      
+      $scope.loadTemplate = function(template, child) {
+	      	$scope.breadcrumb = '<a href="/en/cms">CMS</a>';
+	      	$scope.pageTitle = child;
+	      	if(child){
+	      		$scope.breadcrumb += '<span> &gt;&nbsp;'+child+'</span>';
+	      	}
+			
+	        $http.get("/SiteAssets/TriAngleAsset/CMS Master/" + template)
+	          .then(function(r) {
+	          	localStorage.setItem('template',template);
+	          	localStorage.setItem('child',child);
+
+	            $(".dynamic-content").html(
+	              r.data
+	            );
+	            $(".dynamic-content").html($compile($(".dynamic-content").html())($scope));
+	            $('#s4-workspace').scrollTop(0);
+	            $rootScope.isSpin = false;
+	          })
+      	}
+      	
+      if(localStorage.getItem('template')){
+      	$scope.loadTemplate(localStorage.getItem('template'), localStorage.getItem('child'));
+      }
+    });
+    
+    app.directive('mydir1', function ($sce) {
+	    var menuItem = new function (){
+			var a =[];
+		    return $.ajax({
+		        url: baseUrl_en_id + "/_api/web/lists/getbytitle('Menus')/items?$select=Level,Parent_x0020_Menus,Title,Icon,Position,URL,order0&$orderby=Level,order0",
+		        dataType: "json",
+		        method: "GET",
+		        headers: {Accept: "application/json;odata=verbose"},
+		        async: false,
+		        success: function(b) {
+		        	$.each(b.d.results, function(idx, val) {						                
+		                a.push({
+		                    x: idx,
+		                    t: val.Title,
+		                    l: val.Level,
+		                    p: val.Parent_x0020_Menus,
+		                    u: val.URL,
+		                    i: val.Icon,
+		                    o: val.Position
+		                });
+		            })         
+		        },error: function(error){console.log(JSON.stringify(error))}
+		    }),a;
+		};	
+		
+	var htmlLeftAngular="";
+
+	menuItem.forEach(function(element) {
+	if(element.o == 2 && element.p == 'CMS'){
+			var temp = (element.u).replace('-','').replace('-','').replace('/','').replace(' ','');
+			if (htmlLeftAngular==""){												  
+				htmlLeftAngular	= '<nav class="navbar navbar-default navbar-fixed-side nav-angular">'+
+									  '<div class="collapse navbar-collapse">'+
+										'<ul class="nav navbar-nav no-padding">'+
+										  '<li class="">'+
+											`<a ng-href="#`+temp+`" ng-click="loadTemplate('`+ temp +`.txt', '`+ element.t +`')">`+element.t+`</a>`+
+										  `</li>`;
+			}else{					  
+				htmlLeftAngular += '<li class="">'+
+									`<a ng-href="#`+temp+`" ng-click="loadTemplate('`+ temp +`.txt', '`+ element.t +`')">`+element.t+`</a>`+
+								  '</li>';
+			}				
+			return;
+		}	
+	});	
+											  
+	htmlLeftAngular += '</ul>'+
+							  '</div>'+
+						  '</nav>';
+
+	    return {
+	        template:  htmlLeftAngular
+	    };
+	});
+	
+	app.filter('propsFilter', function() {
+	  return function(items, props) {
+	    var out = [];
+	
+	    if (angular.isArray(items)) {
+	      var keys = Object.keys(props);
+	
+	      items.forEach(function(item) {
+	        var itemMatches = false;
+	
+	        for (var i = 0; i < keys.length; i++) {
+	          var prop = keys[i];
+	          var text = props[prop].toLowerCase();
+	          if (item[prop].toString().toLowerCase().indexOf(text) !== -1) {
+	            itemMatches = true;
+	            break;
+	          }
+	        }
+	
+	        if (itemMatches) {
+	          out.push(item);
+	        }
+	      });
+	    } else {
+
+	      out = items;
+	    }
+	
+	    return out.slice(0, 5);
+	  };
+	});
+	
+	app.directive('ngFileModel', ['$parse', function ($parse) {
+    return {
+        restrict: 'A',
+        link: function (scope, element, attrs) {
+            var model = $parse(attrs.ngFileModel);
+            var isMultiple = attrs.multiple;
+            var modelSetter = model.assign;
+            element.bind('change', function () {
+                var values = [];
+                angular.forEach(element[0].files, function (item) {
+                    var value = {
+                       // File Name 
+                        name: item.name,
+                        //File Size 
+                        size: item.size,
+                        //File URL to view 
+                        url: URL.createObjectURL(item),
+                        // File Input Value 
+                        _file: item
+                    };
+                    values.push(value);
+                });
+                scope.$apply(function () {
+                    if (isMultiple) {
+                        modelSetter(scope, values);
+                    } else {
+                        modelSetter(scope, values[0]);
+                    }
+                });
+            });
+        }
+    };
+}]);
+  </script>
+<script src="/SiteAssets/TriAngleAsset/lib/dataTables.buttons.min.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/buttons.colVis.min.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/buttons.flash.min.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/buttons.html5.min.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/buttons.print.min.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/angular-datatables.buttons.min.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/jszip.min.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/pdfmake.min.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/vfs_fonts.js"></script>
+
+
+<script>
+	$('#LeftNAV').hide();
+	document.querySelector("#pageContentTitle").style.display = 'none';
+	document.querySelector("#LeftNAV").style.display = 'none';
+	document.querySelector("#MainContentCustom").classList.add("row");
+	document.querySelector("#MainContentCustom").classList.remove("col-md-10");	
+	document.querySelector("#breadcrumbs").style.display = 'none';
+	document.querySelector("#hr-breadcrumb").style.display = 'none';
+</script>

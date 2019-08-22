@@ -1,0 +1,43 @@
+﻿<script src="/SiteAssets/TriAngleAsset/lib/angularjs.min.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/angular-sanitize.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/angular-resource.js"></script>
+
+<div ng-app="globalApp" ng-controller="profileCtrl">
+	<div class="col-md-12">
+		<div class="text-center">
+			<div class="col-md-8 col-md-offset-2" ng-bind-html="image">
+			</div>
+		</div>
+	</div>
+	<div class="col-md-12">
+		<p>&nbsp;</p>
+		<span ng-bind-html="persons" style="text-align: justify">
+		</span>
+	</div>
+</div>
+
+<script>
+	angular.module('globalApp', ['ngSanitize', 'ngResource']).controller('profileCtrl', profileCtrl);
+
+	function profileCtrl($resource, $http, $q, $scope) {
+	    var vm = this;
+	    
+	    $scope.persons  = '<p>Profile Indonesian version in draft</p>';  
+	    
+	    $scope.image = '<img class="img-responsive max600" src="'+ window.location.origin +'"/SiteAssets/TriAngleAsset/lib/picture/draft.png">';
+		$resource(_spPageContextInfo.webAbsoluteUrl +"/_api/web/lists/getbytitle('Our%20Company')/Items?$filter=SubmenuContent eq 'Profile' and OData__ModerationStatus eq '0'", {}, {
+				    get: {
+				        method: 'GET',
+				        headers: { "accept": "application/json;odata=verbose" }
+				    }
+				 }).get().$promise.then(function(response) {
+	        		var item = response.d.results;
+	        			item.forEach(function(element) {
+	        				$scope.persons = element.Content;
+		        			$scope.image ='<img class="img-responsive max600" src="'+ element.Thumbnails.Url +'">';
+		        			console.log($scope.persons);
+	        		});
+	    		});
+	};
+
+</script>

@@ -1,0 +1,812 @@
+<div ng-app="globalApp" ng-controller="masterQuizCtrl">
+	<script type="text/ng-template" id="myModalContent.html">
+		<div class="modal-header">
+			<h3 class="modal-title" id="modal-title">{{showCase.items.title}}</h3>
+		</div>
+		<div class="modal-body" id="modal-body" >
+			<h4 style="margin-bottom: 3%; color: #777 !important">Results:</h4>
+			<!-- canvas width="100px !important" id="bar" class="chart chart-bar" chart-data="chartValue" chart-labels="chartLabel"
+				chart-series="chartSeries" chart-options="options">
+			</canvas -->
+		
+			<table id="browseLookup" datatable="ng" dt-options="showCase.dtOptions" dt-column-defs="showCase.dtColumnDefs" dt-instance="showCase.dtInstance" class="table table-striped table-bordered form-table nowrap" style="width:100%!important">
+				<thead>
+					<th style="vertical-align: middle">User ID</th>
+					<th style="vertical-align: middle">Employee Name</th>
+					<th style="vertical-align: middle">Department</th>
+					<!-- th style="vertical-align: middle" ng-repeat="q in showCase.dataList[0].answers">Question {{$index + 1}}</th -->
+					<th style="vertical-align: middle" ng-repeat="q in showCase.dataList[0].answers">{{q.question}}</th>
+				</thead>
+				<tbody>
+					<tr ng-repeat="result in showCase.dataList">
+						<td>{{result.user}}</td>
+						<td>{{result.userName}}</td>
+						<td>{{result.department}}</td>
+						<td ng-repeat="ans in result.answers">{{ans.answer}}</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<div class="modal-footer">
+			<button class="btn btn-primary" type="button" ng-click="showCase.ok()" style="float:left">Close</button>
+		</div>
+	</script>
+
+	<div ng-controller="masterQuizCtrl as masterQuiz">
+		<div id="tableForm" ng-show="hideForm">
+            <a class="btn btn-success btn-md" ng-click="addNew()"><span class="fa fa-plus"> Add New </span></a>
+            <span style="color: red; font-style: italic; font-size: 12px" ng-show="activeAlert"><br /><br />
+                FAILED! - Only one quiz can be active at a time &emsp; 
+                <a ng-click="closeWarning()" style="cursor: pointer;">OK</a>
+            </span>
+			<table datatable="ng" dt-options="masterQuiz.dtOptions" dt-column-defs="masterQuiz.dtColumnDefs" dt-instance="masterQuiz.dtInstance"
+			 class="col-sm-12 table table-striped table-bordered form-table">
+				<thead>
+					<th>No</th>
+					<th>Title</th>
+					<!-- <th>Answer Type</th> -->
+					<!-- <th>Answer</th> -->
+					<th>Active</th>
+					<th>Actions</th>
+				</thead>
+				<tbody>
+					<tr ng-repeat="quiz in quizs track by $index">
+						<td>{{$index+1}}</td>
+						<td>
+							<a href="#" ng-click="getQuizResult(quiz.Title)">{{quiz.TitleQuiz}}</a>
+						</td>
+						<!-- <td>{{quiz.answertype}}</td> -->
+						<!-- <td>{{quiz.answer}}</td> -->
+						<td>
+							<div class="form-group">
+								<div class="col-xs-10">
+									<label class="switch">
+										<input type="checkbox" name="active" ng-model="quiz.Active" ng-true-value="'Active'" ng-false-value="'Not Active'"
+										 ng-change="editAndSave(quiz, 'Active', quiz.Active)">
+										<span class="slider round"></span>
+									</label>
+								</div>
+							</div>
+						</td>
+						<td>
+							<a ng-click="edit(quiz)">
+								<span class="btn btn-warning btn-sm fa fa-edit"></span>
+							</a>
+							<a ng-click="deletes(quiz)">
+								<span class="btn btn-danger btn-sm fa fa-trash-o"></span>
+							</a>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<div id="addForm" ng-show="!hideForm">
+			<table class="col-sm-12 form-table">
+				<div class="col-md-12">
+					<div class="panel-heading col-md-12 no-padding">
+						<a ng-click="collapse()"><span class="pull-right clickable"><i id='test' class="fa fa-minus"></i></span></a>
+						<hr class="hr-thick">
+					</div>
+					<div class="panel-bodies">
+						<div class='form-horizontal'>
+							<div class="form-group">
+								<label class="control-label col-xs-2">Title</label>
+								<div class="col-xs-10">
+									<input type="text" ng-model="TitleQuiz" class="form-control" placeholder="Title of Quiz">
+									<span class="ms-metadata">Title of Group Question</span>
+								</div>
+							</div>
+						</div>
+						<div class='form-horizontal' ng-repeat="item in numberQuestion track by $index">
+							<div class="form-group">
+								<label class="control-label col-xs-2">Question {{$index+1}}</label>
+								<div class="col-xs-10">
+									<textarea type="text" ng-model="data[item].Question" class="form-control" id="Question" placeholder="Your Question goes here"
+									 cols="3"></textarea>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label class="control-label col-xs-2">Answer Type</label>
+								<div class="col-xs-10">
+									<select ng-model="data[item].answertype" class="form-control">
+										<option value=""> -- Select One -- </option>
+										<option value="Text">Text</option>
+										<option value="Multiple Choice">Multiple Choice</option>
+									</select>
+								</div>
+							</div>
+
+							<div class="form-group" ng-if="data[item].answertype == 'Multiple Choice'">
+								<label class="control-label col-xs-2">Answer</label>
+								<div class="col-xs-10">
+									<textarea type="text" ng-model="data[item].answer" class="form-control" id="answer" placeholder="Your answer goes here"
+									 cols="3"></textarea>
+									<span class="ms-metadata">Use semicolon (;) for sepparate answer</span>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label class="control-label col-xs-2">Active</label>
+								<div class="col-xs-10">
+									<label class="switch">
+										<input type="checkbox" name="active" ng-model="data[item].Active" ng-true-value="'Active'" ng-false-value="'Not Active'">
+										<span class="slider round"></span>
+									</label>
+								</div>
+							</div>
+
+							<div class="form-group" ng-if="$last">
+								<div class="col-xs-offset-2 col-xs-10">
+									<a class="btn btn-primary" ng-click="save()">Save</a>
+									<a class="btn btn-warning" ng-click="cancel()">Cancel</a>
+								</div>
+								<div>
+									<a ng-click="removeQuestion($index, item)">
+										<span class="pull-right clickable">
+											<i class="fa fa-trash-o"> Delete Question </i>
+										</span>
+									</a>
+									<a ng-click="addQuestion()"><span class="pull-right clickable"><i class="fa fa-plus" style="padding-right:15px"> Add new Question</i></span></a>
+									
+									
+								</div>
+							</div>
+
+							<div class="form-group" ng-if="!$last">
+								<a ng-click="removeQuestion($index, item)">
+									<span class="pull-right clickable">
+										<i class="fa fa-trash-o"> Delete Question</i>
+									</span>
+								</a>
+								<hr>
+							</div>
+						</div>
+
+					</div>
+				</div>
+			</table>
+		</div>
+	</div>
+</div>
+
+<script>
+
+	angular.module('globalApp')
+		.controller('masterQuizCtrl', masterQuizCtrl)
+		.controller('ModalInstanceCtrl', ModalInstanceCtrl);
+
+	function masterQuizCtrl($scope, $resource, $compile, $http, $q, $anchorScroll, $uibModal, $location, DTOptionsBuilder, DTColumnDefBuilder) {
+		const contruct = {
+			APIGetContext: _spPageContextInfo.webAbsoluteUrl + "/_api/contextinfo",
+			APIGetQuestion: _spPageContextInfo.webAbsoluteUrl + "/_api/web/lists/getbytitle('Quiz Master Question')/Items",
+			APIGetMenu: function (id) {
+				return _spPageContextInfo.webAbsoluteUrl + "/_api/web/lists/getbytitle('Quiz Master Question')/Items(" + id + ")"
+			},
+            APIValidateActive: function (id) {
+                return _spPageContextInfo.webAbsoluteUrl + "/_api/web/lists/getbytitle('Quiz Master Question')/Items?$filter=ID ne '" + id + "' and Active eq 'Active'"
+            },
+			APIGetQuestionWithParams: _spPageContextInfo.webAbsoluteUrl + "/_api/web/lists/getbytitle('Quiz Master Question')/Items?$select=Title",
+			APIGetSitegroups: _spPageContextInfo.webAbsoluteUrl + "/_api/Web/SiteGroups",
+		}
+		var vm = this;
+		$scope.quizs = [];
+		$scope.fullQuizs = [];
+		$scope.TitleQuiz = '';
+        $scope.activeAlert = false;
+        
+       	var quesList = [];
+        var quesSeries = [];
+
+        var ansList = [];
+		var ansCount = {};
+        $scope.chartLabel = [];
+		$scope.chartValue = [];
+		$scope.chartSeries = [];
+        
+		vm.dtInstance = {};
+		vm.number = 1
+		$scope.numberQuestion = [0]
+		$scope.hideForm = true;
+		$scope.data = [];
+		$scope.SiteGroups = [];
+		$scope.Menus = [];
+		$location.hash('top');
+		$scope.xRequestDigest;
+		$anchorScroll();
+		vm.dtOptions = DTOptionsBuilder
+			.newOptions()
+			.withPaginationType('full_numbers')
+			.withDisplayLength(2)
+			.withBootstrap()
+			.withOption('responsive', true)
+		vm.dtOptions = {
+			bLengthChange: false,
+			pageLength: 5,
+			lengthMenu: [[5, -1], [5]],
+			order : [[0, 'desc']]
+		};
+		vm.dtColumnDefs = [
+		];
+
+		$.ajax({
+			url: contruct.APIGetContext,
+			type: "POST",
+			headers: {
+				"Accept": "application/json;odata=verbose",
+			},
+			success: function (data) {
+				$scope.xRequestDigest = data.d.GetContextWebInformation.FormDigestValue;
+			},
+			error: function (data) {
+
+			}
+		});
+
+        $scope.closeWarning = function () {
+            $scope.activeAlert=false;
+        };
+
+		$scope.addNew = function () {
+			$scope.numberQuestion = [0]
+			$scope.data = []
+			$scope.TitleQuiz = ''
+			$scope.hideForm = false;
+		};
+
+		$scope.cancel = function () {
+			$scope.hideForm = true;
+			$anchorScroll();
+		};
+
+		$scope.edit = function (x) {
+			$scope.numberQuestion = []
+			$scope.data = []
+			$scope.TitleQuiz = x.TitleQuiz
+			vm.number = 0
+			$scope.fullQuizs.map(quiz => {
+				if (quiz.Title == x.Title) {
+					$scope.data.push(quiz)
+					const num = $scope.numberQuestion
+					if (num.length < 5) {
+						num.push(vm.number)
+						vm.number++
+						$scope.numberQuestion = num
+					}
+				}
+			})
+			$scope.hideForm = false;
+		};
+
+		$scope.save = function () {
+
+			var url = contruct.APIGetQuestion;
+			var hdr = {
+				headers: {
+					"Content-type": "application/json;odata=verbose",
+					"X-RequestDigest": $scope.xRequestDigest,
+				}
+			};
+
+
+			var hdrEdit = {
+				headers: {
+					"Accept": "application/json;odata=verbose",
+					"Content-type": "application/json;odata=verbose",
+					"X-HTTP-Method": "MERGE",
+					"X-RequestDigest": $scope.xRequestDigest,
+					"If-Match": "*",
+					"odata-version": ""
+				}
+			}
+
+
+			var params = JSON.stringify(
+				{
+					"__metadata": {
+						"type": "SP.Data.QuizMasterQuestionListItem"
+					},
+					Title: $scope.data.Title,
+					Question: $scope.data.Question,
+					answer: $scope.data.answer,
+					answertype: $scope.data.answertype,
+					Active: $scope.data.Active,
+				})
+
+			let title = '1'
+			masterQuizInit().then(function (response) {
+				if (response.d.results.length > 0) {
+					const data = sort(response.d.results, 'Title')
+					$scope.resultForCompare = data
+					if (data.length > 0) {
+						const p = data[data.length - 1]
+						const k = p.Title
+						const l = parseInt(k) + 1
+						title = l.toString()
+					}
+				}
+				const dataWillSend = []
+				$scope.data.map(e => {
+					if ($scope.resultForCompare != undefined) {
+						$scope.resultForCompare.map(result => {
+							if (e.ID == result.ID) {
+								if (e.deleted == true) { } else {
+									e.edit = 1
+								}
+							}
+						})
+					}
+					if (e != null || e != undefined) {
+						if (e.edit == 1) {
+							var urlEdit = contruct.APIGetMenu(e.ID);
+							title = e.Title
+							dataWillSend.push(functionPostNew(urlEdit, getParams(e, title), hdrEdit))
+						} else if (e.deleted == true) {
+							$scope.delete(e, true)
+						} else if (e.deleted == undefined && e.edit == undefined) {
+							dataWillSend.push(functionPostNew(url, getParams(e, title), hdr))
+						}
+					}
+				})
+				Promise.all(dataWillSend).then(e => {
+					setTimeout(() => {
+						masterQuizInit().then(function (response) {
+							$scope.quizs = []
+							$scope.data = []
+							sortQuestionByGroup(sort(response.d.results, 'Title'))
+							$scope.numberQuestion = [0]
+							$scope.cancel()
+						})
+					}, 500);
+				})
+			});
+		};
+
+		function getParams(item, title) {
+			return JSON.stringify(
+				{
+					"__metadata": {
+						"type": "SP.Data.QuizMasterQuestionListItem"
+					},
+					Title: title,
+					Question: item.Question,
+					answer: item.answer,
+					answertype: item.answertype,
+					Active: item.Active,
+					TitleQuiz: $scope.TitleQuiz
+				})
+		};
+		function functionPostNew(url, params, hdr) {
+			$http.post(url, params, hdr)
+				.then(function onSuccess(response) {
+				}).catch(function onError(response) { });
+		};
+		function sort(items, column) {
+
+			items.sort(function (a, b) {
+				var nameA = a[column].toString().toUpperCase()
+				var nameB = b[column].toString().toUpperCase()
+				if (nameA < nameB) {
+					return -1
+				}
+				if (nameA > nameB) {
+					return 1
+				}
+				return 0
+			});
+			return items
+		};
+
+		$scope.delete = function (x, r) {
+			if (!x.ID) return;
+			if (r != true) {
+				r = confirm("Do you want to delete this row?");
+			}
+
+			var url = contruct.APIGetMenu(x.ID);
+			var hdr = {
+				headers: {
+					"Accept": "application/json;odata=verbose",
+					"X-RequestDigest": $scope.xRequestDigest,
+					"If-Match": "*"
+				}
+			};
+			if (r == true) {
+				$http.delete(url, hdr)
+					.then(function onSuccess(response) {
+					}).catch(function onError(response) {
+					});
+			}
+		};
+
+		$scope.download = function (x) {
+
+			alert('download');
+		};
+
+		function masterQuizInit() {
+			return $resource(contruct.APIGetQuestion, {}, {
+				get: {
+					method: 'GET',
+					headers: { "accept": "application/json;odata=verbose" }
+				}
+			}).get().$promise
+		};
+
+		masterQuizInit().then(function (response) {
+			sortQuestionByGroup(sort(response.d.results, 'Title'))
+		});
+
+		$resource(contruct.APIGetSitegroups, {}, {
+			get: {
+				method: 'GET',
+				headers: { "accept": "application/json;odata=verbose" }
+			}
+		}).get().$promise.then(function (response) {
+			$scope.SiteGroups = response.d.results;
+		});
+
+		$resource(contruct.APIGetQuestionWithParams, {}, {
+			get: {
+				method: 'GET',
+				headers: { "accept": "application/json;odata=verbose" }
+			}
+		}).get().$promise.then(function (response) {
+			$scope.Menus = response.d.results;
+		});
+
+		$scope.collapse = function (x) {
+			if (!$('#test').hasClass('fa-plus')) {
+				$('.panel-bodies').slideUp();
+				$('#test').removeClass('fa-minus').addClass('fa-plus');
+			} else {
+				$('.panel-bodies').slideDown();
+				$('#test').removeClass('fa-plus').addClass('fa-minus');
+			}
+		};
+
+		$scope.open = function (title, content, size, parentSelector) {
+			var parentElem = parentSelector ?
+				angular.element($document[0].querySelector('.modal-demo ' + parentSelector)) : undefined;
+			var modalInstance = $uibModal.open({
+				animation: $ctrl.animationsEnabled,
+				ariaLabelledBy: 'modal-title',
+				ariaDescribedBy: 'modal-body',
+				templateUrl: 'myModalContent.html',
+				controller: 'ModalInstanceCtrl',
+				controllerAs: 'masterQuiz',
+				size: size,
+				appendTo: parentElem,
+				resolve: {
+					items: function () {
+						return { 'title': title, 'content': content };
+					}
+				}
+			});
+		};
+
+		$scope.addQuestion = function () {
+			const num = $scope.numberQuestion
+			if (num.length < 5) {
+				num.push(vm.number++)
+				$scope.numberQuestion = num
+			}
+		};
+
+		$scope.removeQuestion = function (e, item) {
+			const num = $scope.numberQuestion
+			const data = $scope.data
+			if (data[item] != undefined) {
+				data[item].deleted = true
+			}
+			if (num.length > 0 && num.length < 6) {
+				const index = num.indexOf(item);
+				if (index > -1) {
+					$scope.numberQuestion.splice(index, 1);
+				}
+			}
+		};
+
+        vm.validateActive = function (id) {
+            return $q(function(resolve, reject) {
+                $resource(contruct.APIValidateActive(id), {}, {
+                    get: {
+                        method: 'GET',
+                        headers: { "accept": "application/json;odata=verbose" }
+                    }
+                }).get().$promise.then(function (response) {
+                    if (response.d.results.length >= 1) {
+                        reject('another is active');
+                    } else if (response.d.results.length === 0) {
+                        resolve('pass');
+                    }
+                });
+            })
+        };
+
+		function sortQuestionByGroup(quizs) {
+			const data = []
+			let temp = { Title: '' }
+			quizs.map(quiz => {
+				if (quiz.Title != temp.Title) {
+					data.push(quiz)
+				}
+				temp = quiz
+			})
+			$scope.fullQuizs = quizs
+			$scope.quizs = data
+		};
+
+		$scope.editAndSave = function (data, type, value) {
+			$scope.numberQuestion = []
+			$scope.data = []
+			$scope.TitleQuiz = data.TitleQuiz
+			vm.number = 0
+			$scope.fullQuizs.map(quiz => {
+				if (quiz.Title == data.Title) {
+					quiz[type] = value
+					$scope.data.push(quiz)
+					const num = $scope.numberQuestion
+					if (num.length < 5) {
+						num.push(vm.number)
+						vm.number++
+						$scope.numberQuestion = num
+					}
+				}
+			})
+
+            if (type === 'Active' && value === 'Active') {
+                var validate = vm.validateActive(data.ID);
+                validate.then(function send() {
+                    $scope.save()
+                }).catch(function alerting() {
+                    $scope.activeAlert = true;
+                    setTimeout(function() {
+                        masterQuizInit().then(function (response) {
+                            sortQuestionByGroup(sort(response.d.results, 'Title')) 
+                        });
+                    }, 500);
+                })
+            } else {
+                $scope.save()
+            }
+		};
+
+		$scope.deletes = function (e) {
+			masterQuizInit().then(function (response) {
+				if (response.d.results.length > 0) {
+					sortQuestionByGroup(sort(response.d.results, 'Title'))
+					const data = $scope.fullQuizs
+					const dataWillSend = []
+					data.map(item => {
+						if (e.Title == item.Title) {
+							dataWillSend.push($scope.delete(item, true))
+						}
+					})
+					Promise.all(dataWillSend).then(e => {
+						setTimeout(() => {
+							masterQuizInit().then(function (response) {
+								$scope.quizs = []
+								$scope.data = []
+								sortQuestionByGroup(sort(response.d.results, 'Title'))
+								$scope.numberQuestion = [0]
+								$scope.cancel()
+							})
+						}, 500);
+					})
+				}
+			})
+		};
+
+		$scope.getQuizResult = function(title) {
+			
+			$resource( _spPageContextInfo.webAbsoluteUrl + "/_api/web/lists/getbytitle('Quiz%20Result')/Items?$filter=TitleId eq '" + title + "'", {}, {
+				    get: {
+				        method: 'GET',
+				        headers: { "accept": "application/json;odata=verbose" }
+				    }
+				 }).get().$promise.then(function(response) {
+				 	ansList = [];
+					ansCount = {};
+					var res = response.d.results;
+					
+					response.d.results.forEach(i => {
+						quesList.push({
+							Question: i.Question,
+							Answer: i.Answer
+						});
+						quesSeries.push(i.Question);	
+					});
+					
+					quesList.forEach(i => {
+						ansList.push(i.Answer);
+						
+					});
+					ansList.forEach(function (i) {
+						ansCount[i] = (ansCount[i] || 0) + 1;
+					});
+					$scope.chartSeries = quesSeries;
+					$scope.chartLabel = Object.keys(ansCount);
+					$scope.chartValue = Object.values(ansCount);
+
+	        		$scope.openModal('Quiz Topic: ' + title, response.d.results, $scope.chartSeries, $scope.chartLabel, $scope.chartValue, 'lg');
+	    		});
+ 		};
+        
+        $scope.openModal = function (title, content, chartseries, chartlabel, chartvalue,size, parentSelector) {
+		    var parentElem = parentSelector?angular.element($document[0].querySelector('.modal-demo ' + parentSelector)) : undefined;
+			  var modalInstance = $uibModal.open({
+			      animation: $scope.animationsEnabled,
+			      ariaLabelledBy: 'modal-title',
+			      ariaDescribedBy: 'modal-body',
+			      templateUrl: 'myModalContent.html',
+			      controller: 'ModalInstanceCtrl',
+			      controllerAs: 'showCase',
+			      size: size,
+			      appendTo: parentElem,
+			      resolve: {
+			        items: function () {
+			          return {'title' : title, 'resultList' : content, 'chartseries' :chartseries, 'chartlabel': chartlabel, 'chartvalue' : chartvalue};
+			        }
+			      }
+		    });
+		};
+	};
+
+	function ModalInstanceCtrl($scope, $rootScope, $q, $http, $uibModalInstance, items, DTOptionsBuilder, DTColumnDefBuilder) {
+        var showCase = this;
+        var vm = this;
+        
+        var ansList = [];
+        var quesList = []
+		var ansCount = {};
+        $scope.chartLabel = [];
+		$scope.chartValue = [];
+		$scope.chartSeries = [];
+		
+		$scope.options = { legend: { display: true } };
+
+        
+        vm.message = '';
+		showCase.hdr = {
+			headers: { "accept": "application/json;odata=verbose" }
+		}
+		showCase.ready = false;
+        showCase.items = items;
+        showCase.selected = {
+            item: showCase.items[0]
+        };
+		showCase.promiseUserData = [];
+		showCase.dataList = [];
+		showCase.answererList = [];
+		showCase.items.resultList.forEach(item => {
+			if (showCase.answererList.indexOf(item.AuthorId) == -1) {
+				showCase.answererList.push(item.AuthorId);
+			};
+		});
+		
+		showCase.answererList.forEach(person => {
+			var obj = {};
+			var q = [];
+			var series = [];
+			showCase.items.resultList.forEach(item => {
+				if (item.AuthorId === person) {
+					q.push({question: item.Question, answer: item.Answer});
+					series.push(item.Question);
+				}
+			});
+			
+			$.ajax({
+				async: false,
+				url: _spPageContextInfo.webAbsoluteUrl + "/_api/web/siteUserInfoList/items(" + person + ")",
+				type: "GET",
+				headers: {
+					"Accept": "application/json;odata=verbose",
+				},
+				success: function (data) {
+					obj.userName = data.d.Title;
+					obj.department = data.d.Department;
+				},
+				error: function (data) {
+					console.log(data);
+				}
+			});
+			obj.user = person;
+			obj.answers = q;
+			obj.seriesquestion= series;
+			
+			showCase.dataList.push(obj);
+			
+			ansList.push(obj.answers);
+			quesList.push(obj.seriesquestion);
+		});
+		
+		$scope.chartLabel = quesList[0];
+		let array_satu = []
+
+		ansList.forEach((e) => {
+			
+		  e.forEach((a) => {
+		  	
+		    if (array_satu.length > 0) {
+		      array_satu.forEach((d, i) => {
+		        if (a.question == d.question) {
+		        	
+		          d.value.push(a.answer)
+		        } else {
+		        const map = array_satu.map(function(e) { return e.question; }).indexOf(a.question);
+		          if (map == -1) {
+		            array_satu.push({
+		              question: a.question,
+		              value: [a.answer]
+		            })
+		          }
+		        }
+		        
+		      })
+		    } else {
+		    	array_satu.push({
+		        question: a.question,
+		        value: [a.answer]
+		      })
+		    }
+		    
+		  })
+		})
+
+		$scope.chartSeries = ['Series A', 'Series B','Series C'];
+		
+		
+		$scope.chartValue = [
+							    [65, 59, 80, 81, 56, 55, 40],
+							    [28, 48, 40, 19, 86, 27, 90],
+							    [28, 48, 40, 19, 86, 27, 90]
+
+							  ];		
+		
+        vm.dtOptions = DTOptionsBuilder
+            .newOptions()
+            .withPaginationType('full_numbers')
+            .withDisplayLength(2)
+            .withBootstrap()
+            .withButtons([
+	            {
+                    extend: "excelHtml5",
+                    filename:  "Quiz Result",
+                    title:"Quiz Result",
+                    text: "Download Result",
+                    exportOptions: {
+                        columns: ':visible'
+                    },
+                    exportData: { decodeEntities: true }
+                }
+            ])
+            .withOption('responsive', true)
+            .withOption('searching', false)
+            .withOption('paging', false)
+            .withOption('info', false)
+            .withOption('bLengthChange', false)
+            .withOption('lengthMenu', [[5, -1], [5]]);
+
+        vm.dtcolumncefs = [
+			DTColumnDefBuilder.newColumnDef(0),
+            DTColumnDefBuilder.newColumnDef(1),
+            DTColumnDefBuilder.newColumnDef(2),
+            DTColumnDefBuilder.newColumnDef(3),
+            DTColumnDefBuilder.newColumnDef(4),
+			DTColumnDefBuilder.newColumnDef(5),
+			DTColumnDefBuilder.newColumnDef(6),
+			DTColumnDefBuilder.newColumnDef(7)
+        ];
+
+        showCase.ok = function () {
+            $uibModalInstance.close(showCase.selected.item);
+        };
+
+        showCase.cancel = function () {
+            $uibModalInstance.dismiss('cancel');
+        };
+    };
+
+</script>

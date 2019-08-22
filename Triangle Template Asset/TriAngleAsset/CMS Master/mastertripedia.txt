@@ -1,0 +1,344 @@
+﻿	<!-- Controller Template -->
+	<div ng-controller="internalVacancyCtrl as showCase">
+		<!-- tableForm Template -->
+		<div id="tableForm" ng-show="hideForm" >
+			<a class="btn btn-success btn-md" ng-click="addNew()"><span class="fa fa-plus"></span> Add New</a>
+			<span style="color: #505050; font-style: italic; font-size: 12px; float: right">Tip: Hold SHIFT + click for multiple sorting</span>
+		    <table datatable="ng" dt-options="showCase.dtOptions" dt-column-defs="showCase.dtColumnDefs" dt-instance="showCase.dtInstance" class="col-sm-12 table table-striped table-bordered form-table">
+		    	<thead>
+			    	<th class="column-datatable">Id</th>
+				    <th class="column-datatable">Title</th>
+				    <th class="column-datatable">Division</th>
+				    <th class="column-datatable">Keyword</th>
+					<th class="column-datatable">KeywordContent</th>
+					<th class="column-datatable">Status</th>
+				    <th class="column-datatable">Actions</th>
+			  	</thead>
+		        <tbody>
+		        	<tr ng-repeat="field in showCase.tables">
+				        <td class="column-datatable">{{field.ID}}</td>
+				        <td class="column-datatable">{{field.Title}}</td>
+				        <td class="column-datatable">{{field.Division}}</td>
+				        <td class="column-datatable">{{field.Keyword}}</td>
+				        <td class="column-datatable-left">
+				        	<div ng-bind-html="field.KeywordContent"></div>
+				        </td>
+				        <td class="column-datatable">
+				        	<div ng-switch="field.OData__ModerationStatus">
+								  <div ng-switch-when="0">
+								    <p>Approved</p>
+								  </div>
+								  <div ng-switch-when="1">
+								    <p>Rejected</p>
+								  </div>
+								  <div ng-switch-when="2">
+								    <p>Pending</p>
+								  </div>
+								  <div ng-switch-default>
+								    <p>Draft</p>
+								  </div>
+								</div>
+				        	</td>
+				        <td class="column-datatable">
+							<div class="col-sm-4 no-padding">
+								<a ng-click="edit(field)"><span class="btn btn-warning btn-sm fa fa-edit"></span></a>
+							</div>
+							<div class="col-sm-4 no-padding">
+								<a ng-click="delete(field)"><span class="btn btn-danger btn-sm fa fa-trash-o"></span></a>  
+							</div>
+							<div class="col-sm-4 no-padding">
+								<a ng-click="approve(field)"><span class="btn btn-success btn-sm fa fa-check"></span></a>
+							</div>
+			            </td>
+		        	</tr>
+		        </tbody>
+		    </table>
+		</div>
+		<!-- tableForm Template -->
+		
+		<!-- Form Input -->
+		<div id="addForm" ng-show="!hideForm">
+			<table class="col-sm-12 form-table">
+				<div class="col-md-12">
+					<div class="panel-heading col-md-12 no-padding">
+						<a ng-click="collapse()"><span class="pull-right clickable"><i id='panel-header' class="fa fa-minus"></i></span></a>
+						<hr class="hr-thick">
+					</div>
+					<div class="panel-bodies">
+						<div class='form-horizontal'>
+							<div class="form-group">
+						        <label for="Title" class="control-label col-xs-2">Title</label>
+						        <div class="col-xs-10">
+						        	<input type="hidden" ng-model="data.ID" name="ID" id="ID" >
+						            <input type="text" ng-model="data.Title" class="form-control" id="Title" placeholder="Title" ng-required="required">
+						            <span class="ms-metadata">Wording for Menu to be displayed</span>
+						        </div>
+						    </div>
+						     <div class="form-group">
+						        <label for="Division" class="control-label col-xs-2">Division</label>
+						        <div class="col-xs-10">
+						            <select ng-model="data.Division" class="form-control">
+					                    <option value=""> -- Select One -- </option>
+					                    <option ng-repeat="Division in Divisions" value="{{Division.id}}">{{Division.name}}</option>
+					                </select>						        
+				                </div>
+						    </div>
+						    <div class="form-group">
+						        <label for="Keyword" class="control-label col-xs-2">Keyword</label>
+						        <div class="col-xs-10">
+						            <input type="text" ng-model="data.Keyword" class="form-control" id="Keyword" placeholder="Keyword" ng-required="required">
+						        </div>
+						    </div>
+						    <div class="form-group">
+						    	<label for="Content" class="control-label col-xs-2">Keyword Content</label>
+						    	<div class="col-md-10">
+							         <input type="text" ng-model="data.KeywordContent" class="form-control" id="KeywordContent" placeholder="KeywordContent" ng-required="required">
+							     </div>
+						    </div>
+						    <div class="form-group">
+						        <div class="col-xs-offset-2 col-xs-10">
+						            <a class="btn btn-primary" ng-click="save()"><span class="fa fa-save"></span> Save</a>
+						            <a class="btn btn-warning" ng-click="cancel()">Cancel</a>
+						        </div>
+						    </div>
+						</div>
+					</div>
+				</div>
+			</table>
+		</div>
+	</div >	
+
+
+<script>
+angular.module('globalApp')
+.controller('internalVacancyCtrl', internalVacancyCtrl);
+	
+function internalVacancyCtrl($scope, $rootScope, $resource, $compile, $http, $q, $anchorScroll, $location, $uibModal, $log, $document, DTOptionsBuilder, DTColumnDefBuilder) {
+	$scope.baseurl = window.location.origin + "/";
+	$scope.baseurl_en = _spPageContextInfo.webAbsoluteUrl;
+	
+	var vm = this;
+	var $ctrl = this;
+	
+	$scope.xRequestDigest;
+	vm.tables = [];
+	vm.dtInstance = {};
+	$scope.data =[];
+	$scope.Divisions =[];
+	$scope.messasge = "";
+	$rootScope.FileName="";
+	$scope.hideForm = true;
+	$scope.animationsEnabled = true;
+	
+	$scope.datepickers = {
+		Created: false
+	};
+
+	$scope.dateOptions = {
+	    formatYear: 'yy',
+	    startingDay: 1,
+	    showWeeks: false
+	 };
+		  
+	$scope.formats = ['dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
+	$scope.format = $scope.formats[0];
+	
+	$.ajax({
+        url: _spPageContextInfo.webAbsoluteUrl + "/_api/contextinfo",
+        type: "POST",
+        headers: {
+            "Accept": "application/json;odata=verbose",
+        },
+        success: function (data) {
+            $scope.xRequestDigest = data.d.GetContextWebInformation.FormDigestValue;
+        },
+        error: function (data) {
+            console.log('error xRequestDigest', data);
+        }
+    });
+
+	$scope.collapse = function(x) {
+		
+		if(!$('#panel-header').hasClass('fa-plus')) {
+			$('.panel-bodies').slideUp();
+			$('#panel-header').removeClass('fa-minus').addClass('fa-plus');
+		} else {
+			$('.panel-bodies').slideDown();
+			$('#panel-header').removeClass('fa-plus').addClass('fa-minus');
+		}		
+	};
+	
+	$scope.openDate = function($event, x) {
+	    $event.preventDefault();
+	    $event.stopPropagation();
+		$scope.datepickers['Created'] = true;
+	};
+
+	$scope.addNew= function() {
+		$scope.data =[];
+		$scope.hideForm = false;
+		$scope.data.Created = new Date();	
+	};
+	    
+    $scope.cancel= function() {
+		$scope.hideForm = true; 
+	};
+
+    $scope.edit =function(x) {
+		$scope.hideForm = false;
+		$scope.data = x;
+    };
+ 	    	
+	vm.dtOptions = DTOptionsBuilder
+		.newOptions()
+		.withPaginationType('full_numbers')
+		.withDisplayLength(2)
+		.withBootstrap()
+		.withOption('responsive', true)
+		
+	vm.dtOptions = {
+		bLengthChange: false,
+		pageLength : 5,
+		lengthMenu: [[5, -1], [5]],
+		order : [[0, 'desc']]
+	};
+	
+	vm.dtColumnDefs = [
+		DTColumnDefBuilder.newColumnDef(0).notVisible(),
+		DTColumnDefBuilder.newColumnDef(1),
+		DTColumnDefBuilder.newColumnDef(2),
+		DTColumnDefBuilder.newColumnDef(3),
+		DTColumnDefBuilder.newColumnDef(4),
+		DTColumnDefBuilder.newColumnDef(5),
+		DTColumnDefBuilder.newColumnDef(6)
+	];
+	
+    $scope.reloadTable = function(){
+    	var url = _spPageContextInfo.webAbsoluteUrl + "/_api/web/lists/getbytitle('TRIpedia')/Items"
+    	var hdr = {
+      		headers:{ 
+	                "Content-type": "application/json;odata=verbose"
+	                }
+	           };
+    	$resource( _spPageContextInfo.webAbsoluteUrl + "/_api/web/lists/getbytitle('TRIpedia')/Items?$top=5000", {}, {
+			    get: {
+			        method: 'GET',
+			        headers: { "accept": "application/json;odata=verbose" }
+			    }
+			 }).get().$promise.then(function(response) {
+        		vm.tables = response.d.results;
+    		});
+    };
+	$scope.reloadTable();
+	
+	$scope.combo = function(){
+		$resource(_spPageContextInfo.webAbsoluteUrl +"/_api/web/lists/GetByTitle('TRIpedia')/fields?$filter=EntityPropertyName%20eq%20%27Division%27", {}, {
+					    get: {
+					        method: 'GET',
+					        headers: { "accept": "application/json;odata=verbose" }
+					    }
+					 }).get().$promise.then(function(response) {
+		        		var mydata = response.d.results[0].Choices.results;
+		        		if(mydata.length > 0)$scope.Divisions=[];
+		        		for(var i = 0; i < mydata.length; i++){
+		        			$scope.Divisions.push({id: mydata[i], name: mydata[i]});
+		        		}
+		    		});
+	};
+	$scope.combo();
+
+
+	$scope.save = function(approve) {
+      	var url = _spPageContextInfo.webAbsoluteUrl +"/_api/web/lists/getbytitle('TRIpedia')/Items";
+      	var hdr = {
+      		headers:{ 
+	                "Content-type": "application/json;odata=verbose",
+	                "X-RequestDigest": $scope.xRequestDigest,
+	               }
+	           };
+      
+      	if ($scope.data.ID){
+	      	url += "("+$scope.data.ID+")";
+			
+	      	hdr = {
+	      		headers:{ 
+			        	"Accept": "application/json;odata=verbose",
+		                "Content-type": "application/json;odata=verbose",
+		                "X-HTTP-Method": "MERGE",
+		                "X-RequestDigest": $scope.xRequestDigest,
+		                "If-Match": "*",
+		                "odata-version": ""				        
+		               }
+		           }
+      	}
+
+      	var params = JSON.stringify(
+					{
+		      			"__metadata" :{
+		      				"type": "SP.Data.TRIpediaListItem"
+		      			},
+						"OData__ModerationStatus": $scope.data.OData__ModerationStatus
+		      			}
+      				);
+      
+      	if(!approve){
+	      	params = JSON.stringify(
+				{
+	      			"__metadata" :{
+	      				"type": "SP.Data.TRIpediaListItem"
+	      			},
+	      			"Title": $scope.data.Title,
+	      			"Division":$scope.data.Division,
+	      			"Keyword": $scope.data.Keyword,
+	      			"KeywordContent": $scope.data.KeywordContent,
+					"OData__ModerationStatus": $scope.data.OData__ModerationStatus
+	      		 })
+      	}	
+		
+		$http.post(url, params, hdr)
+		.then(function onSuccess(response) {
+			$scope.reloadTable();
+			if(!approve) $scope.cancel();
+		}).catch(function onError(response) {
+			console.log(response);
+		});
+     };
+     
+     $scope.approve = function(x) {
+			if(!x.ID) return;
+			
+ 			var r = confirm("Do you want to approve this content?");
+ 			if (r == true) {
+ 				$scope.data = {
+	 				'OData__ModerationStatus' : 0,
+	 				'ID' : x.ID
+	 			 };
+				$scope.save(true);
+			}
+	    };
+
+     $scope.delete = function(x) {
+		if(!x.ID) return;
+		var r = confirm("Do you want to delete this row?");
+	    
+		var url = _spPageContextInfo.webAbsoluteUrl +"/_api/web/lists/getbytitle('TRIpedia')/Items("+x.ID+")";
+	    var hdr = {
+      		headers:{ 
+	                "Accept": "application/json;odata=verbose",
+	                "X-RequestDigest": $scope.xRequestDigest,
+	                "If-Match": "*"
+	        }
+	    };
+		if (r == true) {
+	        $http.delete(url, hdr)
+		    .then(function onSuccess(response) {
+			    $scope.reloadTable();
+			  }).catch(function onError(response) {
+			    console.log('error in delete', response);
+			  });
+	    } 
+	};
+		
+};
+	   
+</script>

@@ -1,0 +1,254 @@
+<link rel="stylesheet" href="/SiteAssets/TriAngleAsset/lib/dist/plugins/bootstrap/datatables.bootstrap.min.css">
+<link rel="stylesheet" href="/SiteAssets/TriAngleAsset/lib/dist/css/angular-datatables.css">
+<script src="/SiteAssets/TriAngleAsset/lib/jquery.dataTables.min.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/angularjs.min.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/dist/angular-datatables.min.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/dist/plugins/bootstrap/angular-datatables.bootstrap.min.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/dataTables.responsive.min.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/angular-sanitize.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/angular-resource.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/Chart.min.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/angular-chart.min.js"></script>
+
+<div ng-app="globalApp" ng-controller="triviaCtrl">
+	<div ng-controller="triviaCtrl as showCase">
+		<div ng-show="showList">
+			<table datatable="ng" dt-options="showCase.dtOptions" dt-column-defs="showCase.dtColumnDefs"  class="table table-striped">
+				<thead style='display:none;'>
+					<th>title</th>
+				</thead>
+				<tbody>
+					<tr class="trivia-table" ng-repeat="trivia in triviaList">
+						<td class="col-md-12"  style="vertical-align: middle" ng-click="showTrivia(trivia.ID)">
+							<div class="col-md-12">
+								<h2 style="margin-top: 10px">{{trivia.TitleTrivia}}</h2>
+								<p style="font-size: 4; margin-bottom: 10px">{{trivia.Title}}</p>
+							</div>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<div ng-show="!showList">
+			<div class="row col-md-12" ng-if="seen">
+				<h2>You already submitted the answer </h2>
+				<h3>{{data.question}}</h3>
+				<h4 style="margin-bottom: 3%; color: #777 !important">Results:</h4>
+				<canvas width="800px" id="pie" class="chart chart-pie" chart-data="chartValue" chart-labels="chartLabel"
+					chart-options="options">
+				</canvas>
+			</div>
+			<div class="col-md-12" ng-if="!seen">
+				<h3>{{data.question}}</h3>
+				<div class="col-md-12" style="margin-top: 5%">
+					<div class="row" style="margin-left: 2%" ng-repeat="ans in b">
+						<a class="btn btn-default btn-submit-gradient" ng-click="submit(ans)" style="min-width: 50px; margin-top: 5px;"
+							target="_blank">{{ans.answer}}</a>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-1 elementHover" ng-click="hideTrivia()" style="margin-top: 5%; padding: 5px 5px 5px 5px">
+				<span>Back</span>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+	//var baseOrigin = window.location.origin;
+	var baseOrigin = "http://triangle.three.co.id";
+	var baseUrl_en_id = _spPageContextInfo.webAbsoluteUrl;
+
+	angular.module('globalApp', ['chart.js', 'ngSanitize', 'datatables', 'datatables.bootstrap', 'ngResource']).controller('triviaCtrl', triviaCtrl);
+
+	function triviaCtrl($scope, $resource, $filter, $http, $q, $anchorScroll, $location, DTOptionsBuilder, DTColumnDefBuilder) {
+		var vm = this;
+		var userId = _spPageContextInfo.userId;
+		var ansList = [];
+		var ansCount = {};
+		
+		$scope.b = [];
+		
+		$location.hash('top');
+		$anchorScroll();
+		$scope.seen = false;
+		$scope.showList = true;
+		$scope.chartLabel = [];
+		$scope.chartValue = [];
+		
+		$scope.triviaList = [];
+
+		vm.dtOptions = DTOptionsBuilder
+            .newOptions()
+            .withPaginationType('full_numbers')
+            .withDisplayLength(2)
+            .withBootstrap()
+            .withOption('responsive', true)
+        vm.dtOptions = {
+			searching:false,
+            bLengthChange: false,
+            pageLength: 5,
+            lengthMenu: [[5, -1], [5]]
+        };
+        vm.dtColumnDefs = [
+            DTColumnDefBuilder.newColumnDef(0),
+        ];
+
+		$scope.data = {
+			id: null,
+			question: null,
+			answers: [],
+			isActive: null,
+		};
+
+		$scope.getList = function () {
+			$resource(_spPageContextInfo.webAbsoluteUrl + "/_api/web/lists/GetByTitle('Trivia%20Master%20Question')/Items?$filter=IsActive%20eq%20%271%27&$OrderBy=Modified%20desc", {}, {
+				get: {
+					method: 'GET',
+					headers: { "accept": "application/json;odata=verbose" }
+				}
+			}).get().$promise.then(function (response) {
+				$scope.triviaList = response.d.results;
+			});
+		}
+
+		$scope.init = function (dataId) {
+			
+			$resource(baseOrigin  + "/en/_api/web/lists/GetByTitle('Trivia%20Master%20Question')/Items(" + dataId + ")", {}, {
+				get: {
+					method: 'GET',
+					headers: { "accept": "application/json;odata=verbose" }
+				}
+			}).get().$promise.then(function (response) {
+				var res = response.d;
+				var ans = res.trivia_answer.split(";");
+				$scope.data.id = res.ID;
+				$scope.data.TitleTrivia = res.TitleTrivia;
+				$scope.data.question = res.Title;
+				$scope.data.isActive = res.IsActive;
+				$scope.data.answers = ans;
+				
+				var length = $scope.data.answers.length;
+                for(var i=0; i < length; i++){
+					var a = {
+					'id' : i, 
+					'answer' : $scope.data.answers[i]}
+					
+					$scope.b.push(a);
+				}
+
+				$resource(baseOrigin  + "/en/_api/web/lists/GetByTitle('Trivia%20Result')/Items?$filter=Title%20eq%20%27" + $scope.data.id + "%27", {}, {
+					get: {
+						method: 'GET',
+						headers: { "accept": "application/json;odata=verbose" }
+					}
+				}).get().$promise.then(function (response) {
+					ansList = [];
+					ansCount = {};
+					var res = response.d.results;
+					
+					for(var j=0 ; j < res.length ; j++){
+						ansList.push(res[j].Answer)
+					}
+					
+					ansList.forEach(function (i) {
+						ansCount[i] = (ansCount[i] || 0) + 1;
+					});
+					
+					answer = [];
+					answercount=[];
+					for( p in ansCount){
+						
+						answer.push(p);
+						answercount.push(ansCount[p]);
+					} 
+					
+					$scope.chartLabel = answer;
+					$scope.chartValue = answercount;
+					
+					//var check = res.find(x => x.RespondentId === userId);
+					var check = res.filter(function (x) {
+									         return x.RespondentId === userId
+									    })[0];
+
+					if (check) {
+						$scope.seen = true
+					};
+				});
+			});
+		}
+
+		$scope.getList();
+		
+		
+		var data = {
+			labels: $scope.chartLabel,
+			datasets: [
+				{
+					data: $scope.chartValue,
+					
+				}
+			]
+		};
+		
+		$scope.options = { 
+			legend: { display: true, position: "left" },
+			tooltips: {
+						callbacks: {
+							label: function(tooltipItem, data) {
+								var allData = data.datasets[tooltipItem.datasetIndex].data;
+								var tooltipLabel = data.labels[tooltipItem.index];
+								var tooltipData = allData[tooltipItem.index];
+								var total = 0;
+								for (var i in allData) {
+									total += allData[i];
+								}
+								var tooltipPercentage = Math.round((tooltipData / total) * 100);
+								return tooltipLabel + ': ' + tooltipData + ' (' + tooltipPercentage + '%)';
+							}
+						}
+					}
+		};
+		
+
+		$scope.showTrivia = function (dataId) {
+			$scope.init(dataId);
+			$scope.showList = false;
+		};
+
+		$scope.hideTrivia = function () {
+			$scope.showList = true;
+			$scope.seen = false;
+		};
+
+		$scope.submit = function (ans) {
+			var url = baseOrigin  + "/en/_api/web/lists/GetByTitle('Trivia%20Result')/Items"
+			var hdr = {
+				headers: {
+					"Accept": "application/json;odata=verbose",
+					"Content-type": "application/json;odata=verbose",
+					"X-RequestDigest": $('#__REQUESTDIGEST').val(),
+					"odata-version": ""
+				}
+			};
+
+			var params = JSON.stringify({
+				'__metadata': {
+					'type': 'SP.Data.TriviaResultListItem'
+				},
+				'Title': $scope.data.id.toString(),
+				'Answer': ans.answer,
+				'AnswerID': ans.id.toString(),
+				'RespondentId': userId
+			});
+
+			$http.post(url, params, hdr)
+				.then(function onSuccess(response) {
+					$scope.init($scope.data.id);
+					$scope.seen = true;
+				}).catch(function onError(response) {
+					console.log(response);
+				});
+		};
+	}
+</script>

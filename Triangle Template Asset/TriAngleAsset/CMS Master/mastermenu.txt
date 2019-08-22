@@ -1,0 +1,553 @@
+﻿<script type="text/ng-template" id="myModalContent.html">
+        <div class="modal-header">
+            <h3 class="modal-title" id="modal-title">{{showCase.items.title}}</h3>
+        </div>
+        <div class="modal-body" id="modal-body" >
+        	<table id="browseLookup" datatable="ng" dt-options="showCase.dtOptions" dt-column-defs="showCase.dtColumnDefs" dt-instance="showCase.dtInstance" class="table table-striped table-bordered form-table nowrap" style="width:100%!important">
+		    <thead>
+		    	<th>Id</th>
+				<th>Title</th>
+                <th>Level</th>
+                <th>Position</th>
+                <th>Order</th>
+			  </thead>
+		        <tbody>
+		        <tr ng-repeat="menu in showCase.items.menuList">
+		        <td>{{menu.ID}}</td>
+		        <td>{{menu.Title}}</td>
+                <td>{{menu.Level}}</td>
+                <td>
+                    <div ng-switch="menu.Position">
+                        <div ng-switch-when="0">
+                            <p>Top</p>
+                        </div>
+                        <div ng-switch-when="1">
+                            <p>Bottom</p>
+                        </div>
+                        <div ng-switch-when="2">
+                            <p>Left</p>
+                        </div>
+                        <div ng-switch-default>
+                            <p>&nbsp;</p>
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <input type="text" class="form-control" ng-model="menu.order0" />
+                </td>
+		        </tbody>
+		    </table>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" type="button" ng-click="showCase.ok()" style="float:left">Close</button>
+            <button class="btn btn-primary" type="button" ng-click="showCase.submitEdit()" style="float:left">Submit</button>
+        </div>
+    </script>
+
+<div ng-controller="newsGalleryCtrl as showCase">
+    <div id="tableForm" ng-show="hideForm">
+        <a class="btn btn-success btn-md" ng-click="addNew()"><span class="fa fa-plus"></span> Add New</a>
+        <span style="color: #505050; font-style: italic; font-size: 12px; float: right">Tip: Hold SHIFT + click for
+            multiple sorting</span>
+        <table datatable="ng" dt-options="showCase.dtOptions" dt-column-defs="showCase.dtColumnDefs" dt-instance="showCase.dtInstance"
+            class="col-sm-12 table table-striped table-bordered form-table">
+            <thead>
+                <th class="column-datatable">Id</th>
+                <th class="column-datatable">Title</th>
+                <th class="column-datatable">Level</th>
+                <th class="column-datatable">Position</th>
+                <th class="column-datatable">Parent Menus</th>
+                <th class="column-datatable">URL</th>
+                <th class="column-datatable">Icon</th>
+                <th class="column-datatable">Order</th>
+                <th class="column-datatable">Status</th>
+                <th class="column-datatable">Actions</th>
+            </thead>
+            <tbody>
+                <tr ng-repeat="person in showCase.persons">
+                    <td>{{person.ID}}</td>
+                    <td class="column-datatable">{{person.Title}}</td>
+                    <td class="column-datatable">{{person.Level}}</td>
+                    <td class="column-datatable">
+                        <div ng-switch="person.Position">
+                            <div ng-switch-when="0">
+                                <p>Top</p>
+                            </div>
+                            <div ng-switch-when="1">
+                                <p>Bottom</p>
+                            </div>
+                            <div ng-switch-when="2">
+                                <p>Left</p>
+                            </div>
+                            <div ng-switch-default>
+                                <p>&nbsp;</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="column-datatable">{{person.Parent_x0020_Menus}}</td>
+                    <td class="column-datatable">{{person.URL}}</td>
+                    <td class="column-datatable">{{person.Icon}}</td>
+                    <td class="column-datatable">
+                        <a href="#" ng-click="getListByOrder(person.Level, person.Position)">{{person.order0}}</a>
+                    </td>
+                    <td class="column-datatable">
+                        <div ng-switch="person.OData__ModerationStatus">
+                            <div ng-switch-when="0">
+                                <p>Approved</p>
+                            </div>
+                            <div ng-switch-when="1">
+                                <p>Rejected</p>
+                            </div>
+                            <div ng-switch-when="2">
+                                <p>Pending</p>
+                            </div>
+                            <div ng-switch-default>
+                                <p>Draft</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="column-datatable">
+                        <div class="col-sm-4 no-padding">
+                            <a ng-click="edit(person)">
+                                <span class="btn btn-warning btn-sm fa fa-edit"></span>
+                            </a>
+                        </div>
+                        <div class="col-sm-4 no-padding">
+                            <a ng-click="delete(person)">
+                                <span class="btn btn-danger btn-sm fa fa-trash-o"></span>
+                            </a>
+                        </div>
+                        <div class="col-sm-4 no-padding">
+                            <a ng-click="approve(person)">
+                                <span class="btn btn-success btn-sm fa fa-check"></span>
+                            </a>
+                        </div>
+
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div id="addForm" ng-show="!hideForm">
+        <table class="col-sm-12 form-table">
+            <div class="col-md-12">
+                <div class="panel-heading col-md-12 no-padding">
+                    <a ng-click="collapse()"><span class="pull-right clickable"><i id='test' class="fa fa-minus"></i></span></a>
+                    <hr class="hr-thick">
+                </div>
+                <div class="panel-bodies">
+
+                    <div class='form-horizontal'>
+                        <div class="form-group">
+                            <label for="Title" class="control-label col-xs-2">Title</label>
+                            <div class="col-xs-10">
+                                <input type="hidden" ng-model="data.ID" name="ID" id="ID">
+                                <input type="text" ng-model="data.Title" class="form-control" id="Title" placeholder="Title"
+                                    ng-required="required">
+                                <span class="ms-metadata">Wording for Menu to be displayed</span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="Level" class="control-label col-xs-2">Level</label>
+                            <div class="col-xs-10">
+                                <input type="number" ng-model="data.Level" class="form-control" id="Level" placeholder="Level"
+                                    min="0" max="2">
+                                <span class="ms-metadata">0 is Parent, 1 is first sub menu, 2 is second child menu</span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="Position" class="control-label col-xs-2">Position</label>
+                            <div class="col-xs-10">
+                                <select ng-model="data.Position" class="form-control">
+                                    <option value=""> -- Select One -- </option>
+                                    <option value="0">Top</option>
+                                    <option value="1">Foot</option>
+                                    <option value="2">Left</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="ParentMenus" class="control-label col-xs-2">Parent Menus</label>
+                            <div class="col-xs-10">
+                                <select ng-model="data.Parent_x0020_Menus" class="form-control">
+                                    <option value=""> -- Select One -- </option>
+                                    <option value="root">root</option>
+                                    <option ng-repeat="menu in Menus" value="{{menu.Title}}">{{menu.Title}}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="URL" class="control-label col-xs-2">URL</label>
+                            <div class="col-xs-10">
+                                <input type="text" ng-model="data.URL" class="form-control" id="URL" placeholder="URL">
+                                <span class="ms-metadata">Destination of the menu</span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="Title" class="control-label col-xs-2">Icon</label>
+                            <div class="col-xs-10">
+                                <input type="text" ng-model="data.Icon" class="form-control" id="Icon" placeholder="Icon">
+                                <span class="ms-metadata">url of the icon image</span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="order0" class="control-label col-xs-2">Order</label>
+                            <div class="col-xs-10">
+                                <input type="number" ng-model="data.order0" class="form-control" id="order0"
+                                    placeholder="Order">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-xs-offset-2 col-xs-10">
+                                <a class="btn btn-primary" ng-click="save()"><span class="fa fa-save"></span> Save</a>
+                                <a class="btn btn-warning" ng-click="cancel()">Cancel</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+		</table>
+	</div>
+</div>
+
+<script>
+
+    angular.module('globalApp')
+        .controller('newsGalleryCtrl', newsGalleryCtrl)
+        .controller('ModalInstanceCtrl', ModalInstanceCtrl);
+
+    function newsGalleryCtrl($scope, $resource, $compile, $http, $q, $anchorScroll, $uibModal, $location, DTOptionsBuilder, DTColumnDefBuilder) {
+        var vm = this;
+        vm.persons = [];
+        vm.dtInstance = {};
+        $scope.hideForm = true;
+        $scope.data = [];
+        $scope.SiteGroups = [];
+        $scope.Menus = [];
+        $location.hash('top');
+        $scope.xRequestDigest;
+        $anchorScroll();
+        vm.dtOptions = DTOptionsBuilder
+            .newOptions()
+            .withPaginationType('full_numbers')
+            .withDisplayLength(2)
+            .withBootstrap()
+            .withOption('responsive', true)
+        vm.dtOptions = {
+            bLengthChange: false,
+            pageLength: 5,
+            lengthMenu: [[5, -1], [5]],
+            order : [[0, 'desc']]
+        };
+        vm.dtColumnDefs = [
+            DTColumnDefBuilder.newColumnDef(0).notVisible(),
+            DTColumnDefBuilder.newColumnDef(1),
+            DTColumnDefBuilder.newColumnDef(2),
+            DTColumnDefBuilder.newColumnDef(3),
+            DTColumnDefBuilder.newColumnDef(4),
+            DTColumnDefBuilder.newColumnDef(5),
+            DTColumnDefBuilder.newColumnDef(6)
+        ];
+
+        $.ajax({
+            url: _spPageContextInfo.webAbsoluteUrl + "/_api/contextinfo",
+            type: "POST",
+            headers: {
+                "Accept": "application/json;odata=verbose",
+            },
+            success: function (data) {
+                $scope.xRequestDigest = data.d.GetContextWebInformation.FormDigestValue;
+            },
+            error: function (data) {
+                console.log(data);
+            }
+        });
+
+        $scope.addNew = function () {
+            $scope.data = [];
+            $scope.hideForm = false;
+        };
+
+        $scope.cancel = function () {
+            $scope.hideForm = true;
+            $anchorScroll();
+        };
+
+        $scope.edit = function (x) {
+            $scope.hideForm = false;
+            $scope.data = x;
+        };
+
+        $scope.save = function (approve) {
+            var url = _spPageContextInfo.webAbsoluteUrl + "/_api/web/lists/getbytitle('Menus')/Items";
+            var hdr = {
+                headers: {
+                    "Content-type": "application/json;odata=verbose",
+                    "X-RequestDigest": $scope.xRequestDigest,
+                }
+            };
+
+
+            if ($scope.data.ID) {
+                url = _spPageContextInfo.webAbsoluteUrl + "/_api/web/lists/getbytitle('Menus')/Items(" + $scope.data.ID + ")";
+
+                hdr = {
+                    headers: {
+                        "Accept": "application/json;odata=verbose",
+                        "Content-type": "application/json;odata=verbose",
+                        "X-HTTP-Method": "MERGE",
+                        "X-RequestDigest": $scope.xRequestDigest,
+                        "If-Match": "*",
+                        "odata-version": ""
+                    }
+                }
+            }
+
+            var params = JSON.stringify(
+                {
+                    "__metadata": {
+                        "type": "SP.Data.MenusListItem"
+                    },
+                    "OData__ModerationStatus": $scope.data.OData__ModerationStatus
+                })
+
+            if (!approve) {
+                params = JSON.stringify(
+                    {
+                        "__metadata": {
+                            "type": "SP.Data.MenusListItem"
+                        },
+                        "Title": $scope.data.Title,
+                        "Level": $scope.data.Level,
+                        "Position": $scope.data.Position,
+                        "Parent_x0020_Menus": $scope.data.Parent_x0020_Menus,
+                        "URL": $scope.data.URL,
+                        "Icon": $scope.data.Icon,
+                        "order0": $scope.data.order0,
+                        "OData__ModerationStatus": "2",
+                    })
+            }
+
+            $http.post(url, params, hdr)
+                .then(function onSuccess(response) {
+                    location.reload();
+                }).catch(function onError(response) {
+                    console.log(response);
+                });
+
+        };
+
+        $scope.delete = function (x) {
+            if (!x.ID) return;
+            var r = confirm("Do you want to delete this row?");
+
+            var url = _spPageContextInfo.webAbsoluteUrl + "/_api/web/lists/getbytitle('Menus')/Items(" + x.ID + ")";
+            var hdr = {
+                headers: {
+                    "Accept": "application/json;odata=verbose",
+                    "X-RequestDigest": $scope.xRequestDigest,
+                    "If-Match": "*"
+                }
+            };
+            if (r == true) {
+                $http.delete(url, hdr)
+                    .then(function onSuccess(response) {
+                        location.reload();
+                    }).catch(function onError(response) {
+                        console.log(response);
+                    });
+            }
+        };
+
+        $scope.approve = function (x) {
+            if (!x.ID) return;
+
+            var r = confirm("Do you want to approve this content?");
+            if (r == true) {
+                $scope.data = {
+                    'Title': x.Title,
+                    'Level': x.Level,
+                    'Parent_x0020_Menus': x.Parent_x0020_Menus,
+                    'Position': x.Position.toString(),
+                    'order0': x.order0,
+                    'URL': x.URL,
+                    'Icon': x.Icon,
+                    'OData__ModerationStatus': 0,
+                    'ID': x.ID
+                };
+                $scope.save(true);
+            }
+        };
+
+
+        $scope.download = function (x) {
+            alert('download');
+        };
+
+        $resource(_spPageContextInfo.webAbsoluteUrl + "/_api/web/lists/getbytitle('Menus')/Items", {}, {
+            get: {
+                method: 'GET',
+                headers: { "accept": "application/json;odata=verbose" }
+            }
+        }).get().$promise.then(function (response) {
+            vm.persons = response.d.results;
+        });
+
+        $resource(_spPageContextInfo.webAbsoluteUrl + "/_api/Web/SiteGroups", {}, {
+            get: {
+                method: 'GET',
+                headers: { "accept": "application/json;odata=verbose" }
+            }
+        }).get().$promise.then(function (response) {
+            $scope.SiteGroups = response.d.results;
+        });
+
+        $resource(_spPageContextInfo.webAbsoluteUrl + "/_api/web/lists/getbytitle('Menus')/Items?$select=Title&$filter=Level%20eq%20%270%27", {}, {
+            get: {
+                method: 'GET',
+                headers: { "accept": "application/json;odata=verbose" }
+            }
+        }).get().$promise.then(function (response) {
+            $scope.Menus = response.d.results;
+        });
+
+        $scope.collapse = function (x) {
+            if (!$('#test').hasClass('fa-plus')) {
+                $('.panel-bodies').slideUp();
+                $('#test').removeClass('fa-minus').addClass('fa-plus');
+            } else {
+                $('.panel-bodies').slideDown();
+                $('#test').removeClass('fa-plus').addClass('fa-minus');
+            }
+
+        };
+
+        $scope.open = function (title, content, size, parentSelector) {
+            var parentElem = parentSelector ?
+                angular.element($document[0].querySelector('.modal-demo ' + parentSelector)) : undefined;
+            var modalInstance = $uibModal.open({
+                animation: $ctrl.animationsEnabled,
+                ariaLabelledBy: 'modal-title',
+                ariaDescribedBy: 'modal-body',
+                templateUrl: 'myModalContent.html',
+                controller: 'ModalInstanceCtrl',
+                controllerAs: 'showCase',
+                size: size,
+                appendTo: parentElem,
+                resolve: {
+                    items: function () {
+                        return { 'title': title, 'content': content };
+                    }
+                }
+            });
+        };
+
+        $scope.getListByOrder = function(lv, pos) {
+			$resource( _spPageContextInfo.webAbsoluteUrl + "/_api/web/lists/getbytitle('Menus')/Items?$filter=Level eq '" + lv + "' and Position eq '" + pos + "'", {}, {
+				    get: {
+				        method: 'GET',
+				        headers: { "accept": "application/json;odata=verbose" }
+				    }
+				 }).get().$promise.then(function(response) {
+	        		$scope.openModal('Edit Ordering', response.d.results,'lg');
+	    		});
+ 		};
+        
+        $scope.openModal = function (title, content, size, parentSelector) {
+		    var parentElem = parentSelector?angular.element($document[0].querySelector('.modal-demo ' + parentSelector)) : undefined;
+			  var modalInstance = $uibModal.open({
+			      animation: $scope.animationsEnabled,
+			      ariaLabelledBy: 'modal-title',
+			      ariaDescribedBy: 'modal-body',
+			      templateUrl: 'myModalContent.html',
+			      controller: 'ModalInstanceCtrl',
+			      controllerAs: 'showCase',
+			      size: size,
+			      appendTo: parentElem,
+			      resolve: {
+			        items: function () {
+			          return {'title' : title, 'menuList' : content};
+			        }
+			      }
+		    });
+		};
+
+    };
+
+    function ModalInstanceCtrl($scope, $rootScope, $q, $http, $uibModalInstance, items, DTOptionsBuilder, DTColumnDefBuilder) {
+        var showCase = this;
+        var vm = this;
+        vm.message = '';
+        showCase.items = items;
+        showCase.selected = {
+            item: showCase.items[0]
+        };
+        vm.someClickHandler = showCase.someClickHandler;
+        vm.dtOptions = DTOptionsBuilder
+            .newOptions()
+            .withPaginationType('full_numbers')
+            .withDisplayLength(2)
+            .withBootstrap()
+            .withOption('responsive', true);
+        vm.dtOptions = {
+            searching: false,
+            paging: false,
+            bLengthChange: false,
+            lengthMenu: [[5, -1], [5]]
+        };
+        vm.dtColumnDefs = [
+            DTColumnDefBuilder.newColumnDef(0).notVisible(),
+            DTColumnDefBuilder.newColumnDef(1),
+            DTColumnDefBuilder.newColumnDef(2),
+            DTColumnDefBuilder.newColumnDef(3),
+            DTColumnDefBuilder.newColumnDef(4)
+        ];
+
+        showCase.someClickHandler = function (info) {
+            vm.message = info.ID + ' - ' + info.Name;
+            $rootScope.FileName = info.Name;
+            showCase.ok();
+        };
+
+        showCase.ok = function () {
+            $uibModalInstance.close(showCase.selected.item);
+        };
+
+        showCase.submitEdit = function () {
+            var promiseSend = [];
+            var menuList = showCase.items.menuList;
+            var hdr = {
+                headers: {
+                    "Accept": "application/json;odata=verbose",
+                    "Content-type": "application/json;odata=verbose",
+                    "X-HTTP-Method": "MERGE",
+                    "X-RequestDigest": $('#__REQUESTDIGEST').val(),
+                    "If-Match": "*",
+                    "odata-version": ""
+                }
+            };
+            menuList.forEach(item => {
+               var url = _spPageContextInfo.webAbsoluteUrl + "/_api/web/lists/getbytitle('Menus')/Items(" + item.ID + ")";
+               var params = JSON.stringify({
+                    "__metadata": {
+                        "type": "SP.Data.MenusListItem"
+                    },
+                    "order0": item.order0
+                });
+                promiseSend.push($http.post(url, params, hdr));
+            });
+            $q.all(promiseSend).then(function onSuccess(resArr) {
+                location.reload();
+            }).catch(function onError(resArr) {
+                console.log(resArr);
+            });
+        };
+
+        showCase.cancel = function () {
+            $uibModalInstance.dismiss('cancel');
+        };
+    };
+</script>

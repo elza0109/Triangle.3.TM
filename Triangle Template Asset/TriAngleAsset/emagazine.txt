@@ -1,0 +1,103 @@
+﻿<link rel="stylesheet" href="/SiteAssets/TriAngleAsset/lib/dist/plugins/bootstrap/datatables.bootstrap.min.css">
+<link rel="stylesheet" href="/SiteAssets/TriAngleAsset/lib/dist/css/angular-datatables.css">
+<script src="/SiteAssets/TriAngleAsset/lib/jquery.dataTables.min.js"></script> 
+<script src="/SiteAssets/TriAngleAsset/lib/angularjs.min.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/dist/angular-datatables.min.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/dist/plugins/bootstrap/angular-datatables.bootstrap.min.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/dataTables.responsive.min.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/angular-sanitize.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/angular-resource.js"></script>
+
+<div ng-app="globalApp" ng-controller="newsGalleryCtrl">
+	<div ng-controller="newsGalleryCtrl as showCase">
+	    <table datatable="ng" dt-options="showCase.dtOptions" dt-column-defs="showCase.dtColumnDefs"  class="table table-striped">
+	    <thead style='display:none;'>
+		    <th>header 1</th>
+		    <th>header 2</th>
+		  </thead>
+	        <tbody>
+				<tr ng-repeat="person in showCase.persons">
+					<td class="col-md-4"><img class="img-responsive max300" ng-src="{{person.Thumbnails.Url}}"/></td>
+					<td class="col-md-8">
+						<div class="row"><span>{{person.PublishingDate}}</span><p style="font-size:16px"><strong>{{person.Title}}</strong></p>
+							<div id="news" ng-bind-html="person.Content| limitTo: 300">
+							</div>
+						</div>
+						<div class="row"><a href="{{person.downloadUrl}}"><i>Download here</i></a></div>
+					</td>
+				</tr>
+	        </tbody>
+	    </table>	
+	</div>
+</div>
+
+<script>
+	var first = 0;
+	angular.module('globalApp', ['ngSanitize','datatables', 'datatables.bootstrap', 'ngResource']).controller('newsGalleryCtrl', newsGalleryCtrl);
+
+	function newsGalleryCtrl($scope,$resource, DTOptionsBuilder, DTColumnDefBuilder, $http, $q) {
+	    var vm = this;
+	    vm.persons = [];
+	    vm.magazine = [];
+	    vm.getfileitems = [];
+		var today = new Date();
+		
+	    vm.dtOptions = DTOptionsBuilder
+	    	.newOptions()
+	        .withPaginationType('full_numbers')
+	        .withDisplayLength(2)
+    		.withBootstrap()
+    		.withOption('responsive', true);
+		vm.dtOptions = {
+						searching:false,
+						bLengthChange: false,
+						pageLength : 3,
+		    			lengthMenu: [[3, -1], [3]]
+						};
+	    vm.dtColumnDefs = [
+	        DTColumnDefBuilder.newColumnDef(0),
+	        DTColumnDefBuilder.newColumnDef(1)
+	    ];
+    	
+    	vm.reloadData = reloadData;
+    	vm.dtInstance = {};
+    	
+    	function reloadData() {
+	        var resetPaging = true;
+	        vm.dtInstance.reloadData(callback, resetPaging);
+	    };
+	    
+	    function callback(json) {
+	        console.log(json);
+	    };
+    	
+
+    	$resource(_spPageContextInfo.webAbsoluteUrl +"/_api/web/lists/getbytitle('e-Magazines%20Library')/Items?$filter=OData__ModerationStatus eq '0' and (PublishDate le datetime'" + today.toISOString() + "')&$orderby=Created%20desc", {}, {
+				    get: {
+				        method: 'GET',
+				        headers: { "accept": "application/json;odata=verbose" }
+				    }
+				 }).get().$promise.then(function(response) {
+	        		vm.persons = response.d.results;					
+        			$resource(_spPageContextInfo.webAbsoluteUrl +"/_api/web/lists/getbytitle('e-Magazines%20Library')/RootFolder/files", {}, {
+					    get: {
+					        method: 'GET',
+					        headers: { "accept": "application/json;odata=verbose" }
+					    }
+					 }).get().$promise.then(function(res) {	
+					 			
+					 			vm.magazine = res.d.results;
+					 								 			
+					 			for(var i = 0;i < vm.persons.length;i++){
+		        					for(var j=0; j < vm.magazine.length;j++){
+		        						if(vm.magazine[j].Title == vm.persons[i].Title ){
+
+											    vm.persons[i]['downloadUrl']= vm.magazine[j].ServerRelativeUrl; 
+		        						}
+		        					}
+		        				}			 
+				 	 });   			       		
+	    		});	
+	   };
+
+</script>

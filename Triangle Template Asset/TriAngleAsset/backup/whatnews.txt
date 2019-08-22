@@ -1,0 +1,382 @@
+<link rel="stylesheet" href="/SiteAssets/TriAngleAsset/lib/dist/plugins/bootstrap/datatables.bootstrap.min.css">
+<link rel="stylesheet" href="/SiteAssets/TriAngleAsset/lib/dist/css/angular-datatables.css">
+<script src="/SiteAssets/TriAngleAsset/lib/jquery.dataTables.min.js"></script> 
+<script src="/SiteAssets/TriAngleAsset/lib/angularjs.min.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/dist/angular-datatables.min.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/dist/plugins/bootstrap/angular-datatables.bootstrap.min.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/dataTables.responsive.min.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/angular-sanitize.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/angular-resource.js"></script>
+
+<script src="/SiteAssets/TriAngleAsset/lib/moment.min.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/angular-moment.min.js"></script>
+
+
+<div ng-app="globalApp">
+	<div>
+		<div class="col-sm-12 no-padding" ng-controller="whatsnew as showCase">
+			<div class="col-md-12 no-padding">
+				<table datatable="ng" dt-options="showCase.dtOptions" dt-column-defs="showCase.dtColumnDefs"  class="table table-striped">
+					<thead style='display:none;'>
+						<th>header 1</th>
+					</thead>
+					<tbody>
+						<tr  ng-repeat="subject in showCase.persons">
+							<td>
+								<div>
+									<h3><a  ng-href='{{subject.link}}'>{{subject.title}}</a></h3><sup>{{subject.from}}</sup>
+								</div>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>	
+		</div>
+	</div>
+</div>
+
+<script>
+	angular.module('globalApp', ['ngSanitize','datatables', 'datatables.bootstrap', 'ngResource','angularMoment'])
+	.controller('whatsnew', whatsnew)
+	
+	
+	function whatsnew($scope, $resource, $filter, $http, $q, DTOptionsBuilder, DTColumnDefBuilder) {
+	    var vm = this;
+	    vm.persons = [];
+	    vm.listall = [];
+	    vm.dtOptions = DTOptionsBuilder
+	    	.newOptions()
+	        .withPaginationType('full_numbers')
+	        .withDisplayLength(1)
+    		.withBootstrap()
+    		.withOption('responsive', true);
+		vm.dtOptions = {
+						searching:false,
+						bLengthChange: false,
+						pageLength : 4,
+		    			lengthMenu: [[4, -1], [4]],
+						order : [[0, 'desc']]
+						};
+	    vm.dtColumnDefs = [
+	        DTColumnDefBuilder.newColumnDef(0)
+	        ];
+	        
+	    var listname =["Trivia Master Question"
+	    				,"Event"
+	    				,"Internal Vacancy"];
+	    
+	    
+	    listname.forEach(function (value) {
+		});
+		var now = new Date();
+		var mm = ("0" +(now.getMonth() + 1)).slice(-2);
+    	var dd = ("0" + now.getDate()).slice(-2);
+    	var yyyy = now.getFullYear();
+    	var varnow = yyyy+ '-' + mm + '-' + dd;
+    	var dateNow = new Date(varnow);
+
+				
+		var last = new Date();
+		last.setDate(last.getDate() - 3);
+		var mmlast = ("0" + (last.getMonth() + 1)).slice(-2);
+    	var ddlast = ("0" + last.getDate()).slice(-2);
+    	var yyyylast = last.getFullYear();
+    	var varlast = yyyylast + '-' + mmlast + '-' + ddlast  ;
+    	
+    	var datelast = new Date(varlast);
+
+    			
+		$scope.reloadTable = function(){
+				$resource(_spPageContextInfo.webAbsoluteUrl +"/_api/web/lists/GetByTitle('Trivia Master Question')/Items?$filter=IsActive eq '1'&$top=10&$orderby=Modified desc", {}, {
+				    get: {
+				        method: 'GET',
+				        headers: { "accept": "application/json;odata=verbose" }
+				    }
+				 }).get().$promise.then(function(response) {
+	        		
+	        		for(var i = 0;i < response.d.results.length;i++){
+	        			var d = response.d.results[i].Modified.slice(0, 10).split('-');
+	        			var e = d[1] +'/'+ d[2] +'/'+ d[0];
+	        			var mydate = new Date(e);
+													        					    					
+	        			if(datelast <= mydate && mydate <= dateNow)
+	        			{
+	        				vm.persons.push({
+			                    title: response.d.results[i].TitleTrivia,
+			                    link: _spPageContextInfo.webAbsoluteUrl+'/trivia',
+			                    from: 'Trivia',
+			                    modified : response.d.results[i].Modified
+			                });	
+	        			}
+	        			
+					}
+					
+					$resource(window.location.origin +"/en/_api/web/lists/getbytitle('Event')/Items?$top=10&$orderby=Modified desc", {}, {
+						    get: {
+						        method: 'GET',
+						        headers: { "accept": "application/json;odata=verbose" }
+						    }
+						 }).get().$promise.then(function(b) {
+						 	
+			        		for(var i = 0;i < b.d.results.length;i++){
+			        			var d = b.d.results[i].Modified.slice(0, 10).split('-');
+			        			var e = d[1] +'/'+ d[2] +'/'+ d[0];
+			        			var mydate = new Date(e);
+													        					    					
+	        					if(datelast <= mydate && mydate <= dateNow)
+			        			{
+			        				vm.persons.push({
+					                    title: b.d.results[i].Title,
+					                    link: _spPageContextInfo.webAbsoluteUrl+'/calendar',
+					                    from: 'Event',
+					                    modified : b.d.results[i].Modified
+					                });
+			        			}
+							}
+							
+							$resource(_spPageContextInfo.webAbsoluteUrl +"/_api/web/lists/getbytitle('Internal Vacancy')/Items?$filter=OData__ModerationStatus eq '0'&$top=10&$orderby=Modified desc", {}, {
+								    get: {
+								        method: 'GET',
+								        headers: { "accept": "application/json;odata=verbose" }
+								    }
+								 }).get().$promise.then(function(b) {
+					        		for(var i = 0;i < b.d.results.length;i++){
+					        			var d = b.d.results[i].Modified.slice(0, 10).split('-');
+			        					var e = d[1] +'/'+ d[2] +'/'+ d[0];
+					        			var mydate = new Date(e);
+													        					    					
+	        							if(datelast <= mydate && mydate <= dateNow)
+					        			{
+					        				vm.persons.push({
+							                    title: b.d.results[i].Title,
+							                    link: _spPageContextInfo.webAbsoluteUrl+'/internal-vacancy',
+							                    from: 'Internal Vacancy',
+							                    modified : b.d.results[i].Modified
+							                });
+					        			}
+					        			
+									}
+									$resource(_spPageContextInfo.webAbsoluteUrl +"/_api/web/lists/getbytitle('3%20Knowledge')/RootFolder/Files?$top=10&$orderby=TimeLastModified desc", {}, {
+										    get: {
+										        method: 'GET',
+										        headers: { "accept": "application/json;odata=verbose" }
+										    }
+										 }).get().$promise.then(function(b) {
+							        		for(var i = 0;i < b.d.results.length;i++){
+							        			var d = b.d.results[i].TimeLastModified.slice(0, 10).split('-');
+					        					var e = d[1] +'/'+ d[2] +'/'+ d[0];
+							        			var mydate = new Date(e);
+													        					    					
+	        									if(datelast <= mydate && mydate <= dateNow)
+							        			{
+							        				vm.persons.push({
+									                    title: b.d.results[i].Name,
+									                    link: _spPageContextInfo.webAbsoluteUrl+'/3-knowledge',
+									                    from: '3 Knowledge',
+									                    modified : b.d.results[i].Modified
+
+									                });
+							        			}
+											}
+											$resource(_spPageContextInfo.webAbsoluteUrl +"/_api/web/lists/getbytitle('TRIpedia')/Items?$filter=OData__ModerationStatus eq '0'&$top=10&$orderby=Modified desc", {}, {
+												    get: {
+												        method: 'GET',
+												        headers: { "accept": "application/json;odata=verbose" }
+												    }
+												 }).get().$promise.then(function(b) {
+												 	
+									        		for(var i = 0;i < b.d.results.length;i++){
+									        			var d = b.d.results[i].Modified.slice(0, 10).split('-');
+							        					var e = d[1] +'/'+ d[2] +'/'+ d[0];
+									        			var mydate = new Date(e);
+													        					    					
+	        											if(datelast <= mydate && mydate <= dateNow)
+									        			{
+									        				vm.persons.push({
+											                    title: b.d.results[i].Title,
+											                    link: _spPageContextInfo.webAbsoluteUrl+'/tripedia',
+											                    from: 'TRIpedia',
+											                    modified : b.d.results[i].Modified
+											                });
+									        			}
+													}
+													$resource(_spPageContextInfo.webAbsoluteUrl +"/_api/web/lists/getbytitle('Policy Library')/Items?$top=10&$orderby=Modified desc", {}, {
+														    get: {
+														        method: 'GET',
+														        headers: { "accept": "application/json;odata=verbose" }
+														    }
+														 }).get().$promise.then(function(b) {
+														 	
+											        		for(var i = 0;i < b.d.results.length;i++){
+											        			var d = b.d.results[i].Modified.slice(0, 10).split('-');
+									        					var e = d[1] +'/'+ d[2] +'/'+ d[0];
+											        			var mydate = new Date(e);
+													        					    					
+	        													if(datelast <= mydate && mydate <= dateNow)
+											        			{
+											        				vm.persons.push({
+													                    title: b.d.results[i].Title,
+													                    link: _spPageContextInfo.webAbsoluteUrl+'/policies',
+													                    from: 'policies',
+													                    modified : b.d.results[i].Modified
+
+													                });
+											        			}
+															}
+															$resource(_spPageContextInfo.webAbsoluteUrl +"/_api/web/lists/getbytitle('Form Library')/Items?$top=10&$orderby=Modified desc", {}, {
+																    get: {
+																        method: 'GET',
+																        headers: { "accept": "application/json;odata=verbose" }
+																    }
+																 }).get().$promise.then(function(b) {
+																 	
+													        		for(var i = 0;i < b.d.results.length;i++){
+													        			var d = b.d.results[i].Modified.slice(0, 10).split('-');
+											        					var e = d[1] +'/'+ d[2] +'/'+ d[0];
+													        			var mydate = new Date(e);
+													        					    					
+	        															if(datelast <= mydate && mydate <= dateNow)
+													        			{
+													        				vm.persons.push({
+															                    title: b.d.results[i].Title,
+															                    link: _spPageContextInfo.webAbsoluteUrl+'/form',
+															                    from: 'Form',
+															                    modified : b.d.results[i].Modified
+
+															                });
+													        			}
+																	}
+																	$resource(_spPageContextInfo.webAbsoluteUrl +"/_api/web/lists/getbytitle('News and Gallery')/Items?$filter=OData__ModerationStatus eq '0'&$top=10&$orderby=Modified desc", {}, {
+																		    get: {
+																		        method: 'GET',
+																		        headers: { "accept": "application/json;odata=verbose" }
+																		    }
+																		 }).get().$promise.then(function(b) {
+																		 	
+															        		for(var i = 0;i < b.d.results.length;i++){
+															        			var d = b.d.results[i].Modified.slice(0, 10).split('-');
+													        					var e = d[0] +'-'+ d[1] +'-'+ d[2];
+													        					var mydate = new Date(e);
+													        																		        					
+															        			if(datelast <= mydate && mydate <= dateNow)
+															        			{
+															        				vm.persons.push({
+																                    title: b.d.results[i].Title,
+																                    link: _spPageContextInfo.webAbsoluteUrl+'/news-gallery',
+																                    from: 'News & Gallery',
+																                    modified : b.d.results[i].Modified
+
+																                	});
+															        			}
+																			}
+																			$resource(_spPageContextInfo.webAbsoluteUrl +"/_api/web/lists/getbytitle('Press Release')/Items?$filter=OData__ModerationStatus eq '0'&$top=10&$orderby=Modified desc", {}, {
+																				    get: {
+																				        method: 'GET',
+																				        headers: { "accept": "application/json;odata=verbose" }
+																				    }
+																				 }).get().$promise.then(function(b) {
+																				 	
+																	        		for(var i = 0;i < b.d.results.length;i++){
+																	        			var d = b.d.results[i].Modified.slice(0, 10).split('-');
+															        					var e = d[1] +'/'+ d[2] +'/'+ d[0];
+																	        			var mydate = new Date(e);
+													        					    					
+	        																			if(datelast <= mydate && mydate <= dateNow)
+																	        			{
+																	        				vm.persons.push({
+																			                    title: b.d.results[i].Title,
+																			                    link: _spPageContextInfo.webAbsoluteUrl+'/press-release',
+																			                    from: 'Press Release',
+																			                    modified : b.d.results[i].Modified
+
+																			                });
+																	        			}
+																					}
+																					$resource(_spPageContextInfo.webAbsoluteUrl +"/_api/web/lists/getbytitle('e-Magazines Library')/Items?$filter=OData__ModerationStatus eq '0'&$top=10&$orderby=Modified desc", {}, {
+																						    get: {
+																						        method: 'GET',
+																						        headers: { "accept": "application/json;odata=verbose" }
+																						    }
+																						 }).get().$promise.then(function(b) {
+																						 	
+																			        		for(var i = 0;i < b.d.results.length;i++){
+																			        			var d = b.d.results[i].Modified.slice(0, 10).split('-');
+																	        					var e = d[1] +'/'+ d[2] +'/'+ d[0];
+																			        			var mydate = new Date(e);
+													        					    					
+	        																					if(datelast <= mydate && mydate <= dateNow)
+																			        			{
+																			        				vm.persons.push({
+																					                    title: b.d.results[i].Title,
+																					                    link: _spPageContextInfo.webAbsoluteUrl+'/e-magazines',
+																					                    from: 'e-Magazines',
+																					                    modified : b.d.results[i].Modified
+
+																					                });
+																			        			}
+																							}
+																							$resource(_spPageContextInfo.webAbsoluteUrl +"/_api/web/lists/getbytitle('Vlog')/Items?$top=10&$orderby=Modified desc", {}, {
+																								    get: {
+																								        method: 'GET',
+																								        headers: { "accept": "application/json;odata=verbose" }
+																								    }
+																								 }).get().$promise.then(function(b) {
+																					        		for(var i = 0;i < b.d.results.length;i++){
+																					        			var d = b.d.results[i].Modified.slice(0, 10).split('-');
+																			        					var e = d[1] +'/'+ d[2] +'/'+ d[0];
+																					        			var mydate = new Date(e);
+													        					    					
+	        																							if(datelast <= mydate && mydate <= dateNow)
+																					        			{
+																					        				if(b.d.results[i].Title != null)
+																					        				{
+																						        				vm.persons.push({
+																								                    title: b.d.results[i].Title,
+																								                    link: _spPageContextInfo.webAbsoluteUrl+'/vlog',
+																								                    from: 'Vlog',
+																								                    modified : b.d.results[i].Modified
+
+																								                	});
+																						        			}
+																					        			}
+																									}
+																									$resource(window.location.origin +"/en/_api/web/lists/getbytitle('Posts')/Items?$filter=_ModerationStatus eq '0'&$top=10&$orderby=Modified desc", {}, {
+																										    get: {
+																										        method: 'GET',
+																										        headers: { "accept": "application/json;odata=verbose" }
+																										    }
+																										 }).get().$promise.then(function(b) {
+																							        		for(var i = 0;i < b.d.results.length;i++){
+																							        			var d = b.d.results[i].Modified.slice(0, 10).split('-');
+																					        					var e = d[1] +'/'+ d[2] +'/'+ d[0];
+																							        			var mydate = new Date(e);
+													        					    					
+	        																									if(datelast <= mydate && mydate <= dateNow)
+																							        			{
+																							        				if(b.d.results[i].Title != null)
+																								        			{
+																								        				vm.persons.push({
+																									                    title: b.d.results[i].Title,
+																									                    link: _spPageContextInfo.webAbsoluteUrl+'/blog',
+																									                    from: 'Blog',
+																									                    modified : b.d.results[i].Modified					                    
+																									                	});
+																								        			}	
+																							        			}
+																											}
+																					    			});	
+																			    			});	
+																	    			});	
+															    			});	
+													    			});	
+											    			});	
+									    			});	
+							    			});	
+					    			});
+			    			});	
+			    		});
+	    		});
+		}
+		$scope.reloadTable();	
+	};
+</script>

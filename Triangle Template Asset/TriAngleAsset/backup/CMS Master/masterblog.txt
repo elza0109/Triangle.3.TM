@@ -1,0 +1,505 @@
+﻿	<!-- Controller Template -->
+	<div ng-controller="masterblogCtrl as showCase">
+            <!-- Modal template -->
+        <script type="text/ng-template" id="myModalContent.html">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modal-title">{{showCase.items.title}}</h3>
+            </div>
+            <div class="modal-body" id="modal-body" ng-bind-html="showCase.items.content.Body">
+             </div>
+            <div class="modal-footer">
+                <div class='form-horizontal'>
+                    <div class="form-group">
+                        <label for="Category" class="control-label col-xs-2">Category</label>
+                        <div class="col-xs-10">
+                            <ui-select multiple ng-model="showCase.items.selectedCategory" style="float:left" ng-disabled="true" theme="bootstrap" sortable="true" close-on-select="false">
+                                <ui-select-match placeholder="Select category" style="float:left">{{$item.name}}</ui-select-match>
+                                <ui-select-choices repeat="person in showCase.items.category | propsFilter: {name: $select.search}">
+                                  <div ng-bind-html="person.name | highlight: $select.search"></div>
+                                </ui-select-choices>
+                            </ui-select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-xs-2">
+                            <button class="btn btn-danger" type="button" ng-click="showCase.ok()">Close</button>
+                        </div>
+                     </div>
+                 </div>
+            </div>
+        </script>
+        <!-- Modal template -->
+            <!-- tableForm Template -->
+            <div id="tableForm" ng-show="hideForm" >
+                <span style="color: #505050; font-style: italic; font-size: 12px; float: right">Tip: Hold SHIFT + click for multiple sorting</span>
+                <table datatable="ng" dt-options="showCase.dtOptions" dt-column-defs="showCase.dtColumnDefs" dt-instance="showCase.dtInstance" class="col-sm-12 table table-striped table-bordered form-table">
+                    <thead>
+                        <th class="column-datatable">Id</th>
+                        <th class="column-datatable">Title</th>
+                        <th class="column-datatable">Author</th>
+                        <th class="column-datatable">Category</th>
+                        <th class="column-datatable">Content</th>
+                        <th class="column-datatable">Status</th>
+                        <th class="column-datatable">Actions</th>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="field in showCase.tables">
+                            <td class="column-datatable">{{field.ID}}</td>
+                            <td class="column-datatable"><a ng-href="#" ng-click="openModal(field)">{{field.Title}}</a></td>
+                            <td class="column-datatable">{{field.Author}}</td>
+                            <td class="column-datatable">
+                                <span ng-bind-html="getCategory(field.PostCategoryId.results)"></span>
+                            </td>
+                            <td class="column-datatable-left">
+                                <div ng-bind-html="field.Body"></div>
+                            </td>
+                            <td class="column-datatable">
+                                <div ng-switch="field.OData__ModerationStatus">
+                                  <div ng-switch-when="0">
+                                    <p>Approved</p>
+                                  </div>
+                                  <div ng-switch-when="1">
+                                    <p>Rejected</p>
+                                  </div>
+                                  <div ng-switch-when="2">
+                                    <p>Pending</p>
+                                  </div>
+                                  <div ng-switch-default>
+                                    <p>Draft</p>
+                                  </div>
+                                </div>
+                            </td>
+                            <td class="column-datatable">
+                                <div class="col-sm-4 no-padding">
+                                    <a ng-click="edit(field)">
+					            		<span class="btn btn-warning btn-sm fa fa-edit"></span>
+					            	</a>
+                                </div>
+                                <div class="col-sm-4 no-padding">
+                                    <a ng-click="delete(field)"><span class="btn btn-danger btn-sm fa fa-trash-o"></span></a>  
+                                </div>
+                                <div class="col-sm-4 no-padding">
+                                    <a ng-click="approve(field)"><span class="btn btn-success btn-sm fa fa-check"></span></a>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+			
+            <!-- Form Input -->
+			<div id="addForm" ng-show="!hideForm">
+				<table class="col-sm-12 form-table">
+					<div class="col-md-12">
+						<div class="panel-heading col-md-12 no-padding">
+							<a ng-click="collapse()"><span class="pull-right clickable"><i id='panel-header' class="fa fa-minus"></i></span></a>
+							<hr class="hr-thick">
+						</div>
+						<div class="panel-bodies">
+							<div class='form-horizontal'>
+								<div class="form-group">
+							        <label for="Title" class="control-label col-xs-2">Title</label>
+							        <div class="col-xs-10">
+							        	<input type="hidden" ng-model="data.ID" name="ID" id="ID" >
+							            <input type="text" ng-model="data.Title" class="form-control" id="Title" placeholder="Title" ng-required="required">
+							            <span class="ms-metadata">Wording for Menu to be displayed</span>
+							        </div>
+							    </div>
+							    
+							    <div class="form-group">
+							    	<label for="Content" class="control-label col-xs-2">Blog Content</label>
+							    	<div class="col-md-10">
+							    		<div text-angular="text-angular" name="htmlcontent" ng-model="data.Body" ta-disabled='disabled' 
+								         	ta-toolbar-button-class="btn btn-default btn-xs"
+								         	ta-toolbar="[]"
+								         	ta-text-editor-class="form-control myform1-height" 
+	        								ta-html-editor-class="form-control myform1-height"
+	        								ta-unsafe-sanitizer="true"
+								         >
+								         </div>
+								     </div>
+							    </div>
+							    
+							 	<div class="form-group">
+							        <label for="category" class="control-label col-xs-2">Category</label>
+							        <div class="col-xs-10">
+								        <ui-select multiple ng-model="showCase.multipleDemo.selectedCategory" theme="bootstrap" ng-disabled="ctrl.disabled" sortable="true" close-on-select="false" style="width: 800px;">
+										    <ui-select-match placeholder="Select category...">{{$item.name}}</ui-select-match>
+										    <ui-select-choices repeat="c in showCase.category | propsFilter: {name: $select.search}">
+										      <div ng-bind-html="c.name | highlight: $select.search"></div>
+										      <small>
+										        {{cat.name}}
+										      </small>
+										    </ui-select-choices>
+										</ui-select>
+								   		<span class="ms-metadata" style="color:red"><i>Please type for search</i></span>
+								   </div>
+							    </div>
+							    <div class="form-group">
+							        <div class="col-xs-offset-2 col-xs-10">
+							        	<a class="btn btn-primary" ng-click="save()">Save as draft</a>
+							            <a class="btn btn-warning" ng-click="cancel()">Cancel</a>
+							        </div>
+							    </div>
+							</div>
+						</div>
+					</div>
+				</table>
+			</div>
+	</div >	
+    
+    <script>
+    angular.module('globalApp')
+    .controller('masterblogCtrl', masterblogCtrl)
+    .controller('ModalInstanceCtrl', ModalInstanceCtrl);
+        
+    function masterblogCtrl($scope, $rootScope, $resource, $compile, $http, $q, $anchorScroll, $location, $uibModal, $log, $document, DTOptionsBuilder, DTColumnDefBuilder) {
+        $scope.baseurl = window.location.origin + "/";
+        $scope.baseurl_en = _spPageContextInfo.webAbsoluteUrl;
+        
+        var vm = this;
+        var $ctrl = this;
+        
+        $scope.xRequestDigest;
+        
+        vm.tables = [];
+        vm.dtInstance = {};
+        vm.idlist=[];
+        vm.category = [];
+    
+        $scope.data =[];
+        $scope.messasge = "";
+        $rootScope.FileName="";
+        $scope.hideForm = true;
+        $scope.animationsEnabled = true;
+    
+        $scope.datepickers = {
+            Created: false
+        };
+    
+        $scope.dateOptions = {
+            formatYear: 'yy',
+            startingDay: 1,
+            showWeeks: false
+         };
+              
+        $scope.formats = ['dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
+        $scope.format = $scope.formats[0];
+        
+        $.ajax({  
+                url: $scope.baseurl  + "en/_api/web/lists/getbytitle('Categories')/Items",  
+                method: "GET",  
+                headers: { "Accept": "application/json; odata=verbose" },  
+                success: function (data) {
+                    
+                    var data = data.d.results;
+                    data.map(el => {
+                        var params = {
+                            name: el.Title,  Id: el.Id
+                        };
+                        vm.category.push(params);
+                    })
+                   
+                },
+                error: function (data) {
+                    console.log('error xRequestDigest', data);
+                }
+            });
+        
+        $.ajax({
+	        url: _spPageContextInfo.webAbsoluteUrl + "/_api/contextinfo",
+	        type: "POST",
+	        headers: {
+	            "Accept": "application/json;odata=verbose",
+	        },
+	        success: function (data) {
+	            $scope.xRequestDigest = data.d.GetContextWebInformation.FormDigestValue;
+	        },
+	        error: function (data) {
+	            console.log('error xRequestDigest', data);
+	        }
+	    });
+
+        
+        vm.multipleDemo = {};
+		vm.multipleDemo.selectedCategory = [];
+		   
+        $scope.collapse = function(x) {
+            if(!$('#panel-header').hasClass('fa-plus')) {
+                $('.panel-bodies').slideUp();
+                $('#panel-header').removeClass('fa-minus').addClass('fa-plus');
+            } else {
+                $('.panel-bodies').slideDown();
+                $('#panel-header').removeClass('fa-plus').addClass('fa-minus');
+            }		
+        };
+        
+        $scope.openDate = function($event, x) {
+            $event.preventDefault();
+            $event.stopPropagation();
+            $scope.datepickers['Created'] = true;
+        };
+        
+        $scope.getCategory= function(x) {
+              if(x == null) return;
+              
+              var html = '<ul style="list-style-type: circle;">';
+              
+            for(var i=0; i < x.length;i++){
+                for(j=0;j < vm.category .length;j++){
+                    if(x[i] == vm.category [j].Id ){
+                        html += "<li>"+ vm.category[j].name +"</li>";
+                    }	
+                }
+            }
+            return html +='</ul>';
+        };
+    
+            
+        $scope.cancel= function() {
+            $scope.hideForm = true; 
+        };
+                     
+        vm.dtOptions = DTOptionsBuilder
+            .newOptions()
+            .withPaginationType('full_numbers')
+            .withDisplayLength(2)
+            .withBootstrap()
+            .withOption('responsive', true)
+            
+        vm.dtOptions = {
+            bLengthChange: false,
+            pageLength : 5,
+            lengthMenu: [[5, -1], [5]],
+            order : [[0, 'desc']]
+        };
+        
+        vm.dtColumnDefs = [
+            DTColumnDefBuilder.newColumnDef(0).notVisible(),
+            DTColumnDefBuilder.newColumnDef(1),
+            DTColumnDefBuilder.newColumnDef(2),
+            DTColumnDefBuilder.newColumnDef(3),
+            DTColumnDefBuilder.newColumnDef(4).notVisible(),
+            DTColumnDefBuilder.newColumnDef(5),
+            DTColumnDefBuilder.newColumnDef(6)
+        ];
+        
+        $resource($scope.baseurl +"en/_api/web/lists/getbytitle('Posts')", {}, {
+                get: {
+                    method: 'GET',
+                    headers: { "accept": "application/json;odata=verbose" }
+                }
+             }).get().$promise.then(function(response) {
+                vm.idlist = response.d.Id;
+                
+            });
+
+        $scope.reloadTable = function(){
+            var url = $scope.baseurl + "en/_api/web/lists/getbytitle('Posts')/Items"
+            var hdr = {
+                  headers:{ 
+                        "Content-type": "application/json;odata=verbose"
+                        }
+                   };
+            $resource( $scope.baseurl + "en/_api/web/lists/getbytitle('Posts')/Items?$OrderBy = Modified desc", {}, {
+                    get: {
+                        method: 'GET',
+                        headers: { "accept": "application/json;odata=verbose" }
+                    }
+                 }).get().$promise.then(function(response) {
+                    vm.tables = response.d.results;
+                    
+                    for(var i = 0;i < vm.tables.length;i++){
+                             
+                             vm.tables[i]['link']=baseOrigin +"/en/Lists/Posts/Post.aspx?List="+ vm.idlist +"&ID="+vm.tables[i].Id;
+                    }
+    
+                    $resource(_spPageContextInfo.webAbsoluteUrl +"/_api/web/siteusers", {}, {
+                                    get: {
+                                        method: 'GET',
+                                        headers: { "accept": "application/json;odata=verbose" }
+                                    }
+                                 }).get().$promise.then(function(res) {
+                                     vm.author = res.d.results;				 			
+                                     for(var i = 0;i < vm.tables.length;i++){
+                                     
+                                        for(var j=0; j < vm.author.length;j++){						
+                                            if(vm.author[j].Id== vm.tables[i].AuthorId){
+                                                   vm.tables[i]['Author']= vm.author[j].Title;	
+                                            }
+                                        }
+                                    }			 	
+                                });
+                });
+        };
+        $scope.reloadTable();
+        
+        $scope.edit =function(x) {
+			$scope.hideForm = false;
+			$scope.data = x;
+			vm.multipleDemo.selectedCategory = [];
+			if(x.PostCategoryId.results != null){
+				for(var i=0; i < x.PostCategoryId.results.length;i++){
+					for(j=0;j < vm.category.length;j++){
+						if(x.PostCategoryId.results[i] == vm.category[j].Id ){
+							vm.multipleDemo.selectedCategory.push(vm.category[j]);
+						}	
+					}
+					
+				}
+			}  
+
+	    };
+
+    
+        $scope.save = function(approve) {
+            var url = $scope.baseurl +"en/_api/web/lists/getbytitle('Posts')/Items";
+	      	var hdr = {
+	      		headers:{ 
+		                "Content-type": "application/json;odata=verbose",
+		                "X-RequestDigest": $scope.xRequestDigest,
+		               }
+		           };
+	      
+	      	if ($scope.data.ID){
+		      	url += "("+$scope.data.ID+")";
+		
+		      	hdr = {
+		      		headers:{ 
+				        	"Accept": "application/json;odata=verbose",
+			                "Content-type": "application/json;odata=verbose",
+			                "X-HTTP-Method": "MERGE",
+			                "X-RequestDigest": $scope.xRequestDigest,
+			                "If-Match": "*",
+			                "odata-version": ""				        
+			               }
+			           }
+	      	}
+			
+	      	var params = JSON.stringify(
+						{
+			      			"__metadata" :{
+			      				"type": "SP.Data.PostsListItem"
+			      			},
+							"OData__ModerationStatus": $scope.data.OData__ModerationStatus
+			      			}
+	      				);
+	      
+	      	if(!approve)
+	      	{
+		      	var medata = [];
+				for(var i=0; i < vm.multipleDemo.selectedCategory.length;i++){
+					medata.push(vm.multipleDemo.selectedCategory[i].Id);
+				}
+	
+		      	params = JSON.stringify(
+					{
+		      			"__metadata" :{
+		      				"type": "SP.Data.PostsListItem"
+		      			},
+		      			"Title": $scope.data.Title,
+		      			"Body": $scope.data.Body,
+						"PostCategoryId": {"results" : medata},
+						"OData__ModerationStatus": 3
+		      		 })
+	      	}
+			
+			$http.post(url, params, hdr)
+			.then(function onSuccess(response) {
+				$scope.reloadTable();
+				$scope.cancel();
+			}).catch(function onError(response) {
+				console.log(response);
+			})    	
+		};
+            
+         $scope.approve =function(x) {
+                if(!x.ID) return;
+                
+                 var r = confirm("Do you want to approve this content?");
+                 if (r == true) {
+                     $scope.data = {
+                         'Title' : x.Title,
+                         'OData__ModerationStatus' : 0,
+                         'ID' : x.ID
+                      };
+                    $scope.save(true);
+                }
+            };
+         
+         $scope.delete = function(x) {
+            if(!x.ID) return;
+            var r = confirm("Do you want to delete this row?");
+            
+            var url = $scope.baseurl +"en/_api/web/lists/getbytitle('Posts')/Items("+x.ID+")";
+            var hdr = {
+                  headers:{ 
+                        "Accept": "application/json;odata=verbose",
+                        "X-RequestDigest": $("#__REQUESTDIGEST").val(),
+                        "If-Match": "*"
+                }
+            };
+            if (r == true) {
+                $http.delete(url, hdr)
+                .then(function onSuccess(response) {
+                    $scope.reloadTable();
+                  }).catch(function onError(response) {
+                    console.log('error in delete', response);
+                  });
+            } 
+        };
+        
+                
+        $scope.openModal = function (content, size, parentSelector) {
+              vm.multipleDemo.selectedPeople = [];
+            if(content.PostCategoryId != null){
+                for(var i=0; i < content.PostCategoryId.results.length;i++){
+                    for(j=0;j < vm.category.length;j++){
+                        if(content.PostCategoryId.results[i] == vm.category[j].Id ){
+                            vm.multipleDemo.selectedPeople.push(vm.category[j]);
+                        }	
+                    }
+                    
+                }
+            }
+    
+            var parentElem = parentSelector?angular.element($document[0].querySelector('.modal-demo ' + parentSelector)) : undefined;
+              var modalInstance = $uibModal.open({
+                  animation: $scope.animationsEnabled,
+                  ariaLabelledBy: 'modal-title',
+                  ariaDescribedBy: 'modal-body',
+                  templateUrl: 'myModalContent.html',
+                  controller: 'ModalInstanceCtrl',
+                  controllerAs: 'showCase',
+                  size: size,
+                  appendTo: parentElem,
+                  resolve: {
+                    items: function () {
+                      return {'title' : content.Title, 'content' : content, category : vm.category, selectedCategory : vm.multipleDemo.selectedPeople };
+                    }
+                  }
+            });
+          };    
+    };
+    
+    function ModalInstanceCtrl($scope, $rootScope, $uibModalInstance, items, DTOptionsBuilder, DTColumnDefBuilder) {
+        var showCase = this;
+        showCase.message = '';
+        showCase.items = items;
+        showCase.selected = {
+            item: showCase.items[0]
+        };
+    
+        showCase.approve = function(data) {
+            showCase.ok();
+        }
+    
+        showCase.ok = function () {
+            $uibModalInstance.close(showCase.selected.item);
+        };
+    
+        showCase.cancel = function () {
+            $uibModalInstance.dismiss('cancel');
+        };
+    };
+</script>

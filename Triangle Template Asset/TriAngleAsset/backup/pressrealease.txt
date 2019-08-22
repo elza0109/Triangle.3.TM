@@ -1,0 +1,136 @@
+﻿<link rel="stylesheet" href="/SiteAssets/TriAngleAsset/lib/dist/plugins/bootstrap/datatables.bootstrap.min.css">
+<link rel="stylesheet" href="/SiteAssets/TriAngleAsset/lib/dist/css/angular-datatables.css">
+
+<script src="/SiteAssets/TriAngleAsset/lib/jquery.dataTables.min.js"></script> 
+<script src="/SiteAssets/TriAngleAsset/lib/angularjs.min.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/angular-animate.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/ui-bootstrap-tpls-0.13.1.js"></script>
+
+<script src="/SiteAssets/TriAngleAsset/lib/dist/angular-datatables.min.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/dist/plugins/bootstrap/angular-datatables.bootstrap.min.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/dataTables.responsive.min.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/angular-sanitize.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/angular-resource.js"></script>
+
+<div ng-app="globalApp">
+	<div ng-controller="pressReleaseCtrl as showCase">
+	    <table datatable="ng" dt-options="showCase.dtOptions" dt-column-defs="showCase.dtColumnDefs"  class="table table-striped">
+			<thead style='display:none;'>
+				<th>header 1</th>
+				<th>header 2</th>
+			</thead>
+	        <tbody>
+				<tr ng-repeat="person in showCase.persons">
+					<td class="col-md-4"><img class="img-responsive max300" ng-src="{{person.Thumbnails.Url}}"/></td>
+					<td class="col-md-8"><div class="row"><span>{{person.PublishingDate | date:'mediumDate'}}</span><p style="font-size:16px"><strong>{{person.Title}}</strong></p>
+							<div id="news" ng-bind-html="person.Content | limitTo: 300">
+							</div>
+							<a style="display: inline-block;" ng-href='#' ng-click="showCase.open(person.Title, person.Content, person.ExternalLink )">...Read more</a>
+							<!-- a style="display: inline-block;" href="{{person.ExternalLink}}">...View more</a -->
+						</div>
+					</td>
+				</tr>
+	        </tbody>
+	    </table>
+	    
+		<script type="text/ng-template" id="myModalContent.html">
+	        <div class="modal-header">
+	            <div class="col-md-10">
+	        		<h3 class="modal-title" id="modal-title">{{showChase.items.title}}</h3>
+	        	</div>
+	        	<div class="col-md-2">
+	        		<a ng-click="showChase.close()"><span class="fa fa-times fa-lg" style="float:right"></span></a>
+	        	</div>
+	        </div>
+	        <div class="modal-body" >
+	        	<div id="modal-body" ng-bind-html="showChase.items.content" style="text-align: justify">
+	        	</div>
+	        </div>
+	        <div class="modal-footer">
+	            <button class="btn btn-primary" type="button" ng-click="showChase.ok(showChase.items.url)" ng-href="{{showChase.items.url}}">For more Information</button>
+	        </div>
+	    </script>
+	</div>
+</div>
+
+<script>
+	angular.module('globalApp', ['ngSanitize','datatables', 'datatables.bootstrap', 'ngResource', 'ngAnimate', 'ui.bootstrap'])
+	.controller('pressReleaseCtrl', pressReleaseCtrl)
+	.controller('ModalInstanceCtrl', ModalInstanceCtrl);
+
+	function pressReleaseCtrl($resource,$modal, DTOptionsBuilder, DTColumnDefBuilder, $http, $q) {
+	    
+	    var vm = this;
+	    vm.persons = [];
+	    vm.dtOptions = DTOptionsBuilder
+	    	.newOptions()
+	        .withPaginationType('full_numbers')
+	        .withDisplayLength(2)
+    		.withBootstrap()
+    		.withOption('responsive', true);
+		vm.dtOptions = {
+						searching:false,
+						bLengthChange: false,
+						pageLength : 3,
+		    			lengthMenu: [[3, -1], [3]]
+						};
+	    vm.dtColumnDefs = [
+	        DTColumnDefBuilder.newColumnDef(0),
+	        DTColumnDefBuilder.newColumnDef(1)
+	    ];
+	    $resource(_spPageContextInfo.webAbsoluteUrl +"/_api/web/lists/getbytitle('Press%20Release')/Items?$filter=OData__ModerationStatus eq '0'&$orderby=PublishingDate%20desc", {}, {
+				    get: {
+				        method: 'GET',
+				        headers: { "accept": "application/json;odata=verbose" }
+				    }
+				 }).get().$promise.then(function(response) {
+	        		
+	        		vm.persons = response.d.results;
+	    		});
+	    		
+	 	vm.animationsEnabled = true;
+		
+		  vm.open = function (title, content, url,  size, parentSelector) {
+		  
+		    var parentElem = parentSelector ? 
+		      angular.element($document[0].querySelector('.modal-demo ' + parentSelector)) : undefined;
+			  var modalInstance = $modal.open({
+		      animation: vm.animationsEnabled,
+		      ariaLabelledBy: 'modal-title',
+		      ariaDescribedBy: 'modal-body',
+		      templateUrl: 'myModalContent.html',
+		      controller: 'ModalInstanceCtrl',
+		      controllerAs: 'showChase',
+		      size: size,
+		      appendTo: parentElem,
+		      resolve: {
+		        items: function () {
+		          return {'title' : title, 'content' : content, 'url' : url};
+		        }
+		      }
+		    });
+		  };   		
+	   
+	 };
+	 
+	function ModalInstanceCtrl($modalInstance, items) {
+	  var $ctrl = this;
+	  $ctrl.items = items;
+	  $ctrl.selected = {
+	    item: $ctrl.items[0]
+	  };
+	  $ctrl.close = function() {
+	  	$modalInstance.close($ctrl.selected.item);
+	  }
+
+	  $ctrl.ok = function (data) {
+	  	window.open(data, '_blank');	    
+	  	$modalInstance.close($ctrl.selected.item);
+	    
+	  };
+	
+	  $ctrl.cancel = function () {
+	    $modalInstance.dismiss('cancel');
+	  };
+	};
+</script>

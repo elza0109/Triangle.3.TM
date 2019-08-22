@@ -1,0 +1,121 @@
+﻿<link rel="stylesheet" href="/SiteAssets/TriAngleAsset/lib/dist/plugins/bootstrap/datatables.bootstrap.min.css">
+<link rel="stylesheet" href="/SiteAssets/TriAngleAsset/lib/dist/css/angular-datatables.css">
+<script src="/SiteAssets/TriAngleAsset/lib/jquery.dataTables.min.js"></script> 
+<script src="/SiteAssets/TriAngleAsset/lib/angularjs.min.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/dist/angular-datatables.min.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/dist/plugins/bootstrap/angular-datatables.bootstrap.min.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/dataTables.responsive.min.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/angular-sanitize.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/angular-resource.js"></script>
+
+<div ng-app="globalApp" ng-controller="newsGalleryCtrl">
+	<div class="col-sm-12 no-padding" ng-controller="newsGalleryCtrl as showCase">
+		<div class="form-horizontal ">
+			<div class="form-group col-sm-6">
+				<label class="control-label col-sm-4" for="sel1">Division Name </label>
+				<div class="col-sm-8">	      
+					<select class="form-control" name="repeatSelect" id="repeatSelect" ng-model="data.division" ng-change="showCase.filterData()">
+						<option value="">-- Select All --</option>
+						<option ng-repeat="option in data.availableOptions" value="{{option.id}}">{{option.name}}</option>
+					</select>
+			    </div>
+		    </div>
+			<div class="form-group col-sm-6 text-right">
+				<label class="control-label col-sm-4" for="sel1">Search </label>    
+				<div class="col-sm-8"> 
+					<input class="form-control" ng-model="data.search" ng-change="showCase.filterAllData()"/>	
+				</div>
+		    </div>
+		</div>
+		<div class="col-md-12 no-padding">
+		    <table datatable="ng" dt-options="showCase.dtOptions" dt-column-defs="showCase.dtColumnDefs"  class="table table-striped">
+				<thead style='display:none;'>
+					<th>header 1</th>
+				</thead>
+		        <tbody>
+					<tr ng-repeat="subject in data.tripedia">
+						<td>
+							<div>
+								<h3>{{subject.Keyword}}</h3><sup>{{subject.Division}}</sup>
+								<p>{{subject.KeywordContent}}</p>
+							</div>
+						</td>
+					</tr>
+		        </tbody>
+		    </table>
+		</div>	
+	</div>
+</div>
+
+<script>
+	angular.module('globalApp', ['ngSanitize','datatables', 'datatables.bootstrap', 'ngResource']).controller('newsGalleryCtrl', newsGalleryCtrl);
+
+	function newsGalleryCtrl($scope, $resource, $filter, $http, $q, DTOptionsBuilder, DTColumnDefBuilder) {
+	    var vm = this;
+	    vm.dtOptions = DTOptionsBuilder
+	    	.newOptions()
+	        .withPaginationType('full_numbers')
+	        .withDisplayLength(1)
+    		.withBootstrap()
+    		.withOption('responsive', true);
+		vm.dtOptions = {
+						searching:false,
+						bLengthChange: false,
+						pageLength : 4,
+		    			lengthMenu: [[4, -1], [4]]
+						};
+	    vm.dtColumnDefs = [
+	        DTColumnDefBuilder.newColumnDef(0)
+	        ];
+	    
+	    $scope.data = {
+		    division: null,
+		    search: null,
+		    tripedia: null,
+		    masterData : null,
+		    availableOptions: [
+		      {id: '1', name: 'Sales'},
+		      {id: '2', name: 'Marketing'},
+		      {id: '3', name: 'IT'}
+		    ]
+		   };
+		
+		$resource(_spPageContextInfo.webAbsoluteUrl +"/_api/web/lists/GetByTitle('TRIpedia')/fields?$filter=EntityPropertyName eq 'Division'", {}, {
+				    get: {
+				        method: 'GET',
+				        headers: { "accept": "application/json;odata=verbose" }
+				    }
+				 }).get().$promise.then(function(response) {
+	        		var mydata = response.d.results[0].Choices.results;
+	        		if(mydata.length > 0)$scope.data.availableOptions=[];
+	        		for(var i = 0; i < mydata.length; i++){
+	        			$scope.data.availableOptions.push({id: mydata[i], name: mydata[i]});
+	        		}
+
+	    		});
+	    		
+	    $resource(_spPageContextInfo.webAbsoluteUrl +"/_api/web/lists/getbytitle('TRIpedia')/Items?$filter=OData__ModerationStatus eq '0'&$top=5000", {}, {
+				    get: {
+				        method: 'GET',
+				        headers: { "accept": "application/json;odata=verbose" }
+				    }
+				 }).get().$promise.then(function(response) {
+	        		$scope.data.masterData = response.d.results;
+	        		$scope.data.tripedia = $scope.data.masterData;
+	        		
+	    		});
+	    		
+	    	vm.filterData = function() {
+				 $scope.data.tripedia = $filter('filter')($scope.data.masterData, {Division: $scope.data.division });
+			};
+			
+			vm.filterAllData = function() {
+				var mydata = $scope.data.masterData;
+				if ($scope.data.division != null){
+				 	mydata = $filter('filter')($scope.data.masterData, {Division: $scope.data.division });
+				}
+				$scope.data.tripedia = $filter('filter')(mydata, $scope.data.search );
+			};
+
+	};
+</script>

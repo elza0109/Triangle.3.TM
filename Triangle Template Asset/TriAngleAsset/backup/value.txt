@@ -1,0 +1,41 @@
+﻿<script src="/SiteAssets/TriAngleAsset/lib/angularjs.min.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/angular-sanitize.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/angular-resource.js"></script>
+
+<div ng-app="globalApp" ng-controller="profileCtrl">
+	<div class="col-md-7 col-md-offset-2" ng-bind-html="image">
+		
+	</div>
+	<div class="col-md-12">
+		<h3>{{title}}</h3>
+		<span ng-bind-html="content"></span>
+		
+	</div>
+</div>
+
+<script>
+	angular.module('globalApp', ['ngSanitize', 'ngResource']).controller('profileCtrl', profileCtrl);
+
+	function profileCtrl($resource, $http, $q, $scope) {
+	    var vm = this;
+	    $scope.content= '';
+	    $scope.title= '';
+	    	     
+	    $scope.image = '<img class="img-responsive" src="'+ window.location.origin +'"/SiteCollectionImages/Banner%20Triangle%20Collection/carousel1.png">';
+		$resource(_spPageContextInfo.webAbsoluteUrl +"/_api/web/lists/getbytitle('Our%20Company')/Items?$filter=SubmenuContent eq 'H3I Values' and OData__ModerationStatus eq '0'", {}, {
+				    get: {
+				        method: 'GET',
+				        headers: { "accept": "application/json;odata=verbose" }
+				    }
+				 }).get().$promise.then(function(response) {
+	        		var item = response.d.results;
+	        			item.forEach(function(element) {
+	        				$scope.content= element.Content;
+		        			$scope.title= element.Title;
+		        			$scope.image ='<img class="img-responsive max600" src="'+ element.Thumbnails.Url +'">';
+	        		});			        			        		
+	    		});
+	
+	}
+
+</script>

@@ -1,0 +1,707 @@
+﻿	<script type="text/ng-template" id="myModalContent.html">
+        <div class="modal-header">
+            <h3 class="modal-title" id="modal-title">{{showCase.items.title}}</h3>
+        </div>
+        <div class="modal-body" id="modal-body" >
+        	<table id="browseLookup" datatable="ng" dt-options="showCase.dtOptions" dt-column-defs="showCase.dtColumnDefs" dt-instance="showCase.dtInstance" class="table table-striped table-bordered form-table nowrap" style="width:100%!important">
+				<thead>
+					<th>order</th>
+					<th>Id</th>
+					<th>Title</th>
+					<th>Order</th>
+				</thead>
+		        <tbody>
+					<tr ng-repeat="order in showCase.items.menuList">
+					<td>{{order.OrderPosition}}</td>
+					<td>{{order.ID}}</td>
+					<td>{{order.Title}}</td>
+					<td>
+						<input type="text" class="form-control" ng-model="order.OrderPosition" />
+					</td>
+		        </tbody>
+		    </table>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" type="button" ng-click="showCase.ok()" style="float:left">Close</button>
+            <button class="btn btn-primary" type="button" ng-click="showCase.submitEdit()" style="float:left">Submit</button>
+        </div>    
+    </script>
+    
+    <script type="text/ng-template" id="myModalGalerry.html">
+        <div class="modal-header">
+            <h3 class="modal-title" id="modal-title">{{showCase.items.title}}</h3>
+        </div>
+        <div class="modal-body" id="modal-body" >
+        	<table id="browseLookup" datatable="ng" dt-options="showCase.dtOptions" dt-column-defs="showCase.dtColumnDefs" dt-instance="showCase.dtInstance" class="table table-striped table-bordered form-table nowrap" style="width:100%!important">
+		    <thead>
+		    	<th>Id</th>
+				<th>Banner Image</th>
+				<th>Description</th>
+			  </thead>
+		        <tbody>
+		        <tr ng-repeat="person in showCase.items.content" ng-click="showCase.someClickHandler(person)">
+		        <td>{{person.ID}}</td>
+		        <td><img ng-src="{{person.ServerRelativeUrl}}" class="img-responsive"></td>
+		        <td style="word-wrap:break-word">{{person.Name}}</td>
+		        </tbody>
+		    </table>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" type="button" ng-click="showCase.ok()" style="float:left">Close</button>
+        </div>
+    </script>
+
+
+<div ng-controller="bannerCtrl as showCase">
+	<div id="tableForm" ng-show="hideForm" >
+		<a class="btn btn-success btn-md" ng-click="addNew()"><span class="fa fa-plus"></span> Add New</a>
+		<span style="color: #505050; font-style: italic; font-size: 12px; float: right">Tip: Hold SHIFT + click for multiple sorting</span>
+		<table datatable="ng" dt-options="showCase.dtOptions" dt-column-defs="showCase.dtColumnDefs" dt-instance="showCase.dtInstance" class="col-sm-12 table table-striped table-bordered form-table">
+			<thead>
+				<th class="column-datatable">Id</th>
+				<th class="column-datatable">Title</th>
+				<th class="column-datatable">Start Date</th>
+				<th class="column-datatable">Expired Date</th>
+				<th class="column-datatable">Banner Image</th>
+				<th class="column-datatable">Link URL Information</th>
+				<th class="column-datatable">Order</th>
+				<th class="column-datatable">Status</th>
+				<th class="column-datatable">Actions</th>
+			</thead>
+			<tbody>
+				<tr ng-repeat="person in showCase.persons">
+					<td class="column-datatable">{{person.ID}}</td>
+					<td class="column-datatable">{{person.Title}}</td>
+					<td class="column-datatable">{{person.startDate | date:'mediumDate'}}</td>
+					<td class="column-datatable">{{person.ExpiredDate | date:'mediumDate'}}</td>
+					<td class="column-datatable"><img ng-src="{{person.BannerImage.Url}}" class="img-responsive"></td>
+					<td class="column-datatable">{{person.LinkURLInformation}}</td>
+					<td class="column-datatable"><a href="#" ng-click="getListByOrder()">{{person.OrderPosition}}</a></td>
+					<td class="column-datatable">
+						<div ng-switch="person.OData__ModerationStatus">
+							  <div ng-switch-when="0">
+								<p>Approved</p>
+							  </div>
+							  <div ng-switch-when="1">
+								<p>Rejected</p>
+							  </div>
+							  <div ng-switch-when="2">
+								<p>Pending</p>
+							  </div>
+							  <div ng-switch-default>
+								<p>Draft</p>
+							  </div>
+						</div>
+					</td>
+					<td class="column-datatable">
+						<div class="col-sm-4 no-padding">
+								<a ng-click="edit(person)">
+									<span class="btn btn-warning btn-sm fa fa-edit"></span>
+								</a>
+						</div>
+						<div class="col-sm-4 no-padding">
+							<a ng-click="delete(person)">
+								<span class="btn btn-danger btn-sm fa fa-trash-o"></span>
+							</a>  
+						</div>
+						<div class="col-sm-4 no-padding">
+							<a ng-click="approve(person)">
+								<span class="btn btn-success btn-sm fa fa-check"></span>
+							</a>
+						</div>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>	
+	<div id="addForm" ng-show="!hideForm">
+		<table class="col-sm-12 form-table">
+			<div class="col-md-12">
+				<div class="panel-heading col-md-12 no-padding">
+					<a ng-click="collapse()"><span class="pull-right clickable"><i id='test' class="fa fa-minus"></i></span></a>
+					<hr class="hr-thick">
+				</div>
+				<div class="panel-bodies">
+					<div class='form-horizontal'>
+						<div class="form-group">
+							<label for="Title" class="control-label col-xs-2">Title</label>
+							<div class="col-xs-10">
+								<input type="hidden" ng-model="data.ID" name="ID" id="ID" >
+								<input type="text" ng-model="data.Title" class="form-control" id="Title" placeholder="Title" ng-required="required">
+								<span class="ms-metadata">Wording for Menu to be displayed</span>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="startDate" class="control-label col-xs-2">Start Date</label>
+							<div class="col-md-10">
+								<div class="input-group">
+								  <input type="text" icon-prefix="fa" class="form-control" uib-datepicker-popup="{{format}}" 
+									ng-model="data.startDate" is-open="datepickers.StartDate" min-date="minDate" max-date="'2215-06-22'" 
+									datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" show-button-bar="false"/>
+								  <span class="input-group-btn">
+									<button type="button" class="btn btn-primary" ng-click="openDate($event,'StartDate')"><i class="fa fa-calendar"></i></button>
+								  </span>
+								</div>
+							 </div>
+						</div>
+						<div class="form-group">
+							<label for="ExpiredDate" class="control-label col-xs-2">Expired Date</label>
+							<div class="col-md-10">
+								<div class="input-group">
+								  <input type="text" class="form-control" uib-datepicker-popup="{{format}}" 
+									ng-model="data.ExpiredDate" is-open="datepickers.ExpiredDate" min-date="minDate" max-date="'2215-06-22'" 
+									datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" show-button-bar="false"/>
+								  <span class="input-group-btn">
+									<button type="button" class="btn btn-primary" ng-click="openDate($event,'ExpiredDate')"><i class="fa fa-calendar"></i></button>
+								  </span>
+								</div>
+							 </div>
+						</div>
+						<div class="form-group">
+							<label for="Url" class="control-label col-xs-2">Banner image</label>
+							<div class="col-xs-5">
+								<!--span class="ms-metadata">Banner of the image</span-->
+								<input type="text" ng-model="$root.FileName" class="form-control" id="FileName" placeholder="FileName" ng-show="data.chkBanner" ng-disabled="data.chkBanner">
+								<input type="file" file-model="myFile" class="form-control" id="myFile" placeholder="FileName" ng-show="!data.chkBanner"/>
+								<span class="ms-metadata" style="color:red"><i>{{messasge}}</i></span>
+							</div>				        
+							<label for="Url" class="control-label col-xs-2"><input type="checkbox" ng-model="data.chkBanner" ng-checked="chkBanner" aria-label="Follower input"> Banner in List</label>
+							<div class="col-xs-3">
+								<button type="button" ng-disabled="!data.chkBanner" class="btn btn-primary" ng-click="browseBannerFromList()"><i class="fa fa-search">Browse</i></button>
+							</div>
+							<!--div class="col-xs-4">
+								<button type="button" class="btn btn-primary" ng-click="upload()"><i class="fa fa-search"> upload</i></button>
+							</div-->
+
+						</div>
+						<div class="form-group">
+							<label for="LinkURLInformation" class="control-label col-xs-2">Link URL Information</label>
+							<div class="col-xs-10">
+								<input type="text" ng-model="data.LinkURLInformation" class="form-control" id="LinkURLInformation" placeholder="LinkURLInformation">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="Order" class="control-label col-xs-2">Order Position</label>
+							<div class="col-xs-10">
+								<input type="text" ng-model="data.OrderPosition" class="form-control" id="OrderPosition" placeholder="Order Position">
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="col-xs-offset-2 col-xs-10">
+								<a class="btn btn-primary" ng-click="save()"><span class="fa fa-save"></span> Save</a>
+								<a class="btn btn-warning" ng-click="cancel()">Cancel</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</table>
+	</div>
+</div>
+
+<script>
+	
+	angular.module('globalApp')
+	.controller('bannerCtrl', bannerCtrl)
+	.controller('ModalInstanceCtrl', ModalInstanceCtrl)
+	.controller('ModalInstanceGalleryCtrl', ModalInstanceGalleryCtrl)
+	.directive('fileModel', ['$parse', function ($parse) {
+            return {
+               restrict: 'A',
+               link: function(scope, element, attrs) {
+                  var model = $parse(attrs.fileModel);
+                  var modelSetter = model.assign;
+                  
+                  element.bind('change', function() {
+                     scope.$apply(function() {
+                        modelSetter(scope, element[0].files[0]);
+                     });
+                  });
+               }
+            };
+         }]);
+	
+	function bannerCtrl($scope, $rootScope, $resource, $compile, $http, $q, $anchorScroll, $location, $uibModal, $log, $document, DTOptionsBuilder, DTColumnDefBuilder) {
+	    var vm = this;
+	    var $ctrl = this;
+	    $scope.baseurl = window.location.origin + "/";
+	    $scope.baseurl_en = _spPageContextInfo.webAbsoluteUrl;
+
+	    vm.persons = [];
+	    vm.dtInstance = {};
+	    $scope.hideForm = true;
+	    $scope.data =[];
+	    $scope.messasge = "";
+	    $rootScope.FileName="";
+	    $location.hash('top');
+	    $scope.xRequestDigest;
+	    $scope.animationsEnabled = true;
+	    $anchorScroll();
+	    
+	    $scope.datepickers = {
+	        StartDate: false,
+	        ExpiredDate: false
+	      };
+	    vm.dtOptions = DTOptionsBuilder
+	    	.newOptions()
+	        .withPaginationType('full_numbers')
+	        .withDisplayLength(2)
+    		.withBootstrap()
+    		.withOption('responsive', true)
+    		
+		vm.dtOptions = {
+						bLengthChange: false,
+						pageLength : 5,
+		    			lengthMenu: [[5, -1], [5]],
+		    			order : [[0, 'desc']]
+						};
+	    vm.dtColumnDefs = [
+	        DTColumnDefBuilder.newColumnDef(0).notVisible(),
+	        DTColumnDefBuilder.newColumnDef(1),
+	        DTColumnDefBuilder.newColumnDef(2),
+	        DTColumnDefBuilder.newColumnDef(3),
+	        DTColumnDefBuilder.newColumnDef(4),
+	        DTColumnDefBuilder.newColumnDef(5),
+	        DTColumnDefBuilder.newColumnDef(6),
+	        DTColumnDefBuilder.newColumnDef(7),
+ 			DTColumnDefBuilder.newColumnDef(8),
+
+
+	    ];
+ 
+	    $.ajax({
+	            url: _spPageContextInfo.webAbsoluteUrl + "/_api/contextinfo",
+	            type: "POST",
+	            headers: {
+	                "Accept": "application/json;odata=verbose",
+	            },
+	            success: function (data) {
+	                
+	                $scope.xRequestDigest = data.d.GetContextWebInformation.FormDigestValue;
+	            },
+	            error: function (data) {
+	                console.log(data);
+	            }
+	        });
+					
+		  $scope.toggleMin = function() {
+		    $scope.minDate = $scope.minDate ? null : new Date();
+		  };
+		  $scope.toggleMin();
+		
+		  $scope.openDate = function($event, x) {
+		  	
+		    $event.preventDefault();
+		    $event.stopPropagation();
+		    for (var key in $scope.datepickers) {
+			    if (key == x) {
+			        $scope.datepickers[key] = true;
+			    }else{
+			    	$scope.datepickers[key] = false;
+			    }
+			}
+		  };
+		
+		  $scope.dateOptions = {
+		    formatYear: 'yy',
+		    startingDay: 1,
+		    showWeeks: false
+		  };
+		  
+		$scope.formats = ['dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
+		$scope.format = $scope.formats[0];
+  
+	    $scope.addNew= function() {
+ 			$scope.data =[];
+ 			$scope.hideForm = false;
+ 			$scope.data.startDate = new Date();
+		    $scope.data.ExpiredDate = new Date();
+	    };
+	    
+	    $scope.cancel= function() {
+ 			$scope.hideForm = true;  
+ 			$anchorScroll();
+	    };
+
+	    $scope.edit =function(x) {
+ 			$scope.hideForm = false;
+ 			$scope.data = x;
+ 			var data = x.BannerImage.Description.split('/');
+			$rootScope.FileName = data[data.length - 1];
+			$scope.data.chkBanner = true;
+			$scope.data.startDate = new Date(x.startDate);
+		    $scope.data.ExpiredDate = new Date(x.ExpiredDate);
+ 	    };
+	    
+	     $scope.save = function(approve) {
+	     	 
+			  var file = $scope.myFile;
+		      var url = $scope.baseurl_en +"/_api/web/lists/getbytitle('Banner Triangle')/Items";
+		      var hdr = {
+		      		headers:{ 
+			                "Content-type": "application/json;odata=verbose",
+			                "X-RequestDigest": $scope.xRequestDigest,
+			               }
+			           };	      
+		      var nameImage = "$rootScope.FileName";
+		      
+		      if(!approve){
+		      	if (file != null)
+		      	{
+		      		nameImage = file.name;
+		      	}
+		      	else
+		      	{
+		      		nameImage = $rootScope.FileName;
+		      	}
+		      	
+		      }
+		      if ($scope.data.ID){
+		      	url += "("+$scope.data.ID+")";
+
+		      	hdr = {
+		      		headers:{ 
+				        	"Accept": "application/json;odata=verbose",
+			                "Content-type": "application/json;odata=verbose",
+			                "X-HTTP-Method": "MERGE",
+			                "X-RequestDigest": $scope.xRequestDigest,
+			                "If-Match": "*",
+			                "odata-version": ""				        
+			               }
+			           }
+		      }
+				
+		      var params = JSON.stringify(
+							{
+				      			"__metadata" :{
+				      				"type": "SP.Data.BannerTriangleListItem"
+				      			},
+								"OData__ModerationStatus": $scope.data.OData__ModerationStatus
+				      			}
+		      				);
+		      
+		      if(!approve){
+		      	params = JSON.stringify(
+					{
+		      			"__metadata" :{
+		      				"type": "SP.Data.BannerTriangleListItem"
+		      			},
+		      			"Title": $scope.data.Title,
+		      			"startDate":$scope.data.startDate,
+		      			"ExpiredDate": $scope.data.ExpiredDate,
+						"LinkURLInformation": $scope.data.LinkURLInformation,
+						"OrderPosition": $scope.data.OrderPosition,
+						"BannerImage": {
+							"Description" : "/SiteCollectionImages/Banner Triangle Collection/" + nameImage ,
+							"Url": window.location.origin + "/SiteCollectionImages/Banner Triangle Collection/" + nameImage						
+							},
+						 "OData__ModerationStatus": $scope.data.OData__ModerationStatus
+		      		 })
+		      }	
+		      $http.post(url, params, hdr)
+			    .then(function onSuccess(response) {
+			    	 if(!approve) $scope.upload();
+			    	 setTimeout(function(){
+					 }, 5000);
+					 $scope.reloadTable();
+				    if(!approve)  $scope.cancel();
+				  }).catch(function onError(response) {
+				    console.log(response);
+				  });
+		};
+	    
+	    $scope.delete = function(x) {
+ 			if(!x.ID) return;
+ 			var r = confirm("Do you want to delete this row?");
+		    
+ 			var url = $scope.baseurl_en +"/_api/web/lists/getbytitle('Banner Triangle')/Items("+x.ID+")";
+		    var hdr = {
+		      		headers:{ 
+			                "Accept": "application/json;odata=verbose",
+			                "X-RequestDigest": $scope.xRequestDigest,
+			                "If-Match": "*"
+			               }
+			           };
+			if (r == true) {
+		        $http.delete(url, hdr)
+			    .then(function onSuccess(response) {
+				    $scope.reloadTable();
+				  }).catch(function onError(response) {
+				    console.log(response);
+				  });
+		    } 
+	    };
+		
+    	$scope.download =function(x) {
+ 			alert('download');        
+	    };
+	    
+	    $scope.uploadImage = function() {
+	        var file = $scope.myFile;
+              if(file.size > 2000000){
+              	$scope.messasge = "your image more than 2MB"
+              }
+	    };
+	    
+	    $scope.$watch('myFile', function (newValue, oldValue, scope) {
+	        if(newValue){
+	        	if(newValue.size > 2000000){
+		          	$scope.messasge = "your image more than 2MB"
+		          }
+	        } 
+	    });
+
+    
+	    $scope.upload =function(x) {
+ 			var file = $scope.myFile;
+ 			if(!file) return;
+ 			
+ 			var hosturl = window.location.origin +"/SiteAssets/Banner%20TriAngle/";
+            var hdr = {
+		      		headers:{ 
+			                "Accept": "application/json;odata=verbose",
+			                "X-RequestDigest": $scope.xRequestDigest,
+			                "content-length": file.byteLength
+			               }
+			           };
+            var url = window.location.origin + "/_api/web/GetFolderByServerRelativeUrl('SiteCollectionImages/Banner%20Triangle%20Collection')/Files/add(overwrite=true, url='"+ file.name+"')?@target='"+ hosturl +"'"       
+	    	$http.post(url, file, hdr)
+		    .then(function onSuccess(response) {
+			    alert('upload succes');
+			  }).catch(function onError(response) {
+			    console.log(response);
+			  });
+	    };
+
+	    $scope.approve =function(x) {
+			if(!x.ID) return;
+			
+ 			var r = confirm("Do you want to approve this content?");
+ 			if (r == true) {
+ 				$scope.data = {
+	 				'OData__ModerationStatus' : 0,
+	 				'ID' : x.ID
+	 			 };
+				$scope.save(true);
+			}
+	    };
+	    
+	    $scope.reloadTable = function(){
+	    	$resource( $scope.baseurl_en + "/_api/web/lists/getbytitle('Banner Triangle')/Items?$orderby=Created desc", {}, {
+				    get: {
+				        method: 'GET',
+				        headers: { "accept": "application/json;odata=verbose" }
+				    }
+				 }).get().$promise.then(function(response) {
+	        		vm.persons = response.d.results;
+	    		});
+	    };	
+
+ 		$scope.collapse = function(x) {
+				if(!$('#test').hasClass('fa-plus')) {
+					$('.panel-bodies').slideUp();
+					$('#test').removeClass('fa-minus').addClass('fa-plus');
+				} else {
+					$('.panel-bodies').slideDown();
+					$('#test').removeClass('fa-plus').addClass('fa-minus');
+				}
+					
+		};
+		
+					
+		$scope.reloadTable();
+		
+		$scope.browseBannerFromList= function(){
+			$resource( window.location.origin + "/_api/web/GetFolderByServerRelativeUrl('SiteCollectionImages/Banner%20Triangle%20Collection')/Files", {}, {
+				    get: {
+				        method: 'GET',
+				        headers: { "accept": "application/json;odata=verbose" }
+				    }
+				 }).get().$promise.then(function(response) {
+	        		$scope.openModalGallery('Browse Banner From List', response.d.results,'lg');
+	    		});
+ 		};
+ 		
+ 		$scope.getListByOrder = function() {
+			$resource( _spPageContextInfo.webAbsoluteUrl + "/_api/web/lists/getbytitle('Banner Triangle')/Items", {}, {
+				    get: {
+				        method: 'GET',
+				        headers: { "accept": "application/json;odata=verbose" }
+				    }
+				 }).get().$promise.then(function(response) {
+	        		$scope.openModal('Edit Ordering', response.d.results,'lg');
+	    		});
+ 		};
+ 		
+ 		$scope.openModalGallery= function (title, content, size, parentSelector) {
+		    var parentElem = parentSelector?angular.element($document[0].querySelector('.modal-demo ' + parentSelector)) : undefined;
+		    
+			  var modalInstance = $uibModal.open({
+			      animation: $scope.animationsEnabled,
+			      ariaLabelledBy: 'modal-title',
+			      ariaDescribedBy: 'modal-body',
+			      templateUrl: 'myModalGalerry.html',
+			      controller: 'ModalInstanceGalleryCtrl',
+			      controllerAs: 'showCase',
+			      size: size,
+			      appendTo: parentElem,
+			      resolve: {
+			        items: function () {
+			          return {'title' : title, content};
+			        }
+			      }
+		    });
+		};
+
+		$scope.getListByOrder = function() {
+			$resource( _spPageContextInfo.webAbsoluteUrl + "/_api/web/lists/getbytitle('Banner Triangle')/Items", {}, {
+				    get: {
+				        method: 'GET',
+				        headers: { "accept": "application/json;odata=verbose" }
+				    }
+				 }).get().$promise.then(function(response) {
+	        		$scope.openModal('Edit Ordering', response.d.results,'lg');
+	    		});
+ 		};
+        
+        $scope.openModal = function (title, content, size, parentSelector) {
+		    var parentElem = parentSelector?angular.element($document[0].querySelector('.modal-demo ' + parentSelector)) : undefined;
+			  var modalInstance = $uibModal.open({
+			      animation: $scope.animationsEnabled,
+			      ariaLabelledBy: 'modal-title',
+			      ariaDescribedBy: 'modal-body',
+			      templateUrl: 'myModalContent.html',
+			      controller: 'ModalInstanceCtrl',
+			      controllerAs: 'showCase',
+			      size: size,
+			      appendTo: parentElem,
+			      resolve: {
+			        items: function () {
+			          return {'title' : title, 'menuList' : content};
+			        }
+			      }
+		    });
+		};
+    
+	   };
+	   
+	 function ModalInstanceGalleryCtrl($scope, $rootScope, $uibModalInstance, items, DTOptionsBuilder, DTColumnDefBuilder) {
+		var showCase = this;
+		showCase.message = '';
+		showCase.items = items;
+		showCase.selected = {
+			item: showCase.items[0]
+		};
+		console.log(items);
+		showCase.someClickHandler = showCase.someClickHandler;
+		showCase.dtOptions = DTOptionsBuilder
+			.newOptions()
+			.withPaginationType('full_numbers')
+			.withDisplayLength(2)
+			.withBootstrap()
+			.withOption('responsive', true);
+	
+		showCase.dtOptions = {
+			bLengthChange: false,
+			pageLength : 5,
+			lengthMenu: [[5, -1], [5]]
+		};
+		showCase.dtColumnDefs = [
+			DTColumnDefBuilder.newColumnDef(0).notVisible(),
+			DTColumnDefBuilder.newColumnDef(1),
+			DTColumnDefBuilder.newColumnDef(2)
+		];
+	
+		showCase.someClickHandler = function(info) {
+			showCase.message = info.ID + ' - ' + info.Name;
+			$rootScope.FileName = info.Name;
+			showCase.ok();
+		};
+	
+		showCase.ok = function () {
+			
+			$uibModalInstance.close(showCase.selected.item);
+		};
+	
+		showCase.cancel = function () {
+			$uibModalInstance.dismiss('cancel');
+		};
+	};
+
+	   
+	 function ModalInstanceCtrl($scope, $rootScope, $q, $http, $uibModalInstance, items, DTOptionsBuilder, DTColumnDefBuilder) {
+	    var showCase = this;
+	    var vm = this;
+	    vm.message = '';
+	    showCase.items = items;
+	    showCase.selected = {
+	        item: showCase.items[0]
+	    };
+	    vm.someClickHandler = showCase.someClickHandler;
+	    vm.dtOptions = DTOptionsBuilder
+	        .newOptions()
+	        .withPaginationType('full_numbers')
+	        .withDisplayLength(2)
+	        .withBootstrap()
+	        .withOption('responsive', true);
+	    vm.dtOptions = {
+	        searching: false,
+	        paging: false,
+	        bLengthChange: false,
+	        lengthMenu: [[5, -1], [5]],
+			order : [[0, 'asc']]
+	    };
+	    vm.dtColumnDefs = [
+	    	DTColumnDefBuilder.newColumnDef(0).notVisible(),
+	        DTColumnDefBuilder.newColumnDef(1).notVisible(),
+	        DTColumnDefBuilder.newColumnDef(2),
+	        DTColumnDefBuilder.newColumnDef(3)
+	    ];
+	
+	    showCase.someClickHandler = function (info) {
+	        vm.message = info.ID + ' - ' + info.Name;
+	        $rootScope.FileName = info.Name;
+	        showCase.ok();
+	    };
+	
+	    showCase.ok = function () {
+	        $uibModalInstance.close(showCase.selected.item);
+	    };
+	
+	    showCase.submitEdit = function () {
+	        var promiseSend = [];
+	        var menuList = showCase.items.menuList;
+	        var hdr = {
+	            headers: {
+	                "Accept": "application/json;odata=verbose",
+	                "Content-type": "application/json;odata=verbose",
+	                "X-HTTP-Method": "MERGE",
+	                "X-RequestDigest": $('#__REQUESTDIGEST').val(),
+	                "If-Match": "*",
+	                "odata-version": ""
+	            }
+	        };
+	        menuList.forEach(item => {
+	           var url = _spPageContextInfo.webAbsoluteUrl + "/_api/web/lists/getbytitle('Banner Triangle')/Items(" + item.ID + ")";
+	           var params = JSON.stringify({
+	                "__metadata": {
+	                    "type": "SP.Data.BannerTriangleListItem"
+	                },
+	                "OrderPosition": item.OrderPosition,
+	                "OData__ModerationStatus": "0"
+
+	            });
+	            promiseSend.push($http.post(url, params, hdr));
+	        });
+	        $q.all(promiseSend).then(function onSuccess(resArr) {
+	            location.reload();
+	        }).catch(function onError(resArr) {
+	            console.log(resArr);
+	        });
+	    };
+	
+	    showCase.cancel = function () {
+	        $uibModalInstance.dismiss('cancel');
+	    };
+	};
+</script>

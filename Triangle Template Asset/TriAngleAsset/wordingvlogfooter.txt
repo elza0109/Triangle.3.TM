@@ -1,0 +1,23 @@
+﻿<div class="col-md-12">
+	<div class="no-padding" id="enfooter">
+		<p>&nbsp;</p>
+		<small>Content should be constructive, positive, transmits enthusiasm and motivation, do not contain elements of politics, pornography, humiliation, or harassment of ethnicity, religion, race, and intergroup (SARA) and other personal backgrounds.</small>
+	</div>
+	<div class="no-padding" id="idfooter">
+		<p>&nbsp;</p>
+		<small>Konten bersifat membangun, positif, menularkan semangat dan motivasi, tidak mengandung unsur politik, pornografi, penghinaan, ataupun pelecehan terhadap SARA dan latar belakang lainnya yang bersifat pribadi.</small>
+	</div>
+</div>
+
+<script>
+	var enurl = _spPageContextInfo.webAbsoluteUrl.search("/en");
+	if(enurl != -1 ){
+		document.querySelector("#enfooter").style.display = 'block';
+		document.querySelector("#idfooter").style.display = 'none';
+	}
+	else
+	{
+		document.querySelector("#enfooter").style.display = 'none';
+		document.querySelector("#idfooter").style.display = 'block';
+	}
+</script>

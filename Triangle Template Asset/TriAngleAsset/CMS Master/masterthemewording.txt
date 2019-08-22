@@ -1,0 +1,422 @@
+﻿	<!-- Modal template -->
+	<script type="text/ng-template" id="myModalContent.html">
+        <div class="modal-header">
+            <h3 class="modal-title" id="modal-title">{{showCase.items.title}}</h3>
+        </div>
+        <div class="modal-body" id="modal-body" >
+        	<table id="browseLookup" datatable="ng" dt-options="showCase.dtOptions" dt-column-defs="showCase.dtColumnDefs" dt-instance="showCase.dtInstance" class="table table-striped table-bordered form-table nowrap" style="width:100%!important">
+				<thead>
+					<th>Id</th>
+					<th>Description</th>
+				</thead>
+		        <tbody>
+					<tr ng-repeat="person in showCase.items.persons" ng-click="showCase.someClickHandler(person)">
+					<td>{{person.ID}}</td>
+					<td style="word-wrap:break-word">{{person.Name}}</td>
+					</tr>
+		        </tbody>
+		    </table>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" type="button" ng-click="showCase.ok()" style="float:left">Close</button>
+        </div>
+    </script>
+	<!-- Modal template -->
+	
+	<!-- Controller Template -->
+	<div ng-controller="masterthemeCtrl as showCase">
+		<!-- tableForm Template -->
+		<div id="tableForm" ng-show="hideForm" >
+			<a class="btn btn-success btn-md" ng-click="addNew()"><span class="fa fa-plus"></span> Add New</a>
+			<span style="color: #505050; font-style: italic; font-size: 12px; float: right">Tip: Hold SHIFT + click for multiple sorting</span>
+		    <table datatable="ng" dt-options="showCase.dtOptions" dt-column-defs="showCase.dtColumnDefs" dt-instance="showCase.dtInstance" class="col-sm-12 table table-striped table-bordered form-table">
+		    	<thead>
+			    	<th class="column-datatable">Id</th>
+				    <th class="column-datatable col-md-6">Theme Wording</th>
+				    <th class="column-datatable col-md-4">Type</th>
+				    <th class="column-datatable col-md-2">Actions</th>
+			  	</thead>
+		        <tbody>
+		        	<tr ng-repeat="field in showCase.tables">
+				        <td class="column-datatable">{{field.ID}}</td>
+				        <td class="column-datatable">
+				        	<div ng-bind-html="field.Theme | limitTo: 100"></div>
+				        </td>
+				        <td class="column-datatable">{{field.Typefor}}</td>
+				        <td class="column-datatable">
+							<div class="col-sm-4 no-padding">
+								<a ng-click="edit(field)"><span class="btn btn-warning btn-sm fa fa-edit"></span></a>
+							</div>
+							<div class="col-sm-4 no-padding">
+								<a ng-click="delete(field)"><span class="btn btn-danger btn-sm fa fa-trash-o"></span></a>  
+							</div>
+			            </td>
+		        	</tr>
+		        </tbody>
+		    </table>
+		</div>
+		<!-- tableForm Template -->
+		
+		<!-- Form Input -->
+		<div id="addForm" ng-show="!hideForm">
+			<table class="col-sm-12 form-table">
+				<div class="col-md-12">
+					<div class="panel-heading col-md-12 no-padding">
+						<a ng-click="collapse()"><span class="pull-right clickable"><i id='panel-header' class="fa fa-minus"></i></span></a>
+						<hr class="hr-thick">
+					</div>
+					<div class="panel-bodies">
+						<div class='form-horizontal'>
+						    <div class="form-group">
+						    	<input type="hidden" ng-model="data.ID" name="ID" id="ID" >
+						    	<label for="Content" class="control-label col-xs-2">Theme</label>
+						    	 <div class="col-md-10">
+							         <div text-angular="text-angular" name="htmltheme" ng-model="data.Theme" ta-disabled='disabled' 
+							         	ta-toolbar-button-class="btn btn-default btn-xs"
+							         	ta-text-editor-class="form-control myform1-height" 
+        								ta-html-editor-class="form-control myform1-height"
+        								ta-unsafe-sanitizer="true"
+							         >
+							         </div>
+							     </div>
+						    </div>
+						    <div class="form-group">
+						        <label for="Typefor" class="control-label col-xs-2">Type</label>
+						        <div class="col-xs-10">
+						            <select ng-model="data.Typefor" class="form-control">
+					                    <option ng-repeat="Typefor in Typefor">{{Typefor}}</option>
+					                </select>						        
+				                </div>
+						    </div>			    
+						    <div class="form-group">
+						        <div class="col-xs-offset-2 col-xs-10">
+						            <a class="btn btn-primary" ng-click="save()"><span class="fa fa-save"></span> Save</a>
+						            <a class="btn btn-warning" ng-click="cancel()">Cancel</a>
+						        </div>
+						    </div>
+						</div>
+					</div>
+				</div>
+			</table>
+		</div>
+	</div >	
+
+
+<script>
+angular.module('globalApp')
+.controller('masterthemeCtrl', masterthemeCtrl)
+.controller('ModalInstanceCtrl', ModalInstanceCtrl)
+.filter('mySort', function() {
+    return function(input) {
+    	String.prototype.replaceAll = function(search, replacement) {
+		    var target = this;
+		    return target.replace(new RegExp(search, 'g'), replacement);
+		};
+      return input.replaceAll("&#58;",":");
+    }
+  })
+.directive('fileModel', ['$parse', function ($parse) {
+        return {
+           restrict: 'A',
+           link: function(scope, element, attrs) {
+              var model = $parse(attrs.fileModel);
+              var modelSetter = model.assign;
+              
+              element.bind('change', function() {
+                 scope.$apply(function() {
+                    modelSetter(scope, element[0].files[0]);
+                 });
+              });
+           }
+        };
+     }]);
+	
+function masterthemeCtrl($scope, $rootScope, $resource, $compile, $http, $q, $anchorScroll, $location, $uibModal, $log, $document, DTOptionsBuilder, DTColumnDefBuilder) {
+	$scope.baseurl = window.location.origin + "/";
+	$scope.baseurl_en = _spPageContextInfo.webAbsoluteUrl;
+	
+	var vm = this;
+	var $ctrl = this;
+	
+	$scope.xRequestDigest;
+	vm.tables = [];
+	vm.dtInstance = {};
+	$scope.data =[];
+	$scope.messasge = "";
+	$scope.Typefor =[];
+
+	$rootScope.FileName="";
+	$scope.hideForm = true;
+	$scope.animationsEnabled = true;
+	
+	$scope.datepickers = {
+		Created: false
+	};
+
+	$scope.dateOptions = {
+	    formatYear: 'yy',
+	    startingDay: 1,
+	    showWeeks: false
+	 };
+		  
+	$scope.formats = ['dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
+	$scope.format = $scope.formats[0];
+	
+	$.ajax({
+        url: _spPageContextInfo.webAbsoluteUrl + "/_api/contextinfo",
+        type: "POST",
+        headers: {
+            "Accept": "application/json;odata=verbose",
+        },
+        success: function (data) {
+            $scope.xRequestDigest = data.d.GetContextWebInformation.FormDigestValue;
+        },
+        error: function (data) {
+            console.log('error xRequestDigest', data);
+        }
+    });
+
+	$scope.collapse = function(x) {
+		if(!$('#panel-header').hasClass('fa-plus')) {
+			$('.panel-bodies').slideUp();
+			$('#panel-header').removeClass('fa-minus').addClass('fa-plus');
+		} else {
+			$('.panel-bodies').slideDown();
+			$('#panel-header').removeClass('fa-plus').addClass('fa-minus');
+		}		
+	};
+	
+	$scope.openDate = function($event, x) {
+	    $event.preventDefault();
+	    $event.stopPropagation();
+		$scope.datepickers['Created'] = true;
+	};
+
+	$scope.addNew= function() {
+		$scope.data =[];
+		$scope.hideForm = false;
+		$scope.data.Created = new Date();	
+	};
+	    
+    $scope.cancel= function() {
+		$scope.hideForm = true; 
+	};
+
+    $scope.edit =function(x) {
+		$scope.hideForm = false;
+		$scope.data = x;
+
+    };
+    
+    $scope.approve =function(x) {
+			if(!x.ID) return;
+			
+ 			var r = confirm("Do you want to approve this content?");
+ 			if (r == true) {
+ 				$scope.data = {
+	 				'Title' : x.Title,
+	 				'OData__ModerationStatus' : 0,
+	 				'ID' : x.ID
+	 			 };
+				$scope.save(true);
+			}
+	    };
+ 	    	
+	vm.dtOptions = DTOptionsBuilder
+		.newOptions()
+		.withPaginationType('full_numbers')
+		.withDisplayLength(2)
+		.withBootstrap()
+		.withOption('responsive', true)
+		
+	vm.dtOptions = {
+		bLengthChange: false,
+		pageLength : 5,
+		lengthMenu: [[5, -1], [5]],
+		order : [[0, 'desc']]
+	};
+	
+	vm.dtColumnDefs = [
+		DTColumnDefBuilder.newColumnDef(0).notVisible(),
+		DTColumnDefBuilder.newColumnDef(1),
+		DTColumnDefBuilder.newColumnDef(2)
+		];
+	
+    $scope.reloadTable = function(){
+    	$resource( _spPageContextInfo.webAbsoluteUrl + "/_api/web/lists/getbytitle('Theme Welcome Wording')/Items", {}, {
+			    get: {
+			        method: 'GET',
+			        headers: { "accept": "application/json;odata=verbose" }
+			    }
+			 }).get().$promise.then(function(response) {
+        		vm.tables = response.d.results;
+    		});
+    };
+	$scope.reloadTable();
+	
+	$scope.combo = function(){
+		$resource(_spPageContextInfo.webAbsoluteUrl +"/_api/web/lists/GetByTitle('Theme Welcome Wording')/fields?$filter=EntityPropertyName eq 'Typefor'", {}, {
+					    get: {
+					        method: 'GET',
+					        headers: { "accept": "application/json;odata=verbose" }
+					    }
+					 }).get().$promise.then(function(response) {
+		        		var mydata = response.d.results[0].Choices.results;
+		        		
+		   				$scope.Typefor = mydata;
+		    		});
+	};
+	$scope.combo();
+	
+	$scope.save = function(approve) {
+      	var url = _spPageContextInfo.webAbsoluteUrl +"/_api/web/lists/getbytitle('Theme Welcome Wording')/Items";
+      	var hdr = {
+      		headers:{ 
+	                "Content-type": "application/json;odata=verbose",
+	                "X-RequestDigest": $scope.xRequestDigest,
+	               }
+	           };
+      
+      	if ($scope.data.ID){
+	      	url += "("+$scope.data.ID+")";
+	
+	      	hdr = {
+	      		headers:{ 
+			        	"Accept": "application/json;odata=verbose",
+		                "Content-type": "application/json;odata=verbose",
+		                "X-HTTP-Method": "MERGE",
+		                "X-RequestDigest": $scope.xRequestDigest,
+		                "If-Match": "*",
+		                "odata-version": ""				        
+		               }
+		           }
+      	}
+		
+      	var params = JSON.stringify(
+					{
+		      			"__metadata" :{
+		      				"type": "SP.Data.ThemeWelcomeWordingListItem"
+		      			},
+						"OData__ModerationStatus": $scope.data.OData__ModerationStatus
+		      			}
+      				);
+      
+      	if(!approve){
+	      	params = JSON.stringify(
+				{
+	      			"__metadata" :{
+	      				"type": "SP.Data.ThemeWelcomeWordingListItem"
+	      			},
+	      			"Title": $scope.data.Typefor,
+	      			"Typefor": $scope.data.Typefor,
+	      			"Theme": $scope.data.Theme,
+					 "OData__ModerationStatus": $scope.data.OData__ModerationStatus
+	      		 })
+      	}	
+      
+		$http.post(url, params, hdr)
+		.then(function onSuccess(response) {
+			$scope.reloadTable();
+			if(!approve) $scope.cancel();
+		}).catch(function onError(response) {
+			console.log(response);
+		});
+     };
+     
+     $scope.delete = function(x) {
+		if(!x.ID) return;
+		var r = confirm("Do you want to delete this row?");
+	    
+		var url = _spPageContextInfo.webAbsoluteUrl +"/_api/web/lists/getbytitle('Theme Welcome Wording')/Items("+x.ID+")";
+	    var hdr = {
+      		headers:{ 
+	                "Accept": "application/json;odata=verbose",
+	                "X-RequestDigest": $scope.xRequestDigest,
+	                "If-Match": "*"
+	        }
+	    };
+		if (r == true) {
+	        $http.delete(url, hdr)
+		    .then(function onSuccess(response) {
+			    $scope.reloadTable();
+			  }).catch(function onError(response) {
+			    console.log('error in delete', response);
+			  });
+	    } 
+	};
+    
+    $scope.item = {
+	    get: function(x) {
+	    
+	    $scope.name="";
+		$scope.eles= angular.element(x).find('p');
+		[].forEach.call($scope.eles, function (ctl) {
+	        $scope.name += (ctl.outerHTML).toString();
+	    });
+		return $scope.name;      
+		
+	    }
+	  };
+    
+    
+	$scope.openModal = function (title, content, size, parentSelector) {
+	    var parentElem = parentSelector?angular.element($document[0].querySelector('.modal-demo ' + parentSelector)) : undefined;
+		  var modalInstance = $uibModal.open({
+		      animation: $scope.animationsEnabled,
+		      ariaLabelledBy: 'modal-title',
+		      ariaDescribedBy: 'modal-body',
+		      templateUrl: 'myModalContent.html',
+		      controller: 'ModalInstanceCtrl',
+		      controllerAs: 'showCase',
+		      size: size,
+		      appendTo: parentElem,
+		      resolve: {
+		        items: function () {
+		          return {'title' : title, 'persons' : content};
+		        }
+		      }
+	    });
+	  };
+};
+	   
+function ModalInstanceCtrl($scope, $rootScope, $uibModalInstance, items, DTOptionsBuilder, DTColumnDefBuilder) {
+	var showCase = this;
+	showCase.message = '';
+	showCase.items = items;
+	showCase.selected = {
+		item: showCase.items[0]
+	};
+	showCase.someClickHandler = showCase.someClickHandler;
+	showCase.dtOptions = DTOptionsBuilder
+		.newOptions()
+		.withPaginationType('full_numbers')
+		.withDisplayLength(2)
+		.withBootstrap()
+		.withOption('responsive', true);
+
+	showCase.dtOptions = {
+		bLengthChange: false,
+		pageLength : 5,
+		lengthMenu: [[5, -1], [5]]
+	};
+	showCase.dtColumnDefs = [
+		DTColumnDefBuilder.newColumnDef(0).notVisible(),
+		DTColumnDefBuilder.newColumnDef(1),
+		DTColumnDefBuilder.newColumnDef(2)
+	];
+
+	showCase.someClickHandler = function(info) {
+		showCase.message = info.ID + ' - ' + info.Name;
+		$rootScope.FileName = info.Name;
+		showCase.ok();
+	};
+
+	showCase.ok = function () {
+		$uibModalInstance.close(showCase.selected.item);
+	};
+
+	showCase.cancel = function () {
+		$uibModalInstance.dismiss('cancel');
+	};
+};
+</script>

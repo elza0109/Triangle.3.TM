@@ -1,0 +1,691 @@
+﻿<link rel="stylesheet" href="/SiteAssets/TriAngleAsset/lib/dist/plugins/bootstrap/datatables.bootstrap.min.css">
+<link rel="stylesheet" href="/SiteAssets/TriAngleAsset/lib/dist/css/angular-datatables.css">
+<link rel="stylesheet" href="/SiteAssets/TriAngleAsset/lib/css/select.css">
+<link rel="stylesheet" href="/SiteAssets/TriAngleAsset/lib/css/select2.default.css">
+<link rel="stylesheet" href="/SiteAssets/TriAngleAsset/lib/css/selectize.default.css">
+
+<script src="/SiteAssets/TriAngleAsset/lib/jquery.dataTables.min.js"></script> 
+<script src="/SiteAssets/TriAngleAsset/lib/angularjs.min.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/dist/angular-datatables.min.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/dist/plugins/bootstrap/angular-datatables.bootstrap.min.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/dataTables.responsive.min.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/angular-sanitize.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/angular-resource.js"></script>
+
+<script src="/SiteAssets/TriAngleAsset/lib/angular-animate.js"></script>
+<script src="/SiteAssets/TriAngleAsset/lib/ui-bootstrap.min.js"></script>
+
+<link rel="stylesheet" href="/SiteAssets/TriAngleAsset/lib/css/textAngular.css" type="text/css">
+<script src='/SiteAssets/TriAngleAsset/lib/textAngular-rangy.min.js'></script>
+<script src='/SiteAssets/TriAngleAsset/lib/textAngular-sanitize.min.js'></script>
+<script src='/SiteAssets/TriAngleAsset/lib/textAngular.min.js'></script>
+
+<script src="/SiteAssets/TriAngleAsset/lib/select.js"></script>
+
+<div ng-app="globalApp">
+
+	<script type="text/ng-template" id="myModalContent.html">
+        <div class="modal-header">
+            <h3 class="modal-title" id="modal-title">{{showCase.items.title}}</h3>
+        </div>
+        <div class="modal-body" id="modal-body" ng-bind-html="showCase.items.content.Content">
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" type="button" ng-click="showCase.ok()">OK</button>
+        </div>
+    </script>
+
+	<div ng-controller="addblogCtrl as showCase">
+		<div id="tableForm" ng-show="hideForm" >
+			<a class="btn btn-success btn-md" ng-click="addNew()"><span class="fa fa-plus"> Add New </span></a>
+			<div class="panel-heading col-md-12 no-padding" id="en">
+				<h3>Term & Condition for Blogs</h3>
+				<ul>
+				    <li>Posts for Blog are up to 1,000 words</li>
+				    <li>Selected articles will be uploaded on the <b>Xpress Yourself page</b></li>
+				    <li>Invite SaTRIa as many as possible to give a Rating in your work or you can give your rating to other SaTRIa’s works (one name valid to give one Rating). Highest rating for 3 consecutive weeks will get EXCLUSIVE merchandise from the Internal Communication and Engagement, HR Division</li>
+				    <li>All your works will belong to PT Hutchison 3 Indonesia</li>				    
+				</ul>
+			</div>
+			<div class="panel-heading col-md-12 no-padding" id="id">
+				<h3>Syarat dan Ketentuan</h3>
+				<ul>
+				    <li>Tulisan untuk Blog maksimal 1.000 kata</li>
+				    <li>Artikel yang terseleksi dan terpilih akan diunggah di laman <b>Xpress Yourself</b></li>
+				    <li>Ajak para SaTRIa sebanyak-banyaknya untuk memberi Rating di hasil karyamu/karya SaTRIa lainnya (satu nama hanya berhak untuk memberikan satu kali Rating). Hasil karya yang memperoleh rating tertinggi selama 3 minggu berturut-turut akan mendapatkan merchandise EKSKLUSIF dari Internal Communication and Engagement, HR Division</li>
+				    <li>Semua karyamu akan menjadi milik PT Hutchison 3 Indonesia.</li>	
+				</ul>
+			</div>
+		    <table datatable="ng" dt-options="showCase.dtOptions" dt-column-defs="showCase.dtColumnDefs"  class="table table-striped">
+			    <thead style='display:none;'>
+			    	<th>header 1</th>
+			    	<th>header 2</th>
+			    	<th>header 3</th>
+			  	</thead>
+		        <tbody>
+			        <tr ng-repeat="person in showCase.persons">
+			        	<td class="column-datatable" style='display:none;'>{{person.ID}}</td>
+			        	<td class="column-datatable" style='display:none;'>{{person.VideoType}}</td>
+			            <td class="col-md-12">
+			            	<div class="row">
+			            		<span>{{person.DateNewsFormatted}}</span>
+			            		<p style="font-size:16px">
+				            		<strong>{{person.Title}}</strong>
+				            		<br />
+				            		<i style="color: {{getColor(person.Status)}}"><sup ng-bind-html="getStatus(person.Status)"></sup></i>
+			            		</p>
+			       
+			             		<div id="news" ng-bind-html="person.Content | limitTo: 300">
+			            		</div>
+			            		<a style="display: inline-block;" ng-href='#' ng-click="openModal(person)">...View</a>
+			            	</div>
+			            	<div class="col-md-12 range25">
+		            		</div>
+
+			            	<div class="col-md-12 no-padding">
+			            		<div class="col-md-6 text-left no-padding">
+				            		<span>Category : </ span> <span ng-bind-html="getCategory(person.PostCategoryId.results)"></span>
+				            	</div>
+				            	<div class="col-md-6 text-right"> 
+				            		<a class="btn btn-primary btn-sm" style="display: inline-block;" ng-click="edit(person)">Edit</a>
+				            		<a class="btn btn-danger btn-sm" style="display: inline-block;" ng-click="delete(person)">Delete</a>
+				            	</div>
+							</div>
+			            </td>
+			        </tr>
+		        </tbody>
+			 </table>
+		</div >
+		<div id="addForm" ng-show="!hideForm">
+				<table class="col-sm-12 form-table">
+					<div class="col-md-12">
+						<div class="panel-heading col-md-12 no-padding">
+							<a ng-click="collapse()"><span class="pull-right clickable"><i id='test' class="fa fa-minus"></i></span></a>
+							<hr class="hr-thick">
+						</div>
+						<div class="panel-bodies">					
+							<div class='form-horizontal'>
+								<div class="form-group">
+									<label for="Title" class="control-label col-xs-2">Title</label>
+									<div class="col-xs-10">
+										<input type="hidden" ng-model="data.ID" name="ID" id="ID" >
+										<input type="text" ng-model="data.Title" class="form-control" id="Title" placeholder="Title" ng-required="required">
+										<span class="ms-metadata">Wording for Menu to be displayed</span>
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<label for="Content" class="control-label col-xs-2">Blog Content</label>
+									<div class="col-md-10">
+										<div text-angular="text-angular" name="htmlcontent" ng-model="data.Content" ta-disabled='disabled' 
+											ta-toolbar-button-class="btn btn-default btn-xs"
+											ta-toolbar="[]"
+											ta-text-editor-class="form-control myform1-height" 
+											ta-html-editor-class="form-control myform1-height"
+											ta-unsafe-sanitizer="true"
+										 >
+										 </div>
+									 </div>
+								</div>
+								
+								<div class="form-group">
+									<label for="category" class="control-label col-xs-2">Category</label>
+									<div class="col-xs-10">
+										<ui-select multiple ng-model="showCase.multipleDemo.selectedCategory" theme="bootstrap" ng-disabled="ctrl.disabled" sortable="true" close-on-select="false" style="width: 800px;">
+											<ui-select-match placeholder="Select category...">{{$item.name}}</ui-select-match>
+											<ui-select-choices repeat="c in showCase.category | propsFilter: {name: $select.search}">
+											  <div ng-bind-html="c.name | highlight: $select.search"></div>
+											  <small>
+												{{cat.name}}
+											  </small>
+											</ui-select-choices>
+										</ui-select>
+										<span class="ms-metadata" style="color:red"><i>Please type for search</i></span>
+								   </div>
+								</div>
+								
+								<div class="form-group">
+									<div class="col-xs-offset-2 col-xs-10">
+										<a class="btn btn-primary" ng-click="save()">Save as draft</a>
+										<a class="btn btn-primary" ng-click="publish()">Sent</a>
+										<a class="btn btn-warning" ng-click="cancel()">Cancel</a>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</table>
+			</div>
+	</div>
+</div>
+<script>
+	
+	var idCurrent = _spPageContextInfo.userId;
+	//var baseurl = window.location.origin + "/";
+	var baseurl ="http://triangle.three.co.id/";
+	var baseurl_en = _spPageContextInfo.webAbsoluteUrl;
+
+			 
+	angular.module('globalApp', ['ngSanitize','datatables', 'datatables.bootstrap', 'ngResource', 'ui.bootstrap','ngAnimate', 'textAngular', 'ui.select'])
+	.config(function(){
+	        angular.lowercase = angular.$$lowercase;
+	})
+	.filter('propsFilter', function() {
+	  return function(items, props) {
+	    var out = [];
+	
+	    if (angular.isArray(items)) {
+	      var keys = Object.keys(props);
+	
+	      items.forEach(function(item) {
+	        var itemMatches = false;
+	
+	        for (var i = 0; i < keys.length; i++) {
+	          var prop = keys[i];
+	          var text = props[prop].toLowerCase();
+	          if (item[prop].toString().toLowerCase().indexOf(text) !== -1) {
+	            itemMatches = true;
+	            break;
+	          }
+	        }
+	
+	        if (itemMatches) {
+	          out.push(item);
+	        }
+	      });
+	    } else {
+	      out = items;
+	    }
+	    return out.slice(0, 5);
+	  };
+	})
+	.controller('addblogCtrl', addblogCtrl)
+	.controller('ModalInstanceCtrl', ModalInstanceCtrl);	
+
+	function addblogCtrl($scope, $rootScope, $resource, $compile, $http, $q, $uibModal, $log, $anchorScroll, $location, DTOptionsBuilder, DTColumnDefBuilder) {
+		
+		var enurl = baseUrl.search("/en");
+		//console.log(enurl);
+		
+		if(localStorage.getItem('bread')){
+				var mybread = localStorage.getItem('bread').split(';');
+				
+				var breadhtml = '';
+				
+				if(enurl != -1 ){
+					if (mybread.length == 7){
+						breadhtml = '<a href="/en">Home</a><span> &gt;&nbsp;Share Your View &gt;&nbsp;<a href="/en/blog" onclick="breadcrumb(`null`, `Share Your View`)">Blog</a> &gt;&nbsp; My Blog</span>';	
+					}else{
+						breadhtml = '<a href="/en">Home</a><span> &gt;&nbsp;Xpress Yourself &gt;&nbsp;<a href="/en/blog" onclick="breadcrumb(`Xpress Yourself`, `Blog`)">Blog</a> &gt;&nbsp; My blog</span>';
+					}
+				}
+				else{
+					if (mybread.length == 7){
+						breadhtml = '<a href="/id">Home</a><span> &gt;&nbsp;Berbagi pandangan &gt;&nbsp;<a href="/id/blog" onclick="breadcrumb(`null`, `Berbagi pandangan`)">Blog</a> &gt;&nbsp; My Blog</span>';	
+					}else{
+						breadhtml = '<a href="/id">Home</a><span> &gt;&nbsp;Xpresikan Dirimu &gt;&nbsp;<a href="/id/blog" onclick="breadcrumb(`Xpresikan Dirimu`, `Blog`)">Blog</a> &gt;&nbsp; My blog</span>';
+					}
+				}
+				
+				localStorage.setItem('bread',breadhtml);
+			}
+
+
+	    var vm = this;
+	    vm.persons = [];
+	    vm.dtInstance = {};
+	    vm.category = [];
+	    $scope.hideForm = true;
+	   	$scope.data = {
+		    category: "",
+		    master : null,
+		    listcategory : []
+		  };
+	
+		if(enurl != -1 ){
+			document.querySelector("#en").style.display = 'block';
+			document.querySelector("#id").style.display = 'none';
+		}
+		else
+		{
+			document.querySelector("#en").style.display = 'none';
+			document.querySelector("#id").style.display = 'block';
+		}
+
+	    $scope.xRequestDigest;
+	    $anchorScroll();
+	    vm.dtOptions = DTOptionsBuilder
+	    	.newOptions()
+	        .withPaginationType('full_numbers')
+	        .withDisplayLength(2)
+    		.withBootstrap()
+    		.withOption('responsive', true)
+		 vm.dtOptions = DTOptionsBuilder
+	    	.newOptions()
+	        .withPaginationType('full_numbers')
+	        .withDisplayLength(2)
+    		.withBootstrap()
+    		.withOption('responsive', true);
+		vm.dtOptions = {
+						searching:false,
+						bLengthChange: false,
+						pageLength : 3,
+		    			lengthMenu: [[3, -1], [3]]
+						};
+	    vm.dtColumnDefs = [
+	        DTColumnDefBuilder.newColumnDef(0),
+	        DTColumnDefBuilder.newColumnDef(1)
+	    ];
+	    
+	    $.ajax({
+	        url: _spPageContextInfo.webAbsoluteUrl + "/_api/contextinfo",
+	        type: "POST",
+	        headers: {
+	            "Accept": "application/json;odata=verbose",
+	        },
+	        success: function (data) {
+	            $scope.xRequestDigest = data.d.GetContextWebInformation.FormDigestValue;
+	        },
+	        error: function (data) {
+	            console.log('error xRequestDigest', data);
+	        }
+	    });
+	    
+	    $.ajax({  
+			url: baseurl + "en/_api/web/lists/getbytitle('Categories')/Items",  
+			method: "GET",  
+			headers: { "Accept": "application/json; odata=verbose" },  
+			success: function (data) {
+	            
+	            var data = data.d.results;				
+				for(var i =0; i < data.length ;i++){
+					var params = {
+						name: data[i].Title,  Id: data[i].Id
+					};
+					
+					vm.category.push(params);
+				}
+				/*				
+	            data.map(el => {
+					var params = {
+						name: el.Title,  Id: el.Id
+					};
+					vm.category2.push(params);
+				})*/
+				
+				$scope.data.listcategory = vm.category;
+				
+	        },
+	        error: function (data) {
+	            console.log('error xRequestDigest', data);
+	        }
+		});
+		
+		
+
+		vm.multipleDemo = {};
+		vm.multipleDemo.selectedCategory = [];
+         				        
+	   
+	    $scope.addNew= function() {
+			$scope.data =[];
+			$scope.hideForm = false;		
+			vm.multipleDemo.selectedCategory = [];
+			$scope.data.Created = new Date();	
+		};
+
+	    
+	    $scope.cancel= function() {
+ 			$scope.hideForm = true;  
+ 			$anchorScroll();
+	    };
+	    
+	    $scope.edit =function(x) {
+			$scope.hideForm = false;
+			$scope.data = x;
+			vm.multipleDemo.selectedCategory = [];
+
+			if(x.PostCategoryId.results != null){
+				for(var i=0; i < x.PostCategoryId.results.length;i++){
+					for(j=0;j < vm.category.length;j++){
+						if(x.PostCategoryId.results[i] == vm.category[j].Id ){
+							
+							vm.multipleDemo.selectedCategory.push(vm.category[j]);
+						}	
+					}
+					
+				}
+			}  
+		 };
+
+	     $scope.save = function() {
+			
+	      	var url = baseurl +"en/_api/web/lists/getbytitle('Posts')/Items";
+	      	var hdr = {
+	      		headers:{ 
+		                "Content-type": "application/json;odata=verbose",
+		                "X-RequestDigest": $scope.xRequestDigest,
+		               }
+		           };
+	      
+	      	if ($scope.data.ID){
+		      	url += "("+$scope.data.ID+")";
+		
+		      	hdr = {
+		      		headers:{ 
+				        	"Accept": "application/json;odata=verbose",
+			                "Content-type": "application/json;odata=verbose",
+			                "X-HTTP-Method": "MERGE",
+			                "X-RequestDigest": $scope.xRequestDigest,
+			                "If-Match": "*",
+			                "odata-version": ""				        
+			               }
+			           }
+	      	}
+			
+	      	var params = JSON.stringify(
+						{
+			      			"__metadata" :{
+			      				"type": "SP.Data.PostsListItem"
+			      			},
+							"OData__ModerationStatus": 0
+			      			}
+	      				);
+
+	      	var medata = [];
+			for(var i=0; i < vm.multipleDemo.selectedCategory.length;i++){
+				
+				medata.push(vm.multipleDemo.selectedCategory[i].Id);
+			}
+			console.log('blog',medata);
+
+	      	params = JSON.stringify(
+				{
+	      			"__metadata" :{
+	      				"type": "SP.Data.PostsListItem"
+	      			},
+	      			"Title": $scope.data.Title,
+	      			"Body": $scope.data.Content,
+					"PostCategoryId": {"results" : medata},
+					"OData__ModerationStatus": 3
+	      		 })
+			$http.post(url, params, hdr)
+			.then(function onSuccess(response) {
+				$scope.reloadTable();
+				$scope.cancel();
+			}).catch(function onError(response) {
+				console.log(response);
+			});
+	     };
+
+	     $scope.publish = function() {
+	      	var url = baseurl +"en/_api/web/lists/getbytitle('Posts')/Items";
+	      	
+	      	var hdr = {
+	      		headers:{ 
+		                "Content-type": "application/json;odata=verbose",
+		                "X-RequestDigest": $scope.xRequestDigest,
+		               }
+		           };
+	      
+	      	if ($scope.data.ID){
+		      	url += "("+$scope.data.ID+")";
+		
+		      	hdr = {
+		      		headers:{ 
+				        	"Accept": "application/json;odata=verbose",
+			                "Content-type": "application/json;odata=verbose",
+			                "X-HTTP-Method": "MERGE",
+			                "X-RequestDigest": $scope.xRequestDigest,
+			                "If-Match": "*",
+			                "odata-version": ""				        
+			               }
+			           }
+	      	}
+			
+	      	var params = JSON.stringify(
+						{
+			      			"__metadata" :{
+			      				"type": "SP.Data.PostsListItem"
+			      			},
+							"OData__ModerationStatus": 0
+			      			}
+	      				);
+	      	
+      		var medata = [];
+			for(var i=0; i < vm.multipleDemo.selectedCategory.length;i++){
+				
+				medata.push(vm.multipleDemo.selectedCategory[i].Id);
+			}
+
+	      	params = JSON.stringify(
+				{
+	      			"__metadata" :{
+	      				"type": "SP.Data.PostsListItem"
+	      			},
+	      			"Title": $scope.data.Title,
+	      			"Body": $scope.data.Content,
+					"PostCategoryId": {"results" : medata},
+					"OData__ModerationStatus": 2
+	      		 })
+
+
+
+			$http.post(url, params, hdr)
+			.then(function onSuccess(response) {
+				$scope.reloadTable();
+				$scope.cancel();
+			}).catch(function onError(response) {
+				console.log(response);
+			});
+	     };
+
+	    $scope.delete = function(x) {
+			if(!x.ID) return;
+			var r = confirm("Do you want to delete this blog?");
+		    
+			var url = baseurl  +"en/_api/web/lists/getbytitle('Posts')/Items("+x.ID+")";
+			
+		    var hdr = {
+	      		headers:{ 
+		                "Accept": "application/json;odata=verbose",
+		                "X-RequestDigest": $scope.xRequestDigest,
+		                "If-Match": "*"
+		        }
+		    };
+			if (r == true) {
+		        $http.delete(url, hdr)
+			    .then(function onSuccess(response) {
+				    $scope.reloadTable();
+				  }).catch(function onError(response) {
+				    console.log('error in delete', response);
+				  });
+		    } 
+		};
+
+	    $scope.reloadTable = function(){
+	    	vm.persons = [];
+	    	var url = baseurl + "en/_api/web/lists/getbytitle('Posts')/Items"
+	    	var hdr = {
+	      		headers:{ 
+		                "Content-type": "application/json;odata=verbose"
+		                }
+		           };
+	    	$resource( baseurl  + "en/_api/web/lists/getbytitle('Posts')/Items", {}, {
+				    get: {
+				        method: 'GET',
+				        headers: { "accept": "application/json;odata=verbose" }
+				    }
+				 }).get().$promise.then(function(response) {
+	        		
+	        		for(var i = 0;i <response.d.results.length;i++){
+				 		if(response.d.results[i].AuthorId == idCurrent)
+				 		{
+				 			
+				 			vm.persons.push({
+		        				ID:response.d.results[i].ID,
+			                    Title: response.d.results[i].Title,
+			                    AuthorId:response.d.results[i].AuthorId,
+			                    Content : response.d.results[i].Body,
+			                    Status : response.d.results[i].OData__ModerationStatus,
+			                    PostCategoryId : response.d.results[i].PostCategoryId
+			                });
+				 		}
+				 	}
+	
+	        		$resource(_spPageContextInfo.webAbsoluteUrl +"/_api/web/siteusers", {}, {
+								    get: {
+								        method: 'GET',
+								        headers: { "accept": "application/json;odata=verbose" }
+								    }
+								 }).get().$promise.then(function(res) {
+								 	vm.author = res.d.results;				 			
+						 			for(var i = 0;i < vm.persons.length;i++){
+						 			
+			        					for(var j=0; j < vm.author.length;j++){						
+			        						if(vm.author[j].Id== vm.persons[i].AuthorId){
+												   vm.persons[i]['Author']= vm.author[j].Title;	
+			        						}
+			        					}
+			        				}			 		        		
+					    		});
+	    		});
+	    };
+		$scope.reloadTable();
+
+ 		$scope.collapse = function(x) {
+			
+			if(!$('#test').hasClass('fa-plus')) {
+				$('.panel-bodies').slideUp();
+				$('#test').removeClass('fa-minus').addClass('fa-plus');
+			} else {
+				$('.panel-bodies').slideDown();
+				$('#test').removeClass('fa-plus').addClass('fa-minus');
+			}		
+		};
+		
+		$scope.collapseterm = function() {
+			if(!$('#term').hasClass('fa-plus')) {
+				$('#condition').slideUp();
+				$('#term').removeClass('fa-minus').addClass('fa-plus');
+			} else {
+				$('#condition').slideDown();
+				$('#term').removeClass('fa-plus').addClass('fa-minus');
+			}		
+		};
+
+		
+		$scope.getCategory= function(x) {
+	  		if(x == null) return;
+	  		
+	  		var html = '';
+	  		
+			for(var i=0; i < x.length;i++){
+				for(j=0;j < vm.category.length;j++){
+					if(i == 0){
+						if(x[i] == vm.category [j].Id ){
+							html += vm.category[j].name;						
+						}
+					}
+					else if(i == (x.length-1)){
+						if(x[i] == vm.category [j].Id ){
+							html += " and "+vm.category[j].name;						
+						}
+					}
+					else{
+						if(x[i] == vm.category [j].Id ){
+							html += ", "+vm.category[j].name;						
+						}
+					}				
+				}
+			}
+			return html;
+		};
+		
+		$scope.getStatus=function(x){
+			var status;
+			switch(x) {
+			case 0:
+			    status = 'Approved';
+			    break;
+			case 1:
+			    status = 'Rejected';
+			    break;
+			case 2:
+				status = 'Pending';
+				break;
+			case 3:
+				status = 'Draft';
+				break;
+			default:
+			    status = 'x';
+			    break;
+			}
+			
+			return status;
+		};
+		
+		$scope.getColor=function(x){
+			var color;
+			switch(x) {
+			case 0:
+			    color = '#2ab928';
+			    break;
+			case 1:
+			    color = '#b92835';
+			    break;
+			case 2:
+				color = '#ded34e';
+				break;
+			case 3:
+				color = '#73a5ff';
+				break;
+			default:
+			    color = '#ffffff';
+			    break;
+			}
+			
+			return color;
+		};
+		
+		$scope.animationsEnabled = true;
+		  $scope.openModal = function (content, size, parentSelector) {
+		    var parentElem = parentSelector?angular.element($document[0].querySelector('.modal-demo ' + parentSelector)) : undefined;
+			  var modalInstance = $uibModal.open({
+			      animation: $scope.animationsEnabled,
+			      ariaLabelledBy: 'modal-title',
+			      ariaDescribedBy: 'modal-body',
+			      templateUrl: 'myModalContent.html',
+			      controller: 'ModalInstanceCtrl',
+			      controllerAs: 'showCase',
+			      size: size,
+			      appendTo: parentElem,
+			      resolve: {
+			        items: function () {
+			          return {'title' : content.Title, 'content' : content};
+			        }
+			      }
+		    });
+		  };
+	};
+	function ModalInstanceCtrl($scope, $rootScope, $uibModalInstance, items, DTOptionsBuilder, DTColumnDefBuilder) 
+	{
+		var showCase = this;
+		showCase.message = '';
+		showCase.items = items;
+		showCase.selected = {item: showCase.items[0]};
+		
+		showCase.approve = function(data){
+			showCase.ok();
+		};
+			
+		showCase.ok = function () {
+			$uibModalInstance.close(showCase.selected.item);
+		};
+		showCase.cancel = function (){	
+			$uibModalInstance.dismiss('cancel');
+		};
+	};
+		
+		
+ </script>
